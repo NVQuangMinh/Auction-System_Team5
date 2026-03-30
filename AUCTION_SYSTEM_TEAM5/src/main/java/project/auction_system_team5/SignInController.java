@@ -2,16 +2,14 @@ package project.auction_system_team5;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 
-public class LoginController {
+public class SignInController {
     @FXML
     TextField username;
     PasswordField password;
