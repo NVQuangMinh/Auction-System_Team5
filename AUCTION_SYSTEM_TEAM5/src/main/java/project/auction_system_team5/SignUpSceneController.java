@@ -17,4 +17,7 @@ public class SignUpSceneController {
     private PasswordField cfpassword;
 
     @FXML
-    protected void create_account(ActionEvent)
+    protected void create_account(ActionEvent event){
+
+    }
+}
