@@ -8,7 +8,7 @@
       <TextField fx:id="username" layoutX="226.0" layoutY="187.0" promptText="USERNAME" />
       <PasswordField fx:id="password" layoutX="226.0" layoutY="226.0" promptText="PASSWORD" />
       <Label layoutX="284.0" layoutY="30.0" text="LOGO" />
-      <Button fx:id="signInButton" layoutX="227.0" layoutY="134.0" mnemonicParsing="false" onAction="#switchToSignIncene" prefHeight="25.0" prefWidth="73.0" text="Sign In" />
+      <Button fx:id="signInButton" layoutX="227.0" layoutY="134.0" mnemonicParsing="false" onAction="#switchToSignInScene" prefHeight="25.0" prefWidth="73.0" text="Sign In" />
       <Button fx:id="signUpButton" layoutX="300.0" layoutY="134.0" mnemonicParsing="false" onAction="#switchToSignUpScene" prefHeight="25.0" prefWidth="73.0" text="Sign up" />
       <Button fx:id="loginButton" layoutX="226.0" layoutY="272.0" mnemonicParsing="false" onAction="#switchToMainScene" prefHeight="25.0" prefWidth="149.0" text="LOGIN" />
    </children>

@@ -22,7 +22,7 @@ public class SignInController {
     Parent root;
     public void switchToMainScene(ActionEvent event){
     }
-    public void switchToSignIncene(ActionEvent event) throws IOException{
+    public void switchToSignInScene(ActionEvent event) throws IOException {
         System.out.println("sign in");
     }
     public void switchToSignUpScene(ActionEvent event) throws IOException {
