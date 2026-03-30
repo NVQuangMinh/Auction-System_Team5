@@ -1,0 +1,5 @@
+<modules>
+    <module>auction-shared</module>
+    <module>auction-server</module>
+    <module>auction-client</module>
+</modules>
