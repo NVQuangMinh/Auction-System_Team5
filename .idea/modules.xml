@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/Auction-System_Team5.iml" filepath="$PROJECT_DIR$/.idea/Auction-System_Team5.iml" />
-      <module fileurl="file://$PROJECT_DIR$/login_scene/login_scene.iml" filepath="$PROJECT_DIR$/login_scene/login_scene.iml" />
     </modules>
   </component>
 </project>
