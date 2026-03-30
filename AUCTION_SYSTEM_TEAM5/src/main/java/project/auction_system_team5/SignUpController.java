@@ -1,5 +1,6 @@
 package project.auction_system_team5;
 
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -18,7 +19,12 @@ public class SignUpController {
     Stage stage;
     Scene scene;
     Parent root;
-
+    public void switchToMainScene(ActionEvent event){
+        System.out.println("Main");
+    }
+    public void switchToSignUpScene(ActionEvent event) throws IOException{
+        System.out.println("sign up");
+    }
     public void switchToSignInScene(ActionEvent event) throws IOException{
         root = FXMLLoader.load(getClass().getResource("SignInScene.fxml"));
         stage = (Stage)((Node) event.getSource()).getScene().getWindow();
