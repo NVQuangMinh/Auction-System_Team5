@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="CONTROLLER_NAME">
+   <children>
+      <Button fx:id="signInButton" layoutX="227.0" layoutY="134.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="73.0" text="Sign In" />
+      <Button fx:id="signUpButton" layoutX="300.0" layoutY="134.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="73.0" text="Sign up" />
+      <TextField fx:id="username" layoutX="226.0" layoutY="181.0" prefHeight="25.0" prefWidth="147.0" promptText="USERNAME" />
+      <PasswordField fx:id="password" layoutX="226.0" layoutY="225.0" prefHeight="25.0" prefWidth="147.0" promptText="PASSWORD" />
+      <PasswordField fx:id="cfpassword" layoutX="226.0" layoutY="268.0" prefHeight="25.0" prefWidth="147.0" promptText="CONFIRM PASWORD" />
+      <Button fx:id="crtaccount" layoutX="226.0" layoutY="339.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="147.0" text="CREATE ACCOUNT" />
+      <Label layoutX="284.0" layoutY="27.0" text="LOGO" />
+   </children>
+</AnchorPane>
