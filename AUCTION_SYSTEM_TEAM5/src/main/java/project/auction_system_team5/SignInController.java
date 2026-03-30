@@ -22,7 +22,9 @@ public class SignInController {
     Scene scene;
     Parent root;
     public void switchToMainScene(ActionEvent event){
-
+    }
+    public void switchToSignIncene(ActionEvent event) throws IOException{
+        System.out.println("sign in");
     }
     public void switchToSignUpScene(ActionEvent event) throws IOException {
         root = FXMLLoader.load(getClass().getResource("SignUpScene.fxml"));
