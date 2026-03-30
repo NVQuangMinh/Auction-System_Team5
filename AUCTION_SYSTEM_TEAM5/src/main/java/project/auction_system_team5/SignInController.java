@@ -11,8 +11,8 @@ import javafx.stage.Stage;
 
 public class SignInController {
     @FXML
-    TextField username;
-    PasswordField password;
+    public TextField username;
+    public PasswordField password;
     Stage stage;
     Scene scene;
     Parent root;
