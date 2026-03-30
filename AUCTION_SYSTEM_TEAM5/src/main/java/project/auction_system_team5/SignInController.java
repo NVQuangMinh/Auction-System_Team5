@@ -16,6 +16,7 @@ import java.io.IOException;
 public class SignInController {
     @FXML
     public TextField username;
+    @FXML
     public PasswordField password;
     Stage stage;
     Scene scene;

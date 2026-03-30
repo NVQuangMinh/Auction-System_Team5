@@ -32,5 +32,11 @@ public class SignUpController {
         stage.setScene(scene);
         stage.show();
     }
+    public void switchToMainScene(ActionEvent event){
+
+    }
+    public void switchToSignUpScene(ActionEvent event){
+
+    }
 
 }
