@@ -19,8 +19,12 @@ public class SignUpController {
     Stage stage;
     Scene scene;
     Parent root;
-    public void switchToMainScene(ActionEvent event){
-        System.out.println("Main");
+    public void switchToMainScene(ActionEvent event) throws IOException{
+        root = FXMLLoader.load(getClass().getResource("AuctionMain.fxml"));
+        stage = (Stage)((Node) event.getSource()).getScene().getWindow();
+        scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
     }
     public void switchToSignUpScene(ActionEvent event) throws IOException{
         System.out.println("sign up");
