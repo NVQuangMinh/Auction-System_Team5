@@ -4,21 +4,18 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.team5.auction</groupId>
-    <artifactId>OnlineAuctionSystem</artifactId>
+    <groupId>project.auction_system_team5</groupId>
+    <artifactId>Auction-System_Team5</artifactId>
     <version>1.0-SNAPSHOT</version>
-    
-    <packaging>pom</packaging>
+    <packaging>pom</packaging> <modules>
+    <module>auction-shared</module>
+    <module>auction-server</module>
+    <module>auction-client</module>
+</modules>
 
     <properties>
-        <maven.compiler.source>17</maven.compiler.source> <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-
-    <modules>
-        <module>auction-shared</module>
-        <module>auction-server</module>
-        <module>auction-client</module>
-    </modules>
-
 </project>
