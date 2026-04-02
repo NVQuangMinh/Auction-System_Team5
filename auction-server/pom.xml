@@ -10,7 +10,7 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>auction-client</artifactId>
+    <artifactId>auction-server</artifactId>
 
     <dependencies>
         <dependency>
