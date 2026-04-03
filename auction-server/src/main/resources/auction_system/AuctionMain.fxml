@@ -10,16 +10,16 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="MainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#logOut" prefHeight="600.0" prefWidth="1200.0" style="-fx-background-color: #f6f8ef;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction_system.controllers.AuctionMainController">
+<BorderPane fx:id="MainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1200.0" style="-fx-background-color: #f6f8ef;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction_system.controllers.AuctionMainController">
    <top>
-      <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" minWidth="0.0" style="-fx-background-color: #138eff;" BorderPane.alignment="CENTER">
+      <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" minWidth="0.0" spacing="15.0" style="-fx-background-color: #138eff;" BorderPane.alignment="CENTER">
          <children>
-            <Label fx:id="welcome" alignment="CENTER" text="Welcome,  000000000000" textFill="WHITE">
+            <Label fx:id="welcome" alignment="CENTER" text="Welcome,  0000000000" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
             </Label>
-            <Button alignment="CENTER" mnemonicParsing="false" style="-fx-background-color: transparent;" text="PRODUCTS" textAlignment="CENTER" textFill="WHITE">
+            <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" style="-fx-background-color: transparent;" text="PRODUCTS" textAlignment="CENTER" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
@@ -41,7 +41,7 @@
                   <Font name="System Bold" size="12.0" />
                </font>
             </Button>
-            <ImageView fx:id="logoutImage" fitHeight="35.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="logoutImage" fitHeight="35.0" fitWidth="40.0" onMouseClicked="#logOut" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@images/log.png" />
                </image>
