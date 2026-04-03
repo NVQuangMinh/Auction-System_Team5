@@ -1,4 +1,4 @@
-package project.auction_system_team5;
+package auction_system.controllers;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -10,10 +10,8 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
-import java.awt.event.ActionEvent;
 import java.io.IOException;
 
 public class AuctionMainController {
@@ -35,7 +33,7 @@ public class AuctionMainController {
         logOutAlert.setHeaderText("REDIRECT TO THE SIGN-IN PAGE...");
         logOutAlert.setContentText("ARE YOU SURE YOU WANNA LOGOUT?");
         if (logOutAlert.showAndWait().get() == ButtonType.OK){
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("SignInScene.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/auction_system/SignInScene.fxml"));
             root = fxmlLoader.load();
             stage = (Stage)((Node) event.getSource()).getScene().getWindow();
             Scene = new Scene(root);

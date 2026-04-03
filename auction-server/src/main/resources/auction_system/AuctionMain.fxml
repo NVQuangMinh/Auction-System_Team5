@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="MainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#logOut" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #f6f8ef;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.auction_system_team5.AuctionMainController">
+<BorderPane fx:id="MainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#logOut" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #f6f8ef;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction_system.controllers.AuctionMainController">
    <top>
       <HBox alignment="CENTER_LEFT" prefHeight="80.0" prefWidth="60.0" style="-fx-background-color: #138eff;" BorderPane.alignment="CENTER">
          <children>
@@ -25,7 +25,7 @@
             </Button>
             <ImageView fitHeight="84.0" fitWidth="151.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@Auction-System.png" />
+                  <Image url="@images/Auction-System.png" />
                </image>
             </ImageView>
             <Button mnemonicParsing="false" prefHeight="80.0" prefWidth="124.0" style="-fx-background-color: transparent;" text="YOUR LISTINGS" textFill="WHITE">
@@ -40,7 +40,7 @@
             </Button>
             <ImageView fx:id="logoutImage" fitHeight="80.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@log.png" />
+                  <Image url="@images/log.png" />
                </image>
                <cursor>
                   <Cursor fx:constant="HAND" />

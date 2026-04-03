@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #f6f8ef;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.auction_system_team5.SignInController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #f6f8ef;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction_system.controllers.SignInController">
    <children>
       <AnchorPane prefHeight="400.0" prefWidth="305.0" style="-fx-background-color: #138eff;">
          <children>
@@ -31,7 +31,7 @@
             </Button>
             <ImageView fitHeight="139.0" fitWidth="320.0" layoutX="21.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@Auction-System.png" />
+                  <Image url="@images/Auction-System.png" />
                </image>
             </ImageView>
          </children>

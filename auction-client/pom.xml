@@ -37,7 +37,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.8</version>
                 <configuration>
-                    <mainClass>project.auction_system_team5.Launcher</mainClass>
+                    <mainClass>auction_system.launcher.Launcher</mainClass>
                 </configuration>
             </plugin>
         </plugins>
