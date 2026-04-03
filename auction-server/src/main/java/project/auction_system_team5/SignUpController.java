@@ -13,8 +13,11 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class SignUpController {
+    @FXML
     public PasswordField password;
+    @FXML
     public PasswordField confirmpassword;
+    @FXML
     public TextField username;
     Stage stage;
     Scene scene;

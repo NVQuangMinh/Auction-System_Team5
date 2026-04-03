@@ -22,11 +22,19 @@ public class SignInController {
     Scene scene;
     Parent root;
     public void switchToMainScene(ActionEvent event) throws IOException{
-        root = FXMLLoader.load(getClass().getResource("AuctionMain.fxml"));
-        stage = (Stage)((Node) event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
+
+
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("AuctionMain.fxml"));
+        root = fxmlLoader.load();
+        AuctionMainController mainController = fxmlLoader.getController();
+        String temp = username.getText();
+        if (!temp.equals("")){
+            mainController.WelcomUsername(temp);
+            stage = (Stage)((Node) event.getSource()).getScene().getWindow();
+            scene = new Scene(root);
+            stage.setScene(scene);
+            stage.show();
+        }
     }
     public void switchToSignInScene(ActionEvent event) throws IOException {
         System.out.println("sign in");
