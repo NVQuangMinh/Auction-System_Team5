@@ -1,41 +1,81 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction_system.controllers.SignUpController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction_system.controllers.SignUpController">
     <children>
-      <AnchorPane prefHeight="400.0" prefWidth="305.0" style="-fx-background-color: #138eff;">
+      <ImageView pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <image>
+            <Image url="@images/1378262.png" />
+         </image>
+      </ImageView>
+      <HBox alignment="CENTER_LEFT" fillHeight="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-              <Button fx:id="signInButton" layoutX="20.0" layoutY="143.0" mnemonicParsing="false" onAction="#switchToSignInScene" prefHeight="25.0" prefWidth="124.0" style="-fx-background-color: white;" text="Sign In">
-               <font>
-                  <Font name="System Bold" size="12.0" />
-               </font>
-            </Button>
-              <Button fx:id="signUpButton" layoutX="159.0" layoutY="143.0" mnemonicParsing="false" onAction="#switchToSignUpScene" prefHeight="25.0" prefWidth="124.0" style="-fx-background-color: white;" text="Sign up">
-               <font>
-                  <Font name="System Bold" size="12.0" />
-               </font>
-            </Button>
-              <TextField fx:id="username" layoutX="35.0" layoutY="213.0" prefHeight="25.0" prefWidth="235.0" promptText="USERNAME" style="-fx-background-color: white;" />
-              <PasswordField fx:id="password" layoutX="36.0" layoutY="249.0" prefHeight="25.0" prefWidth="235.0" promptText="PASSWORD" style="-fx-background-color: white;" />
-            <PasswordField fx:id="confirmpassword" layoutX="37.0" layoutY="284.0" prefHeight="25.0" prefWidth="235.0" promptText="CONFIRMPASSWORD" style="-fx-background-color: white;" />
-              <Button fx:id="CreateAccountButton" layoutX="72.0" layoutY="349.0" mnemonicParsing="false" onAction="#switchToMainScene" prefHeight="25.0" prefWidth="149.0" style="-fx-background-color: white;" text="CREATE ACCCOUNT" textAlignment="CENTER">
-               <font>
-                  <Font name="System Bold" size="12.0" />
-               </font>
-            </Button>
-            <ImageView fitHeight="153.0" fitWidth="249.0" layoutX="28.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@images/Auction-System.png" />
-               </image>
-            </ImageView>
+            <AnchorPane prefHeight="530.0" prefWidth="422.0" style="-fx-background-color: #1e90ff; -fx-background-radius: 20;">
+               <children>
+                  <VBox alignment="CENTER" fillWidth="false" prefHeight="538.0" prefWidth="351.0" spacing="20.0" style="-fx-background-radius: 500;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <ImageView fitHeight="193.0" fitWidth="286.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@images/Auction-System.png" />
+                           </image>
+                        </ImageView>
+                        <Region prefHeight="43.0" prefWidth="249.0" />
+                        <HBox alignment="CENTER" prefHeight="31.0" prefWidth="354.0" spacing="15.0">
+                           <children>
+                                <Button fx:id="signInButton" mnemonicParsing="false" onAction="#switchToSignInScene" prefHeight="31.0" prefWidth="115.0" style="-fx-background-color: transparent; -fx-background-radius: 500;" text="Sign In" textFill="WHITE">
+                                 <font>
+                                    <Font name="System Bold" size="15.0" />
+                                 </font>
+                              </Button>
+                                <Button fx:id="signUpButton" mnemonicParsing="false" onAction="#switchToSignUpScene" prefHeight="31.0" prefWidth="115.0" style="-fx-background-color: white; -fx-background-radius: 500;" text="Sign up">
+                                 <font>
+                                    <Font name="System Bold" size="15.0" />
+                                 </font>
+                              </Button>
+                           </children>
+                        </HBox>
+                          <TextField fx:id="username" prefHeight="25.0" prefWidth="255.0" promptText="USERNAME" style="-fx-background-color: white;">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </TextField>
+                          <PasswordField fx:id="password" alignment="TOP_LEFT" prefHeight="25.0" prefWidth="255.0" promptText="PASSWORD" style="-fx-background-color: white;">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </PasswordField>
+                        <PasswordField fx:id="confirmpassword" prefHeight="25.0" prefWidth="255.0" promptText="CONFIRMPASSWORD" style="-fx-background-color: white;">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </PasswordField>
+                          <Button fx:id="CreateAccountButton" mnemonicParsing="false" onAction="#switchToMainScene" prefHeight="31.0" prefWidth="166.0" style="-fx-background-color: white; -fx-background-radius: 500;" text="CREATE ACCCOUNT" textAlignment="CENTER">
+                           <font>
+                              <Font name="System Bold" size="15.0" />
+                           </font>
+                        </Button>
+                     </children>
+                     <padding>
+                        <Insets bottom="50.0" left="50.0" right="50.0" top="50.0" />
+                     </padding>
+                  </VBox>
+               </children>
+            </AnchorPane>
          </children>
-      </AnchorPane>
+         <padding>
+            <Insets left="200.0" />
+         </padding>
+      </HBox>
     </children>
 </AnchorPane>
