@@ -27,6 +27,7 @@ public class SignUpController {
         stage = (Stage)((Node) event.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);
+        stage.centerOnScreen();
         stage.show();
     }
     public void switchToSignUpScene(ActionEvent event) throws IOException{
@@ -37,6 +38,7 @@ public class SignUpController {
         stage = (Stage)((Node) event.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);
+        stage.centerOnScreen();
         stage.show();
     }
 }

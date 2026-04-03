@@ -38,6 +38,7 @@ public class AuctionMainController {
             stage = (Stage)((Node) event.getSource()).getScene().getWindow();
             Scene = new Scene(root);
             stage.setScene(Scene);
+            stage.centerOnScreen();
             stage.show();
         }
     }
