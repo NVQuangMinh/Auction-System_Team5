@@ -1,4 +1,4 @@
-package project.auction_system_team5;
+package auction_system.launcher;
 
 import javafx.application.Application;
 
