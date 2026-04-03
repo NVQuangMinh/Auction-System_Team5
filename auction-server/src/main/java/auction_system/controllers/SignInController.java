@@ -22,8 +22,6 @@ public class SignInController {
     Scene scene;
     Parent root;
     public void switchToMainScene(ActionEvent event) throws IOException{
-
-
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/auction_system/AuctionMain.fxml"));
         root = fxmlLoader.load();
         AuctionMainController mainController = fxmlLoader.getController();
@@ -33,6 +31,7 @@ public class SignInController {
             stage = (Stage)((Node) event.getSource()).getScene().getWindow();
             scene = new Scene(root);
             stage.setScene(scene);
+            stage.centerOnScreen();
             stage.show();
         }
     }
@@ -44,6 +43,7 @@ public class SignInController {
         stage = (Stage)((Node) event.getSource()).getScene().getWindow();
         scene = new Scene(root);
         stage.setScene(scene);
+        stage.centerOnScreen();
         stage.show();
     }
 }
