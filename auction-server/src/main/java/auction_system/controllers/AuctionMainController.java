@@ -20,7 +20,6 @@ public class AuctionMainController {
     @FXML
     public ImageView logoutImage;
     public Scene Scene;
-
     Stage stage;
     Parent root;
     public void WelcomUsername(String username){
