@@ -60,7 +60,7 @@
       </HBox>
    </top>
    <center>
-      <ScrollPane fitToWidth="true" hbarPolicy="NEVER" BorderPane.alignment="CENTER">
+      <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" BorderPane.alignment="CENTER">
          <content>
             <VBox spacing="40.0" style="-fx-background-color: white;">
                <padding>
