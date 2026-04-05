@@ -21,6 +21,7 @@ public class SignInController {
     Stage stage;
     Scene scene;
     Parent root;
+    @FXML
     public void switchToMainScene(ActionEvent event) throws IOException{
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/auction_system/AuctionMain.fxml"));
         root = fxmlLoader.load();
@@ -35,9 +36,11 @@ public class SignInController {
             stage.show();
         }
     }
+    @FXML
     public void switchToSignInScene(ActionEvent event) throws IOException {
         System.out.println("sign in");
     }
+    @FXML
     public void switchToSignUpScene(ActionEvent event) throws IOException {
         root = FXMLLoader.load(getClass().getResource("/auction_system/SignUpScene.fxml"));
         stage = (Stage)((Node) event.getSource()).getScene().getWindow();
