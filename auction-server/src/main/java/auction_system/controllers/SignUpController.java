@@ -25,9 +25,11 @@ public class SignUpController {
     public void switchToMainScene(ActionEvent event) throws IOException{
         root = FXMLLoader.load(getClass().getResource("/auction_system/AuctionMain.fxml"));
         stage = (Stage)((Node) event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
+//        scene = new Scene(root);
+//        stage.setScene(scene);
+        stage.getScene().setRoot(root);
         stage.centerOnScreen();
+        stage.setMaximized(true);
         stage.show();
     }
     public void switchToSignUpScene(ActionEvent event) throws IOException{
@@ -36,8 +38,9 @@ public class SignUpController {
     public void switchToSignInScene(ActionEvent event) throws IOException{
         root = FXMLLoader.load(getClass().getResource("/auction_system/SignInScene.fxml"));
         stage = (Stage)((Node) event.getSource()).getScene().getWindow();
-        scene = new Scene(root);
-        stage.setScene(scene);
+//        scene = new Scene(root);
+//        stage.setScene(scene);
+        stage.getScene().setRoot(root);
         stage.centerOnScreen();
         stage.show();
     }

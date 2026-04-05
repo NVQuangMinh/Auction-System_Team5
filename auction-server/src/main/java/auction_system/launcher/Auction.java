@@ -16,6 +16,7 @@ public class Auction extends Application {
         stage.setTitle("The Auction Studio");
         Scene scene = new Scene(fxmlLoader.load());
         stage.setScene(scene);
+        stage.setMaximized(true);
         stage.show();
     }
 }
