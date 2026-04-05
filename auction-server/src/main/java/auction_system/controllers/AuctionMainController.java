@@ -35,8 +35,7 @@ public class AuctionMainController {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/auction_system/SignInScene.fxml"));
             root = fxmlLoader.load();
             stage = (Stage)((Node) event.getSource()).getScene().getWindow();
-            Scene = new Scene(root);
-            stage.setScene(Scene);
+            stage.getScene().setRoot(root);
             stage.centerOnScreen();
             stage.show();
         }
