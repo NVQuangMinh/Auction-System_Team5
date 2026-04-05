@@ -21,7 +21,7 @@
       </ImageView>
       <HBox alignment="CENTER_LEFT" fillHeight="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <AnchorPane prefHeight="530.0" prefWidth="422.0" style="-fx-background-color: #1e90ff; -fx-background-radius: 30;">
+            <AnchorPane prefHeight="530.0" prefWidth="422.0" style="-fx-background-color: #1e90ff; -fx-background-radius: 30; -fx-effect: dropshadow(three-pass-box, rgba(19, 142, 255, 0.6), 40, 0, 0, 10);">
                <children>
                   <VBox alignment="CENTER" fillWidth="false" prefHeight="538.0" prefWidth="351.0" spacing="15.0" style="-fx-background-radius: 30;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
@@ -33,7 +33,7 @@
                               <Insets bottom="1.0" />
                            </VBox.margin>
                         </ImageView>
-                        <HBox alignment="CENTER" fillHeight="false" prefHeight="52.0" prefWidth="354.0" spacing="15.0">
+                        <HBox alignment="CENTER" fillHeight="false" prefHeight="52.0" prefWidth="354.0" spacing="23.0">
                            <children>
                                 <Button fx:id="signInButton" mnemonicParsing="false" onAction="#switchToSignInScene" prefHeight="31.0" prefWidth="115.0" style="-fx-background-color: transparent; -fx-background-radius: 500;" text="Sign In" textFill="WHITE">
                                  <font>
