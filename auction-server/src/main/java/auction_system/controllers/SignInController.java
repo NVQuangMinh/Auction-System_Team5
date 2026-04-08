@@ -25,7 +25,8 @@ public class SignInController {
     public void switchToMainScene(ActionEvent event) throws IOException{
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/auction_system/AuctionMain.fxml"));
         root = fxmlLoader.load();
-        AuctionMainController mainController = fxmlLoader.getController();
+        AuctionMainController mainController1 = fxmlLoader.getController();
+        WebMenuBarController mainController = mainController1.getMenuBarController();
         String temp = username.getText();
         if (!temp.equals("")){
             mainController.WelcomUsername(temp);

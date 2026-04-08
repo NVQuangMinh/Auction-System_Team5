@@ -24,6 +24,7 @@ public class SignUpController {
     Parent root;
     @FXML
     public void switchToMainScene(ActionEvent event) throws IOException{
+
         root = FXMLLoader.load(getClass().getResource("/auction_system/AuctionMain.fxml"));
         stage = (Stage)((Node) event.getSource()).getScene().getWindow();
 //        scene = new Scene(root);
