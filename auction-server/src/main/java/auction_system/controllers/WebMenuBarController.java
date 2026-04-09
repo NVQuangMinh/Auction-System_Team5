@@ -26,9 +26,10 @@ public class WebMenuBarController {
     Scene scene;
     Stage stage;
     Parent root;
-    public void WelcomUsername(String username){
-
-        welcome.setText("Welcome, " + "\n" + username);
+    public void setWelcomeUsername(String username) {
+        if (username != null && !username.equals("")) {
+            welcome.setText("Welcome, " + "\n" + username);
+        }
     }
     @FXML
     public void switchToProductScene(ActionEvent event) throws IOException{

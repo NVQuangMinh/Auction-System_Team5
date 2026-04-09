@@ -5,48 +5,50 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 
-
 public class SignInController {
     @FXML
     public TextField username;
     @FXML
     public PasswordField password;
+    
     Stage stage;
-    Scene scene;
     Parent root;
+
     @FXML
-    public void switchToMainScene(ActionEvent event) throws IOException{
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/auction_system/AuctionMain.fxml"));
-        root = fxmlLoader.load();
-        AuctionMainController mainController1 = fxmlLoader.getController();
-        WebMenuBarController mainController = mainController1.getMenuBarController();
-        String temp = username.getText();
-        if (!temp.equals("")){
-            mainController.WelcomUsername(temp);
-            stage = (Stage)((Node) event.getSource()).getScene().getWindow();
+    public void switchToMainScene(ActionEvent event) throws IOException {
+        String userText = username.getText().trim();
+        if (!userText.isEmpty()) {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/auction_system/AuctionMain.fxml"));
+            root = fxmlLoader.load();
+            
+            AuctionMainController mainController = fxmlLoader.getController();
+            if (mainController != null && mainController.getMenuBarController() != null) {
+                mainController.getMenuBarController().setWelcomeUsername(userText);
+            }
+            
+            stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.getScene().setRoot(root);
             stage.centerOnScreen();
             stage.setMaximized(true);
             stage.show();
         }
     }
+
     @FXML
     public void switchToSignInScene(ActionEvent event) throws IOException {
         System.out.println("sign in");
     }
+
     @FXML
     public void switchToSignUpScene(ActionEvent event) throws IOException {
         root = FXMLLoader.load(getClass().getResource("/auction_system/SignUpScene.fxml"));
-        stage = (Stage)((Node) event.getSource()).getScene().getWindow();
-//        scene = new Scene(root);
-//        stage.setScene(scene);
+        stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.getScene().setRoot(root);
         stage.centerOnScreen();
         stage.show();
