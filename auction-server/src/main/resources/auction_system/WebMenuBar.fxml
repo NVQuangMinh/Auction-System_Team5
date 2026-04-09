@@ -24,13 +24,13 @@
             </font>
         </Button>
         <Region minWidth="0.0" prefHeight="75.0" prefWidth="260.0" HBox.hgrow="ALWAYS" />
-        <ImageView fitHeight="64.0" fitWidth="110.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fitHeight="64.0" fitWidth="110.0" onMouseClicked="#switchToMainScene" pickOnBounds="true" preserveRatio="true">
             <image>
                 <Image url="@images/Auction-System.png" />
             </image>
         </ImageView>
         <Region minWidth="0.0" prefHeight="75.0" prefWidth="260.0" HBox.hgrow="ALWAYS" />
-        <Button alignment="CENTER" mnemonicParsing="false" style="-fx-background-color: transparent;" stylesheets="@UnderlineButton.css" text="YOUR LISTINGS" textFill="WHITE">
+        <Button alignment="CENTER" mnemonicParsing="false" onAction="#switchToUserProductListScene" style="-fx-background-color: transparent;" stylesheets="@UnderlineButton.css" text="YOUR LISTINGS" textFill="WHITE">
             <font>
                 <Font name="System Bold" size="14.0" />
             </font>

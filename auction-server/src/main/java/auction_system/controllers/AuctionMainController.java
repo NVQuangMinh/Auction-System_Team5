@@ -4,9 +4,9 @@ import javafx.fxml.FXML;
 
 public class AuctionMainController {
     @FXML
-    private WebMenuBarController menuBarController;
+    public WebMenuBarController webMenuBarController;
 
-    public WebMenuBarController getMenuBarController(){
-        return menuBarController;
+    public WebMenuBarController getWebMenuBarController(){
+        return webMenuBarController;
     }
 }

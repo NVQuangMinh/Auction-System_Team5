@@ -12,21 +12,28 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import java.io.IOException;
 
 public class UserProductListController {
     @FXML
-    public Label welcome;
+    private WebMenuBarController webMenuBarController;
+
     @FXML
-    public ImageView logoutImage;
+    public WebMenuBarController getWebMenuBarController() {
+        return webMenuBarController;
+    }
+
     @FXML
-    public Button productsButton;
-
-    Scene scene;
-    Stage stage;
-    Parent root;
-
-
-
+    public void handleUserAddItem(ActionEvent event) throws IOException{
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/auction_system/ProductInfoSubmission.fxml"));
+        Parent root = fxmlLoader.load();
+        Scene scene = new Scene(root);
+        Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setScene(scene);
+        stage.setTitle("Add New Product");
+        stage.show();
+    }
 }

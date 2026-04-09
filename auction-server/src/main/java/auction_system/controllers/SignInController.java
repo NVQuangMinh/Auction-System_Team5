@@ -26,12 +26,10 @@ public class SignInController {
         if (!userText.isEmpty()) {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/auction_system/AuctionMain.fxml"));
             root = fxmlLoader.load();
-            
             AuctionMainController mainController = fxmlLoader.getController();
-            if (mainController != null && mainController.getMenuBarController() != null) {
-                mainController.getMenuBarController().setWelcomeUsername(userText);
+            if (mainController != null && mainController.getWebMenuBarController() != null) {
+                mainController.getWebMenuBarController().setWelcomeUsername(userText);
             }
-            
             stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.getScene().setRoot(root);
             stage.centerOnScreen();

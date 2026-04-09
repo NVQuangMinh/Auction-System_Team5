@@ -30,7 +30,7 @@ public class SignUpController {
         root = fxmlLoader.load();
         
         AuctionMainController auctionMainController = fxmlLoader.getController();
-        WebMenuBarController webMenuBarController = auctionMainController.getMenuBarController();
+        WebMenuBarController webMenuBarController = auctionMainController.getWebMenuBarController();
         String temp = username.getText();
         if (!temp.equals("")){
             webMenuBarController.setWelcomeUsername(temp);

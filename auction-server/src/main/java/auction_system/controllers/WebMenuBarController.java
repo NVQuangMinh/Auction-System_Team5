@@ -5,7 +5,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -23,19 +22,31 @@ public class WebMenuBarController {
     @FXML
     public Button productsButton;
 
-    Scene scene;
-    Stage stage;
-    Parent root;
     public void setWelcomeUsername(String username) {
-        if (username != null && !username.equals("")) {
-            welcome.setText("Welcome, " + "\n" + username);
+        if (username != null && !username.isBlank()) {
+            welcome.setText("Welcome, " + "\n" + username.trim());
         }
     }
+
     @FXML
-    public void switchToProductScene(ActionEvent event) throws IOException{
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/auction_system/ProductScene.fxml"));
-        root = fxmlLoader.load();
-        stage = (Stage)((Node) event.getSource()).getScene().getWindow();
+    public void switchToMainScene(ActionEvent event) throws IOException {
+        switchScene(event, "/auction_system/AuctionMain.fxml");
+    }
+
+    @FXML
+    public void switchToUserProductListScene(ActionEvent event) throws IOException {
+        switchScene(event, "/auction_system/UserProductList.fxml");
+    }
+
+    @FXML
+    public void switchToProductScene(ActionEvent event) throws IOException {
+        switchScene(event, "/auction_system/ProductScene.fxml");
+    }
+
+    private void switchScene(javafx.event.Event event, String fxmlPath) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(fxmlPath));
+        Parent root = fxmlLoader.load();
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.getScene().setRoot(root);
         stage.centerOnScreen();
         stage.show();
@@ -45,15 +56,11 @@ public class WebMenuBarController {
     public void logOut(MouseEvent event) throws IOException {
         Alert logOutAlert = new Alert(Alert.AlertType.CONFIRMATION);
         logOutAlert.setTitle("Logout");
-        logOutAlert.setHeaderText("REDIRECT TO THE SIGN-IN PAGE...");
-        logOutAlert.setContentText("ARE YOU SURE YOU WANNA LOGOUT?");
-        if (logOutAlert.showAndWait().get() == ButtonType.OK){
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/auction_system/SignInScene.fxml"));
-            root = fxmlLoader.load();
-            stage = (Stage)((Node) event.getSource()).getScene().getWindow();
-            stage.getScene().setRoot(root);
-            stage.centerOnScreen();
-            stage.show();
+        logOutAlert.setHeaderText("Redirecting to sign-in page...");
+        logOutAlert.setContentText("Are you sure you want to logout?");
+
+        if (logOutAlert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
+            switchScene(event, "/auction_system/SignInScene.fxml");
         }
     }
 }
