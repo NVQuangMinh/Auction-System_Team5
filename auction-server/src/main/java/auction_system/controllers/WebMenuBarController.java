@@ -50,6 +50,11 @@ public class WebMenuBarController implements Initializable {
         switchScene(event, "/auction_system/ProductScene.fxml");
     }
 
+    @FXML
+    public void switchToActivitiesScene(ActionEvent event) throws IOException {
+        switchScene(event,"/auction_system/ActivitiesScene.fxml");
+    }
+
     private void switchScene(javafx.event.Event event, String fxmlPath) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(fxmlPath));
         Parent root = fxmlLoader.load();

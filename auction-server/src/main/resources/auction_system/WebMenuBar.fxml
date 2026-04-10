@@ -15,12 +15,12 @@
     <children>
         <Label fx:id="welcome" alignment="CENTER" text="Welcome,  0000000000" textFill="WHITE">
             <font>
-                <Font name="System Bold" size="14.0" />
+                <Font name="System Bold" size="12.0" />
             </font>
         </Label>
         <Button fx:id="productsButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#switchToProductScene" style="-fx-background-color: transparent;" stylesheets="@UnderlineButton.css" text="PRODUCTS" textAlignment="CENTER" textFill="WHITE">
             <font>
-                <Font name="System Bold" size="14.0" />
+                <Font name="System Bold" size="12.0" />
             </font>
         </Button>
         <Region minWidth="0.0" prefHeight="75.0" prefWidth="260.0" HBox.hgrow="ALWAYS" />
@@ -35,12 +35,12 @@
         <Region minWidth="0.0" prefHeight="75.0" prefWidth="260.0" HBox.hgrow="ALWAYS" />
         <Button alignment="CENTER" mnemonicParsing="false" onAction="#switchToUserProductListScene" style="-fx-background-color: transparent;" stylesheets="@UnderlineButton.css" text="YOUR LISTINGS" textFill="WHITE">
             <font>
-                <Font name="System Bold" size="14.0" />
+                <Font name="System Bold" size="12.0" />
             </font>
         </Button>
-        <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" style="-fx-background-color: transparent;" stylesheets="@UnderlineButton.css" text="ACTIVITIES" textAlignment="CENTER" textFill="WHITE">
+        <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#switchToActivitiesScene" style="-fx-background-color: transparent;" stylesheets="@UnderlineButton.css" text="ACTIVITIES" textAlignment="CENTER" textFill="WHITE">
             <font>
-                <Font name="System Bold" size="14.0" />
+                <Font name="System Bold" size="12.0" />
             </font>
         </Button>
         <ImageView fx:id="logoutImage" fitHeight="35.0" fitWidth="40.0" onMouseClicked="#logOut" pickOnBounds="true" preserveRatio="true">
