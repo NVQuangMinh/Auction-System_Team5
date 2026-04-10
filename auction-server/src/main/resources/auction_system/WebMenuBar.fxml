@@ -28,6 +28,9 @@
             <image>
                 <Image url="@images/Auction-System.png" />
             </image>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
         </ImageView>
         <Region minWidth="0.0" prefHeight="75.0" prefWidth="260.0" HBox.hgrow="ALWAYS" />
         <Button alignment="CENTER" mnemonicParsing="false" onAction="#switchToUserProductListScene" style="-fx-background-color: transparent;" stylesheets="@UnderlineButton.css" text="YOUR LISTINGS" textFill="WHITE">

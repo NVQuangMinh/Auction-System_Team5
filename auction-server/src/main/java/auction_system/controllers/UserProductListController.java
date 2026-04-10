@@ -6,17 +6,16 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+
 import java.io.IOException;
 
 public class UserProductListController {
+    @FXML
+    public AnchorPane overlayPane;
     @FXML
     private WebMenuBarController webMenuBarController;
 
@@ -30,10 +29,17 @@ public class UserProductListController {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/auction_system/ProductInfoSubmission.fxml"));
         Parent root = fxmlLoader.load();
         Scene scene = new Scene(root);
+        scene.setFill(javafx.scene.paint.Color.TRANSPARENT);
         Stage stage = new Stage();
+        stage.initStyle(StageStyle.TRANSPARENT);
         stage.initModality(Modality.APPLICATION_MODAL);
+        Stage owner = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.initOwner(owner);
+        stage.setOnHiding(e -> overlayPane.setVisible(false));
         stage.setScene(scene);
         stage.setTitle("Add New Product");
+        overlayPane.setVisible(true);
         stage.show();
+
     }
 }

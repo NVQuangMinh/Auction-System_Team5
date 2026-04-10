@@ -29,7 +29,7 @@ public class WebMenuBarController {
     }
 
     @FXML
-    public void switchToMainScene(ActionEvent event) throws IOException {
+    public void switchToMainScene(MouseEvent event) throws IOException {
         switchScene(event, "/auction_system/AuctionMain.fxml");
     }
 
