@@ -1,5 +1,6 @@
 package auction_system.controllers;
 
+import auction_system.UserSession;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -24,12 +25,10 @@ public class SignInController {
     public void switchToMainScene(ActionEvent event) throws IOException {
         String userText = username.getText().trim();
         if (!userText.isEmpty()) {
+            UserSession.getInstance().setUsername(userText);
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/auction_system/AuctionMain.fxml"));
             root = fxmlLoader.load();
-            AuctionMainController mainController = fxmlLoader.getController();
-            if (mainController != null && mainController.getWebMenuBarController() != null) {
-                mainController.getWebMenuBarController().setWelcomeUsername(userText);
-            }
+
             stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.getScene().setRoot(root);
             stage.centerOnScreen();

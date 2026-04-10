@@ -1,8 +1,10 @@
 package auction_system.controllers;
 
+import auction_system.UserSession;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Alert;
@@ -13,8 +15,10 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
 
-public class WebMenuBarController {
+public class WebMenuBarController implements Initializable {
     @FXML
     public Label welcome;
     @FXML
@@ -22,6 +26,9 @@ public class WebMenuBarController {
     @FXML
     public Button productsButton;
 
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        setWelcomeUsername(UserSession.getInstance().getUsername());
+    }
     public void setWelcomeUsername(String username) {
         if (username != null && !username.isBlank()) {
             welcome.setText("Welcome, " + "\n" + username.trim());
@@ -63,4 +70,7 @@ public class WebMenuBarController {
             switchScene(event, "/auction_system/SignInScene.fxml");
         }
     }
+
+
+
 }
