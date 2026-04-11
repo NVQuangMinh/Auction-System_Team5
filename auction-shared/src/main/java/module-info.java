@@ -1,9 +1,9 @@
 module auction.shared {
-    exports aution_shared.base;
-    exports aution_shared.entities;
-    exports aution_shared.interfaces;
-    exports aution_shared.items;
-    exports aution_shared.behaviors;
+    exports auction_shared.base;
+    exports auction_shared.entities;
+    exports auction_shared.interfaces;
+    exports auction_shared.items;
+    exports auction_shared.behaviors;
 
-    opens aution_shared.entities to auction.server, auction.client;
+    opens auction_shared.entities to auction.server, auction.client;
 }

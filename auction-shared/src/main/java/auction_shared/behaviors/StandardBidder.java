@@ -1,6 +1,6 @@
-package aution_shared.behaviors;
+package auction_shared.behaviors;
 
-import aution_shared.interfaces.BidderAction;
+import auction_shared.interfaces.BidderAction;
 
 
 

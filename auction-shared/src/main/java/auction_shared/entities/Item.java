@@ -1,6 +1,6 @@
-package aution_shared.entities;
+package auction_shared.entities;
 
-import aution_shared.base.Entity;
+import auction_shared.base.Entity;
 import java.time.LocalDateTime;
 
 

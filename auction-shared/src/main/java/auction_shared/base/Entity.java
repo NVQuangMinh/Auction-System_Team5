@@ -1,4 +1,4 @@
-package aution_shared.base;
+package auction_shared.base;
 
 
 public abstract class Entity {

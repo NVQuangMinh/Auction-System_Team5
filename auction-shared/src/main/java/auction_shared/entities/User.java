@@ -1,7 +1,7 @@
-package aution_shared.entities;
-import aution_shared.base.Entity;
-import aution_shared.interfaces.BidderAction;
-import aution_shared.interfaces.SellerAction;
+package auction_shared.entities;
+import auction_shared.base.Entity;
+import auction_shared.interfaces.BidderAction;
+import auction_shared.interfaces.SellerAction;
 
 public class User extends Entity {
     protected String username;

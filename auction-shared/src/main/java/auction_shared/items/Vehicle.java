@@ -1,6 +1,6 @@
-package aution_shared.items;
+package auction_shared.items;
 
-import aution_shared.entities.Item;
+import auction_shared.entities.Item;
 
 import java.time.LocalDateTime;
 
