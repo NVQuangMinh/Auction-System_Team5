@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="MainPane" style="-fx-background-color: #f6f8ef;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction_system.controllers.AuctionMainController">
+<BorderPane fx:id="MainPane" style="-fx-background-color: #f6f8ef;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction_client.controllers.AuctionMainController">
    <top>
       <fx:include fx:id="menuBar" source="WebMenuBar.fxml" />
    </top>

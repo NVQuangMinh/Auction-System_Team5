@@ -1,4 +1,4 @@
-module project.auction_system_team5 {
+module auction.client {
     requires javafx.controls;
     requires javafx.fxml;
     requires java.desktop;

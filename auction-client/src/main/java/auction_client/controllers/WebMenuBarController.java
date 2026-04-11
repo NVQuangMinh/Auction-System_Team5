@@ -1,6 +1,6 @@
 package auction_client.controllers;
 
-import auction_system.UserSession;
+import auction_client.UserSession;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -37,22 +37,22 @@ public class WebMenuBarController implements Initializable {
 
     @FXML
     public void switchToMainScene(MouseEvent event) throws IOException {
-        switchScene(event, "/auction_system/AuctionMain.fxml");
+        switchScene(event, "/auction_client/AuctionMain.fxml");
     }
 
     @FXML
     public void switchToUserProductListScene(ActionEvent event) throws IOException {
-        switchScene(event, "/auction_system/UserProductList.fxml");
+        switchScene(event, "/auction_client/UserProductList.fxml");
     }
 
     @FXML
     public void switchToProductScene(ActionEvent event) throws IOException {
-        switchScene(event, "/auction_system/ProductScene.fxml");
+        switchScene(event, "/auction_client/ProductScene.fxml");
     }
 
     @FXML
     public void switchToActivitiesScene(ActionEvent event) throws IOException {
-        switchScene(event,"/auction_system/ActivitiesScene.fxml");
+        switchScene(event,"/auction_client/ActivitiesScene.fxml");
     }
 
     private void switchScene(javafx.event.Event event, String fxmlPath) throws IOException {
@@ -72,7 +72,7 @@ public class WebMenuBarController implements Initializable {
         logOutAlert.setContentText("Are you sure you want to logout?");
 
         if (logOutAlert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
-            switchScene(event, "/auction_system/SignInScene.fxml");
+            switchScene(event, "/auction_client/SignInScene.fxml");
         }
     }
 

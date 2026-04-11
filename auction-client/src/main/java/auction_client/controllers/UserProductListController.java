@@ -26,7 +26,7 @@ public class UserProductListController {
 
     @FXML
     public void handleUserAddItem(ActionEvent event) throws IOException{
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/auction_system/ProductInfoSubmission.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/auction_client/ProductInfoSubmission.fxml"));
         Parent root = fxmlLoader.load();
         Scene scene = new Scene(root);
         scene.setFill(javafx.scene.paint.Color.TRANSPARENT);

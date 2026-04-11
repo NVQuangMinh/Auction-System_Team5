@@ -1,6 +1,6 @@
 package auction_client.controllers;
 
-import auction_system.UserSession;
+import auction_client.UserSession;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -26,7 +26,7 @@ public class SignInController {
         String userText = username.getText().trim();
         if (!userText.isEmpty()) {
             UserSession.getInstance().setUsername(userText);
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/auction_system/AuctionMain.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/auction_client/AuctionMain.fxml"));
             root = fxmlLoader.load();
 
             stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -44,7 +44,7 @@ public class SignInController {
 
     @FXML
     public void switchToSignUpScene(ActionEvent event) throws IOException {
-        root = FXMLLoader.load(getClass().getResource("/auction_system/SignUpScene.fxml"));
+        root = FXMLLoader.load(getClass().getResource("/auction_client/SignUpScene.fxml"));
         stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.getScene().setRoot(root);
         stage.centerOnScreen();
