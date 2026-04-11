@@ -1,4 +1,4 @@
-package auction_system.launcher;
+package auction_client.launcher;
 
 import javafx.application.Application;
 

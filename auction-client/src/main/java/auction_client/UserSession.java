@@ -1,4 +1,4 @@
-package auction_system;
+package auction_client;
 
 public class UserSession {
     private static UserSession self = null;

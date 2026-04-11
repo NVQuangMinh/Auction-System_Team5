@@ -1,4 +1,4 @@
-package auction_system.controllers;
+package auction_client.controllers;
 
 import auction_system.UserSession;
 import javafx.event.ActionEvent;
