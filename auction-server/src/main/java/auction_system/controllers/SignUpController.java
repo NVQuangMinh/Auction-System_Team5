@@ -1,14 +1,13 @@
 package auction_system.controllers;
 
-import auction_system.entity.Bidder;
-import auction_system.entity.Session;
-import auction_system.entity.User;
 import auction_system.UserSession;
+import auction_system.entity.Bidder;
+import auction_system.entity.User;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.event.ActionEvent;
@@ -23,41 +22,43 @@ public class SignUpController {
     public PasswordField confirmpassword;
     @FXML
     public TextField username;
-    
+
     Stage stage;
     Parent root;
 
     @FXML
     public void switchToMainScene(ActionEvent event) throws IOException {
-        String newUsername = username.getText();
-        String newPassword = password.getText();
+        String inputUsername = username.getText().trim();
+        String inputPassword = password.getText();
+        String inputPasswordConfirm = confirmpassword.getText();
 
-        if (!newUsername.isEmpty() && !newPassword.isEmpty()) {
-            User newUser = new Bidder(newUsername, newPassword);
-            Session.getInstance().setCurrentUser(newUser);
+        if (!inputUsername.isEmpty() && !inputPassword.isEmpty() && !inputPasswordConfirm.isEmpty()) {
+            if (!inputPassword.equals(inputPasswordConfirm)) {
+                showAlert(Alert.AlertType.ERROR, "Lỗi Mật Khẩu", "Mật khẩu xác nhận không khớp. Vui lòng nhập lại!");
+                confirmpassword.clear();
+                return;
+            }
+            User newUser = new Bidder(inputUsername, inputPassword);
+
+            UserSession.getInstance().setUsername(inputUsername);
 
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/auction_system/AuctionMain.fxml"));
             root = fxmlLoader.load();
 
-            try {
-                AuctionMainController mainController = fxmlLoader.getController();
-                mainController.WelcomUsername(newUser.getUsername());
-            } catch (Exception e) {
-            }
-
-            stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-    public void switchToMainScene(ActionEvent event) throws IOException{
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/auction_system/AuctionMain.fxml"));
-        String usernameText = username.getText();
-        if (!usernameText.equals("") || !usernameText.isBlank()){
-            UserSession.getInstance().setUsername(usernameText);
-            root = fxmlLoader.load();
             stage = (Stage)((Node) event.getSource()).getScene().getWindow();
             stage.getScene().setRoot(root);
             stage.centerOnScreen();
             stage.setMaximized(true);
             stage.show();
         }
+    }
+
+    private void showAlert(Alert.AlertType alertType, String title, String message) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
     public void switchToSignUpScene(ActionEvent event) throws IOException {

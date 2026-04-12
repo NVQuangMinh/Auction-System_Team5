@@ -1,14 +1,14 @@
 package auction_system.controllers;
 
-import auction_system.entity.Bidder;
-import auction_system.entity.Session;
-import auction_system.entity.User;
 import auction_system.UserSession;
+import auction_system.entity.Bidder;
+import auction_system.entity.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -20,50 +20,59 @@ public class SignInController {
     public TextField username;
     @FXML
     public PasswordField password;
-    
+
     Stage stage;
     Parent root;
 
     @FXML
     public void switchToMainScene(ActionEvent event) throws IOException {
-        String inputUsername = username.getText();
+        String inputUsername = username.getText().trim();
         String inputPassword = password.getText();
 
         if (!inputUsername.isEmpty() && !inputPassword.isEmpty()) {
-            User loggedInUser = authenticate(inputUsername, inputPassword);
+            try {
+                //TODO: sửa lại lấy từ database
+                User authenticatedUser = authenticate(inputUsername, inputPassword);
 
-            if (loggedInUser != null) {
-                Session.getInstance().setCurrentUser(loggedInUser);
+                if (authenticatedUser != null) {
+                    UserSession.getInstance().setUsername(inputUsername);
 
-                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/auction_system/AuctionMain.fxml"));
-                root = fxmlLoader.load();
+                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/auction_system/AuctionMain.fxml"));
+                    root = fxmlLoader.load();
 
-                try {
-                    AuctionMainController mainController = fxmlLoader.getController();
-                    mainController.WelcomUsername(loggedInUser.getUsername());
-                } catch (Exception e) {
+                    stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                    stage.getScene().setRoot(root);
+                    stage.centerOnScreen();
+                    stage.setMaximized(true);
+                    stage.show();
+                } else {
+                    System.out.println("Tài khoản không tồn tại. Đang chuyển hướng sang Đăng ký...");
+                    switchToSignUpScene(event);
                 }
-
-                stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                stage.getScene().setRoot(root);
-                stage.centerOnScreen();
-                stage.setMaximized(true);
-                stage.show();
-            } else {
-                System.out.println("Tài khoản không tồn tại. Đang chuyển hướng sang Đăng ký...");
-                switchToSignUpScene(event);
+            }
+            catch (IllegalArgumentException e) {
+                showAlert("Sai mật khẩu", e.getMessage(), Alert.AlertType.ERROR);
+                password.clear();
             }
         }
     }
 
+    private void showAlert(String title, String content, Alert.AlertType type) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+
+
     private User authenticate(String username, String password) {
+        // TODO: Thay bằng lệnh SQL thực tế sau này (Ví dụ: return userDao.login(username, password);)
 
-        // TODO: Thêm lệnh database vào
-
+        // TODO: Mô phỏng tài khoản admin
         if (username.equals("admin") && password.equals("123")) {
             return new Bidder(username, password);
         }
-
         return null;
     }
 

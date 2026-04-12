@@ -19,3 +19,4 @@ public class ClientLauncher extends Application {
         stage.show();
     }
 }
+
