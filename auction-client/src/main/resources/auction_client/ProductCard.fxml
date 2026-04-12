@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox alignment="CENTER" prefHeight="330.0" prefWidth="300.0" spacing="20.0" style="-fx-background-color: #f6f8ef; -fx-background-radius: 30;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label text="NAME" textFill="#fe5721">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Label>
+      <ImageView fitHeight="150.0" fitWidth="130.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@images/612215032_924566373471633_8707547751471691558_n.jpg" />
+         </image>
+      </ImageView>
+      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="15.0">
+         <children>
+            <Label text="Current Price" />
+            <Button contentDisplay="CENTER" mnemonicParsing="false" prefHeight="25.0" prefWidth="75.0" style="-fx-background-radius: 15; -fx-background-color: #fe5721;" text="Buy Out" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font></Button>
+         </children>
+      </HBox>
+      <Label text="Description" />
+      <Button alignment="CENTER" mnemonicParsing="false" prefHeight="75.0" prefWidth="215.0" style="-fx-background-color: #fe5721; -fx-background-radius: 20;" text="Bid Now" textFill="WHITE">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font></Button>
+      <Region prefHeight="200.0" prefWidth="200.0" />
+   </children>
+</VBox>

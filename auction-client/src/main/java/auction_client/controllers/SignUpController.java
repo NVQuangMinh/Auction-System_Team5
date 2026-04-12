@@ -1,9 +1,6 @@
-package auction_system.controllers;
+package auction_client.controllers;
 
-import auction_system.entity.Bidder;
-import auction_system.entity.Session;
-import auction_system.entity.User;
-import auction_system.UserSession;
+import auction_client.UserSession;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -28,26 +25,8 @@ public class SignUpController {
     Parent root;
 
     @FXML
-    public void switchToMainScene(ActionEvent event) throws IOException {
-        String newUsername = username.getText();
-        String newPassword = password.getText();
-
-        if (!newUsername.isEmpty() && !newPassword.isEmpty()) {
-            User newUser = new Bidder(newUsername, newPassword);
-            Session.getInstance().setCurrentUser(newUser);
-
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/auction_system/AuctionMain.fxml"));
-            root = fxmlLoader.load();
-
-            try {
-                AuctionMainController mainController = fxmlLoader.getController();
-                mainController.WelcomUsername(newUser.getUsername());
-            } catch (Exception e) {
-            }
-
-            stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
     public void switchToMainScene(ActionEvent event) throws IOException{
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/auction_system/AuctionMain.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/auction_client/AuctionMain.fxml"));
         String usernameText = username.getText();
         if (!usernameText.equals("") || !usernameText.isBlank()){
             UserSession.getInstance().setUsername(usernameText);
@@ -58,15 +37,15 @@ public class SignUpController {
             stage.setMaximized(true);
             stage.show();
         }
-    }
 
-    public void switchToSignUpScene(ActionEvent event) throws IOException {
+    }
+    public void switchToSignUpScene(ActionEvent event) throws IOException{
         System.out.println("sign up");
     }
 
     @FXML
     public void switchToSignInScene(ActionEvent event) throws IOException {
-        root = FXMLLoader.load(getClass().getResource("/auction_system/SignInScene.fxml"));
+        root = FXMLLoader.load(getClass().getResource("/auction_client/SignInScene.fxml"));
         stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.getScene().setRoot(root);
         stage.centerOnScreen();

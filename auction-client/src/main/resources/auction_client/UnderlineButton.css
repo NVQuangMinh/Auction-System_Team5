@@ -1,0 +1,11 @@
+.button {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-border-color: transparent;
+    -fx-border-width: 0 0 1.5 0;
+}
+
+.button: hover {
+    -fx-border-color: white;
+    -fx-cursor: hand;
+}

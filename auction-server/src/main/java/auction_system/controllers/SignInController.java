@@ -3,12 +3,12 @@ package auction_system.controllers;
 import auction_system.entity.Bidder;
 import auction_system.entity.Session;
 import auction_system.entity.User;
+import auction_system.UserSession;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -20,8 +20,8 @@ public class SignInController {
     public TextField username;
     @FXML
     public PasswordField password;
+    
     Stage stage;
-    Scene scene;
     Parent root;
 
     @FXML
