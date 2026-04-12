@@ -12,4 +12,6 @@ module project.auction_system_team5 {
     // Xuất các package để các module khác có thể dùng (nếu cần)
     exports auction_system.launcher;
     exports auction_system.controllers;
+    exports auction_system.entity;
+    opens auction_system.entity to javafx.fxml;
 }
