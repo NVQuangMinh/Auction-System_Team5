@@ -17,7 +17,6 @@ public class UserProductListController {
     @FXML
     public AnchorPane overlayPane;
     @FXML
-    // Đổi tên để JavaFX có thể inject từ <fx:include fx:id="menuBar" ... />
     private WebMenuBarController menuBarController;
 
     public WebMenuBarController getMenuBarController() {

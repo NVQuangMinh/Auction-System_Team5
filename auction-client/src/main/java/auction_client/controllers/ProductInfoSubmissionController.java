@@ -27,13 +27,11 @@ public class ProductInfoSubmissionController {
 
     @FXML
     private void handleAddImage() {
-        // Logic for adding an image
         System.out.println("Add image clicked");
     }
 
     @FXML
     private void handleSubmit() {
-        // Logic for submitting product info
         String name = productName.getText();
         String description = productDescription.getText();
         String startPrice = startingPrice.getText();

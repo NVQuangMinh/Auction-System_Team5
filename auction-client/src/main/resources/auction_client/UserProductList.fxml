@@ -51,6 +51,6 @@
             </ScrollPane>
          </center>
       </BorderPane>
-      <AnchorPane opacity="0.21" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #000000;" visible="false" />
+      <AnchorPane fx:id="overlayPane" opacity="0.21" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #000000;" visible="false" />
    </children>
 </StackPane>
