@@ -1,4 +1,4 @@
-package auction_system.entity;
+package auction_client.entity;
 
 public class Bidder extends User {
     public Bidder(String username, String passwordHash) {

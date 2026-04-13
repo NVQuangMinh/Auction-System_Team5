@@ -3,17 +3,17 @@ package auction_client.launcher;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class Auction extends Application {
+public class ClientLauncher extends Application {
     @Override
     public void start(Stage stage) throws IOException {
 
-        FXMLLoader fxmlLoader = new FXMLLoader(Auction.class.getResource("/auction_client/SignInScene.fxml"));
-        stage.setTitle("The Auction Studio");
+        // Sửa lỗi sai tên folder tài nguyên từ auction_system sang auction_client
+        FXMLLoader fxmlLoader = new FXMLLoader(ClientLauncher.class.getResource("/auction_client/SignInScene.fxml"));
+        stage.setTitle("The ClientLauncher Studio");
         Scene scene = new Scene(fxmlLoader.load());
         stage.setScene(scene);
         stage.setMaximized(true);

@@ -4,9 +4,10 @@ import javafx.fxml.FXML;
 
 public class AuctionMainController {
     @FXML
-    public WebMenuBarController webMenuBarController;
+    // Phải đặt tên là menuBarController để khớp với fx:id="menuBar" trong FXML
+    private WebMenuBarController menuBarController;
 
-    public WebMenuBarController getWebMenuBarController(){
-        return webMenuBarController;
+    public WebMenuBarController getMenuBarController(){
+        return menuBarController;
     }
 }

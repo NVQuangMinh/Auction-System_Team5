@@ -1,4 +1,4 @@
-package auction_system.entity;
+package auction_client.entity;
 
 public class Vehicle extends Item {
     public Vehicle(String name, String description, Seller owner) {

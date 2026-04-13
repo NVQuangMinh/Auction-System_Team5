@@ -1,4 +1,4 @@
-package auction_system.entity;
+package auction_client.entity;
 
 public class Art extends Item {
     public Art(String name, String description, Seller owner) {

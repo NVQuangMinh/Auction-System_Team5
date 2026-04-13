@@ -1,4 +1,4 @@
-package auction_system.entity;
+package auction_client.entity;
 
 public abstract class Item extends Entity {
     private String name;

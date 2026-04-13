@@ -17,11 +17,11 @@ public class UserProductListController {
     @FXML
     public AnchorPane overlayPane;
     @FXML
-    private WebMenuBarController webMenuBarController;
+    // Đổi tên để JavaFX có thể inject từ <fx:include fx:id="menuBar" ... />
+    private WebMenuBarController menuBarController;
 
-    @FXML
-    public WebMenuBarController getWebMenuBarController() {
-        return webMenuBarController;
+    public WebMenuBarController getMenuBarController() {
+        return menuBarController;
     }
 
     @FXML

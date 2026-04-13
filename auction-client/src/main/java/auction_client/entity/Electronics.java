@@ -1,4 +1,4 @@
-package auction_system.entity;
+package auction_client.entity;
 
 public class Electronics extends Item {
     public Electronics(String name, String description, Seller owner) {

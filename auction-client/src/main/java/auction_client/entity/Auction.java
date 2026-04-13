@@ -1,4 +1,4 @@
-package auction_system.entity;
+package auction_client.entity;
 
 import java.util.ArrayList;
 import java.util.List;
