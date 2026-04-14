@@ -37,7 +37,7 @@ public class SignInController {
                 if (authenticatedUser != null) {
                     UserSession.getInstance().setUsername(inputUsername);
 
-                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/auction_system/AuctionMain.fxml"));
+                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/auction_client/AuctionMain.fxml"));
                     root = fxmlLoader.load();
 
                     stage = (Stage) ((Node) event.getSource()).getScene().getWindow();

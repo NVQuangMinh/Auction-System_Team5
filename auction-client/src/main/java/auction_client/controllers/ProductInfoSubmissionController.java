@@ -1,11 +1,15 @@
 package auction_client.controllers;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.stage.Stage;
+
 
 public class ProductInfoSubmissionController {
     @FXML
@@ -40,6 +44,11 @@ public class ProductInfoSubmissionController {
         boolean antiSnipping = antiSnippingCheckbox.isSelected();
 
         System.out.println("Product Submitted: " + name);
+    }
+    @FXML
+    private void switchToUserProductList(ActionEvent event) {
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.close();
     }
 
 }
