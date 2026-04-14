@@ -1,4 +1,7 @@
-package auction_client.entity;
+package entity;
+
+import auction_client.entity.Entity;
+import auction_client.entity.Seller;
 
 public abstract class Item extends Entity {
     private String name;

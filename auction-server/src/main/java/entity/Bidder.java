@@ -1,4 +1,7 @@
-package auction_client.entity;
+package entity;
+
+import auction_client.entity.Auction;
+import auction_client.entity.User;
 
 public class Bidder extends User {
 
@@ -12,7 +15,7 @@ public class Bidder extends User {
     }
 
     public void placeBid(Auction auction, double amount) {
-        // TODO: Ở Client, hàm này tạo Socket Request. Ở Server, đẩy Request vào AuctionService để xử lý qua ReentrantLock.
+        // TODO: Ở Client, hàm này tạo Socket Request. Ở Server, đẩy Request vào service.AuctionService để xử lý qua ReentrantLock.
     }
 
 }

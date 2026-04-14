@@ -1,4 +1,7 @@
-package auction_client.entity;
+package entity;
+
+import auction_client.entity.Item;
+import auction_client.entity.Seller;
 
 public class Electronics extends Item {
     private String brand;

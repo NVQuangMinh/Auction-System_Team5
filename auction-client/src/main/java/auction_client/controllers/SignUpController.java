@@ -34,7 +34,7 @@ public class SignUpController {
 
         if (!inputUsername.isEmpty() && !inputPassword.isEmpty() && !inputPasswordConfirm.isEmpty()) {
             if (!inputPassword.equals(inputPasswordConfirm)) {
-                showAlert(Alert.AlertType.ERROR, "Lỗi Mật Khẩu", "Mật khẩu xác nhận không khớp. Vui lòng nhập lại!");
+                showAlert(Alert.AlertType.ERROR, "Error", "Passwords do not match!");
                 confirmpassword.clear();
                 return;
             }

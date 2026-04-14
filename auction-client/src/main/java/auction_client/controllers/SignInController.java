@@ -46,12 +46,12 @@ public class SignInController {
                     stage.setMaximized(true);
                     stage.show();
                 } else {
-                    System.out.println("Tài khoản không tồn tại. Đang chuyển hướng sang Đăng ký...");
+                    System.out.println("Account not existing");
                     switchToSignUpScene(event);
                 }
             }
             catch (IllegalArgumentException e) {
-                showAlert("Sai mật khẩu", e.getMessage(), Alert.AlertType.ERROR);
+                showAlert("Wrong password", e.getMessage(), Alert.AlertType.ERROR);
                 password.clear();
             }
         }

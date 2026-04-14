@@ -1,4 +1,4 @@
-package auction_client.entity;
+package entity;
 
 public class Seller extends User {
 
@@ -12,6 +12,6 @@ public class Seller extends User {
     }
 
     public void createItem(Item item) {
-        // TODO: Đẩy đối tượng Item xuống DAO
+        // TODO: Đẩy đối tượng entity.Item xuống DAO
     }
 }

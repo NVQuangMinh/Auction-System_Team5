@@ -1,16 +1,16 @@
-package auction_client.entity;
+package entity;
 
-public class Electronics extends Item {
+public class Vehicle extends Item {
     private String brand;
 
-    public Electronics(String name, String imageUrl, Seller seller, String brand) {
+    public Vehicle(String name, String imageUrl, Seller seller, String brand) {
         super(name, imageUrl, seller);
         this.brand = brand;
     }
 
     @Override
     public String getItemCategory() {
-        return "ELECTRONICS";
+        return "VEHICLE";
     }
 
     public String getBrand() { return brand; }

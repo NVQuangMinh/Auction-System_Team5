@@ -28,7 +28,7 @@
                      <children>
                         <ImageView fitHeight="143.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@images/Auction-System.png" />
+                              <Image url="@images/entity.Auction-System.png" />
                            </image>
                            <VBox.margin>
                               <Insets top="3.0" />

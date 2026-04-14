@@ -1,4 +1,6 @@
-package auction_client.entity;
+package entity;
+
+import auction_client.entity.Entity;
 
 public abstract class User extends Entity {
     private String username;

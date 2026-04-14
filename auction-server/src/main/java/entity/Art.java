@@ -1,16 +1,19 @@
-package auction_client.entity;
+package entity;
 
-public class Electronics extends Item {
+import auction_client.entity.Item;
+import auction_client.entity.Seller;
+
+public class Art extends Item {
     private String brand;
 
-    public Electronics(String name, String imageUrl, Seller seller, String brand) {
+    public Art(String name, String imageUrl, Seller seller, String brand) {
         super(name, imageUrl, seller);
         this.brand = brand;
     }
 
     @Override
     public String getItemCategory() {
-        return "ELECTRONICS";
+        return "ART";
     }
 
     public String getBrand() { return brand; }

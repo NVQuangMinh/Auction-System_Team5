@@ -1,4 +1,4 @@
-package auction_client.entity;
+package entity;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

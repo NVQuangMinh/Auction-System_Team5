@@ -3,7 +3,7 @@ module project.auction_system_team5 {
     requires javafx.fxml;
     requires java.desktop;
 
-    // Cho phép JavaFX truy cập vào class khởi chạy (Launcher, Auction)
+    // Cho phép JavaFX truy cập vào class khởi chạy (Launcher, entity.Auction)
     opens auction_system.launcher to javafx.graphics, javafx.fxml;
 
     // Cho phép JavaFX FXML load các Controller

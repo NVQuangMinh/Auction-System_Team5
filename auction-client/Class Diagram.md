@@ -1,6 +1,6 @@
 classDiagram
     %% Root Abstract Class
-    class Entity {
+    class entity.Entity {
         <<abstract>>
         - Long id
         - LocalDateTime createdAt
@@ -8,8 +8,8 @@ classDiagram
         + getCreatedAt() LocalDateTime
     }
 
-    %% User Hierarchy
-    class User {
+    %% entity.User Hierarchy
+    class entity.User {
         <<abstract>>
         - String username
         - String passwordHash
@@ -18,54 +18,54 @@ classDiagram
         + getRole()* String 
     }
 
-    class Bidder {
+    class entity.Bidder {
         - double balance
-        + placeBid(Auction auction, double amount) void
+        + placeBid(entity.Auction auction, double amount) void
         + getRole() String
     }
 
-    class Seller {
+    class entity.Seller {
         - double reputationScore
-        + createItem(Item item) void
+        + createItem(entity.Item item) void
         + getRole() String
     }
 
-    class Admin {
-        + cancelAuction(Auction auction) void
-        + banUser(User user) void
+    class entity.Admin {
+        + cancelAuction(entity.Auction auction) void
+        + banUser(entity.User user) void
         + getRole() String
     }
 
-    %% Item Hierarchy
-    class Item {
+    %% entity.Item Hierarchy
+    class entity.Item {
         <<abstract>>
         - String name
         - String description
-        - Seller seller
+        - entity.Seller seller
         + getDetails()* String
     }
 
-    class Electronics {
+    class entity.Electronics {
         - String brand
         - int warrantyMonths
         + getDetails() String
     }
 
-    class Art {
+    class entity.Art {
         - String artistName
         - int creationYear
         + getDetails() String
     }
 
-    class Vehicle {
+    class entity.Vehicle {
         - String engineType
         - int mileage
         + getDetails() String
     }
 
     %% Core Business Classes
-    class Auction {
-        - Item item
+    class entity.Auction {
+        - entity.Item item
         - double startingPrice
         - double currentHighestBid
         - LocalDateTime startTime
@@ -73,33 +73,33 @@ classDiagram
         - String status
         + start() void
         + close() void
-        + addTransaction(BidTransaction tx) void
+        + addTransaction(entity.BidTransaction tx) void
     }
 
-    class BidTransaction {
-        - Auction auction
-        - Bidder bidder
+    class entity.BidTransaction {
+        - entity.Auction auction
+        - entity.Bidder bidder
         - double bidAmount
         - LocalDateTime timestamp
         + isValid() boolean
     }
 
     %% Relationships (Inheritance)
-    Entity <|-- User
-    Entity <|-- Item
-    Entity <|-- Auction
-    Entity <|-- BidTransaction
+    entity.Entity <|-- entity.User
+    entity.Entity <|-- entity.Item
+    entity.Entity <|-- entity.Auction
+    entity.Entity <|-- entity.BidTransaction
 
-    User <|-- Bidder
-    User <|-- Seller
-    User <|-- Admin
+    entity.User <|-- entity.Bidder
+    entity.User <|-- entity.Seller
+    entity.User <|-- entity.Admin
 
-    Item <|-- Electronics
-    Item <|-- Art
-    Item <|-- Vehicle
+    entity.Item <|-- entity.Electronics
+    entity.Item <|-- entity.Art
+    entity.Item <|-- entity.Vehicle
 
     %% Relationships (Associations)
-    Seller "1" --> "*" Item : owns
-    Auction "1" --> "1" Item : sells
-    Auction "1" *-- "*" BidTransaction : contains
-    Bidder "1" --> "*" BidTransaction : makes
+    entity.Seller "1" --> "*" entity.Item : owns
+    entity.Auction "1" --> "1" entity.Item : sells
+    entity.Auction "1" *-- "*" entity.BidTransaction : contains
+    entity.Bidder "1" --> "*" entity.BidTransaction : makes
