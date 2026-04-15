@@ -2,6 +2,7 @@ module auction.client {
     requires javafx.controls;
     requires javafx.fxml;
     requires java.desktop;
+    requires java.sql;
 
     // Cho phép JavaFX truy cập vào class khởi chạy (Launcher, ClientLauncher)
     opens auction_client.launcher to javafx.graphics, javafx.fxml;

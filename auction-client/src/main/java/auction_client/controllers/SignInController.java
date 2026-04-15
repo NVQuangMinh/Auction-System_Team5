@@ -1,5 +1,6 @@
 package auction_client.controllers;
 
+import auction_client.DatabaseConnector;
 import auction_client.UserSession;
 import auction_client.entity.Bidder;
 import auction_client.entity.User;
@@ -68,12 +69,14 @@ public class SignInController {
 
     private User authenticate(String username, String password) {
         // TODO: Thay bằng lệnh SQL thực tế sau này (Ví dụ: return userDao.login(username, password);)
-
-        // TODO: Mô phỏng tài khoản admin
-        if (username.equals("admin") && password.equals("123")) {
+        if (DatabaseConnector.checkLogin(username, password)) {
+            // Nếu đăng nhập thành công, trả về đối tượng User
             return new Bidder(username, password);
         }
         return null;
+
+        // TODO: Mô phỏng tài khoản admin
+
     }
 
     @FXML
