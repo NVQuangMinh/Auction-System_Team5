@@ -1,8 +1,8 @@
-package auction_shared.entities;
+package auction_server.entities;
 
-import auction_shared.base.Entity;
+import auction_server.base.Entity;
+
 import java.time.LocalDateTime;
-
 
 public abstract class Item extends Entity {
     protected String itemName;
@@ -21,4 +21,3 @@ public abstract class Item extends Entity {
     }
 
 }
-

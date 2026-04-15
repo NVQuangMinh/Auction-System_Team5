@@ -1,15 +1,10 @@
-package auction_shared.base;
-
-
-import java.time.LocalDateTime;
+package auction_server.base;
 
 public abstract class Entity {
     protected String id;
-    LocalDateTime createdAt;
     public Entity(String id){
         this.id = id;
     }
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
 }
-
