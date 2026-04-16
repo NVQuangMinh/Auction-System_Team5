@@ -4,6 +4,8 @@
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
@@ -14,9 +16,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="622.0" prefWidth="490.0" spacing="15.0" style="-fx-background-radius: 30; -fx-background-color: white; -fx-border-radius: 30; -fx-border-color: #e0e0e0; -fx-border-width: 1;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction_client.controllers.ProductInfoSubmissionController">
+<VBox prefHeight="664.0" prefWidth="490.0" spacing="20.0" style="-fx-background-radius: 30; -fx-background-color: white; -fx-border-radius: 30; -fx-border-color: #e0e0e0; -fx-border-width: 1;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction_client.controllers.ProductInfoSubmissionController">
    <children>
-      <HBox alignment="CENTER" fillHeight="false" prefHeight="67.0" prefWidth="438.0">
+      <HBox alignment="CENTER" fillHeight="false" prefHeight="25.0" prefWidth="438.0">
          <children>
             <Label prefHeight="56.0" prefWidth="281.0" style="-fx-font-size: 23; -fx-font-weight: Bold;" text="Add New Item" textFill="#007bff" />
             <Region prefHeight="55.0" prefWidth="238.0" HBox.hgrow="ALWAYS" />
@@ -34,8 +36,11 @@
          <cursor>
             <Cursor fx:constant="TEXT" />
          </cursor>
+         <VBox.margin>
+            <Insets top="15.0" />
+         </VBox.margin>
       </TextField>
-      <TextArea prefHeight="126.0" prefWidth="438.0" promptText="Product Description" style="-fx-background-radius: 10;">
+      <TextArea prefHeight="50.0" prefWidth="438.0" promptText="Product Description" style="-fx-background-radius: 10;">
          <font>
             <Font size="15.0" />
          </font>
@@ -49,9 +54,9 @@
             <Cursor fx:constant="TEXT" />
          </cursor>
       </TextArea>
-      <HBox alignment="CENTER" prefHeight="73.0" prefWidth="440.0" spacing="15.0">
+      <HBox alignment="CENTER" prefHeight="50.0" prefWidth="438.0">
          <children>
-            <TextField prefHeight="50.0" prefWidth="212.0" promptText="Starting Price" style="-fx-background-radius: 10;" HBox.hgrow="ALWAYS">
+            <TextField prefHeight="50.0" prefWidth="195.5" promptText="Starting Price" style="-fx-background-radius: 10;" HBox.hgrow="ALWAYS">
                <font>
                   <Font size="15.0" />
                </font>
@@ -59,7 +64,8 @@
                   <Cursor fx:constant="TEXT" />
                </cursor>
             </TextField>
-            <TextField prefHeight="50.0" prefWidth="180.0" promptText="Buyout Price" style="-fx-background-radius: 10;" HBox.hgrow="ALWAYS">
+            <Region prefHeight="46.0" prefWidth="28.0" />
+            <TextField prefHeight="50.0" prefWidth="195.5" promptText="Buyout Price" style="-fx-background-radius: 10;" HBox.hgrow="ALWAYS">
                <font>
                   <Font size="15.0" />
                </font>
@@ -69,7 +75,7 @@
             </TextField>
          </children>
       </HBox>
-      <TextField prefHeight="50.0" prefWidth="440.0" promptText="Tick Size" style="-fx-background-radius: 10;">
+      <TextField prefHeight="50.0" prefWidth="438.0" promptText="Tick Size" style="-fx-background-radius: 10;">
          <font>
             <Font size="15.0" />
          </font>
@@ -77,12 +83,19 @@
             <Cursor fx:constant="TEXT" />
          </cursor>
       </TextField>
-      <HBox alignment="CENTER_RIGHT" prefHeight="33.0" prefWidth="438.0">
+      <HBox prefHeight="37.0" prefWidth="438.0">
          <children>
-            <CheckBox contentDisplay="CENTER" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" prefHeight="19.0" prefWidth="154.0" style="-fx-font-size: 13;" text="Enable Anti-Snipping" />
+            <ChoiceBox prefHeight="50.0" prefWidth="195.5" />
+            <Region prefHeight="37.0" prefWidth="14.0" HBox.hgrow="ALWAYS" />
+            <DatePicker prefHeight="50.0" prefWidth="195.5" promptText="End Bid Date" />
          </children>
       </HBox>
-      <HBox alignment="CENTER_LEFT" prefHeight="87.0" prefWidth="458.0" VBox.vgrow="ALWAYS">
+      <HBox alignment="CENTER_RIGHT" prefHeight="33.0" prefWidth="438.0">
+         <children>
+            <CheckBox contentDisplay="CENTER" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" prefHeight="27.0" prefWidth="154.0" style="-fx-font-size: 13;" text="Enable Anti-Snipping" />
+         </children>
+      </HBox>
+      <HBox alignment="CENTER_LEFT" prefHeight="80.0" prefWidth="438.0" VBox.vgrow="ALWAYS">
          <children>
             <Button alignment="CENTER" mnemonicParsing="false" onAction="#switchToUserProductList" style="-fx-font-size: 15; -fx-font-weight: bold; -fx-padding: 15 75 15 75; -fx-background-radius: 10; -fx-background-color: #E0E0E0;" text="CANCEL" HBox.hgrow="ALWAYS">
                <cursor>
