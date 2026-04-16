@@ -1,5 +1,6 @@
 package auction_shared.entities;
 import auction_shared.base.Entity;
+import auction_shared.behaviors.Admin;
 import auction_shared.interfaces.BidderAction;
 import auction_shared.interfaces.SellerAction;
 
@@ -10,6 +11,7 @@ public class User extends Entity {
     protected String password;
     protected BidderAction bidder = null;
     protected SellerAction seller = null;
+    protected Admin admin = null;
     public User(String id,String username, String password){
         super(id);
         this.username = username;
