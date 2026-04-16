@@ -5,6 +5,6 @@ import auction_shared.interfaces.SellerAction;
 
 
 
-public class StandardSeller implements SellerAction {
+public class SellerProfile implements SellerAction {
     public void postItem(Item item) {}
 }
