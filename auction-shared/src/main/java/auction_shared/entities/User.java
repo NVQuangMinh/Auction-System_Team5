@@ -4,9 +4,10 @@ import auction_shared.behaviors.AdminProfile;
 import auction_shared.interfaces.BidderAction;
 import auction_shared.interfaces.SellerAction;
 
+import java.io.Serializable;
 
 
-public class User extends Entity {
+public class User extends Entity implements Serializable {
     protected String username;
     protected String password;
     protected BidderAction bidder = null;
