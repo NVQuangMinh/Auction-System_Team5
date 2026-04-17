@@ -1,4 +1,5 @@
 module auction.server {
+
     requires auction.shared;
 
     requires java.sql;
