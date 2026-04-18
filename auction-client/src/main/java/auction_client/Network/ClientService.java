@@ -54,7 +54,7 @@ public class ClientService {
                     handleServerResponse(response);
                 }
             } catch (Exception e) {
-                System.out.println("Mất kết nối với Server.");
+                System.out.println("Lost connection to server.");
                 isRunning = false;
             }
         });
@@ -66,7 +66,7 @@ public class ClientService {
     private void handleServerResponse(NetworkMessage response) {
         // Sau này dùng Interface hoặc Platform.runLater()
         // để cập nhật giao diện JavaFX tại đây.
-        System.out.println("Nhận từ Server: " + response.getAction());
+        System.out.println("receive from server: " + response.getAction());
     }
 
 }
