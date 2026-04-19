@@ -13,7 +13,7 @@ import javafx.stage.StageStyle;
 
 import java.io.IOException;
 
-public class UserProductListController {
+public class SellProductSceneController {
     @FXML
     public AnchorPane overlayPane;
     @FXML

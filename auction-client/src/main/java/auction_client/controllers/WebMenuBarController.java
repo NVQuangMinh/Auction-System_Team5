@@ -42,12 +42,12 @@ public class WebMenuBarController implements Initializable {
 
     @FXML
     public void switchToUserProductListScene(ActionEvent event) throws IOException {
-        switchScene(event, "/auction_client/UserProductList.fxml");
+        switchScene(event, "/auction_client/SellProductScene.fxml");
     }
 
     @FXML
     public void switchToProductScene(ActionEvent event) throws IOException {
-        switchScene(event, "/auction_client/ProductScene.fxml");
+        switchScene(event, "/auction_client/BidProductScene.fxml");
     }
 
     @FXML
