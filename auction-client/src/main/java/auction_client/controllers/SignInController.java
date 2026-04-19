@@ -1,8 +1,9 @@
 package auction_client.controllers;
 
+import auction_client.Network.ClientService;
 import auction_client.UserSession;
-import auction_client.entity.Bidder;
-import auction_client.entity.User;
+import auction_shared.entities.User;
+import auction_shared.Network.NetworkMessage;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -68,12 +69,11 @@ public class SignInController {
 
     private User authenticate(String username, String password) {
         // TODO: Thay bằng lệnh SQL thực tế sau này (Ví dụ: return userDao.login(username, password);)
-
         // TODO: Mô phỏng tài khoản admin
-        if (username.equals("admin") && password.equals("123")) {
-            return new Bidder(username, password);
-        }
-        return null;
+        User user = new User("01",username, password);
+        NetworkMessage msg = new NetworkMessage("LOGIN",user);
+        ClientService.getInstance().sendMessage(msg);
+        return user;
     }
 
     @FXML

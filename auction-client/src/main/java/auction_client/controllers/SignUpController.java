@@ -1,8 +1,7 @@
 package auction_client.controllers;
 
 import auction_client.UserSession;
-import auction_client.entity.Bidder;
-import auction_client.entity.User;
+import auction_shared.entities.User;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -38,7 +37,7 @@ public class SignUpController {
                 confirmpassword.clear();
                 return;
             }
-            User newUser = new Bidder(inputUsername, inputPassword);
+            User newUser = new User("01",inputUsername, inputPassword);
 
             UserSession.getInstance().setUsername(inputUsername);
 

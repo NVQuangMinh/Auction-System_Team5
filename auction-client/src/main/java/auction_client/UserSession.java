@@ -5,7 +5,7 @@ public class UserSession {
     private String username = "";
     private UserSession(){}
 
-    public static UserSession getInstance(){
+    public synchronized static UserSession getInstance(){
         if (self == null){
             self = new UserSession();
             return self;

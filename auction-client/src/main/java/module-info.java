@@ -2,14 +2,13 @@ module auction.client {
     requires javafx.controls;
     requires javafx.fxml;
     requires java.desktop;
+    requires auction.shared;
 
-    // Cho phép JavaFX truy cập vào class khởi chạy (Launcher, ClientLauncher)
-    opens auction_client.launcher to javafx.graphics, javafx.fxml;
-
-    // Cho phép JavaFX FXML load các Controller
-
-    // Xuất các package để các module khác có thể dùng (nếu cần)
     exports auction_client.launcher;
     exports auction_client.controllers;
+    opens auction_client.launcher to javafx.graphics, javafx.fxml;
     opens auction_client.controllers to javafx.fxml, javafx.graphics;
+    opens auction_client.Network to auction.shared;
+    opens auction_client to javafx.fxml;
+
 }
