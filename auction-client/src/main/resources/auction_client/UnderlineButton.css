@@ -1,11 +1,26 @@
-.button {
+.button, .menu-button {
     -fx-background-color: transparent;
     -fx-text-fill: white;
     -fx-border-color: transparent;
     -fx-border-width: 0 0 1.5 0;
 }
 
-.button: hover {
+.button:hover, .menu-button:hover {
     -fx-border-color: white;
     -fx-cursor: hand;
+}
+.menu-button .label{
+    -fx-text-fill:white;
+}
+.menu-item .label{
+    -fx-text-fill:black;
+}
+.menu-button .arrow-button {
+    -fx-padding: 0;
+}
+
+.menu-button .arrow {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+    -fx-shape: null;
 }
