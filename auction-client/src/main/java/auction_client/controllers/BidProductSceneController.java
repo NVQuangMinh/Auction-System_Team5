@@ -26,22 +26,18 @@ public class BidProductSceneController implements Initializable {
     }
 
     public void updateProductList(List<Auction> auctions) {
-        // Bắt buộc dùng Platform.runLater vì dữ liệu đến từ luồng Socket
         Platform.runLater(() -> {
             // 1. Xóa các card cũ để tránh trùng lặp khi cập nhật
             productFlowPane.getChildren().clear();
 
             for (Auction auction : auctions) {
                 try {
-                    // 2. Load FXML của tấm thẻ sản phẩm
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("/auction_client/ProductCard.fxml"));
                     Parent card = loader.load();
 
-                    // 3. Lấy controller của Card để đổ dữ liệu (Tên, giá, ảnh...)
                     ProductCardController cardController = loader.getController();
                     cardController.setData(auction);
 
-                    // 4. Chỉ cần "add" vào là xong, FlowPane tự xếp hàng
                     productFlowPane.getChildren().add(card);
 
                 } catch (IOException e) {
