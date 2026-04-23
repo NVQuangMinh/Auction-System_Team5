@@ -74,8 +74,6 @@ public class ClientService {
 
 
     private void handleServerResponse(NetworkMessage response) {
-        // Sau này dùng Interface hoặc Platform.runLater()
-        // để cập nhật giao diện JavaFX tại đây.
         if (response.getAction().equals("GET_PRODUCTS")){
             List<Auction> auctions = (List<Auction>) response.getData();
             if (auctionListCallback != null) {
