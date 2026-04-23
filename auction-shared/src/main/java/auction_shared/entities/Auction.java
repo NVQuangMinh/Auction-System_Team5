@@ -28,5 +28,8 @@ public class Auction implements Serializable {
     public Item getItem() {
         return item;
     }
+    public String getState(){
+        return status;
+    }
 
 }
