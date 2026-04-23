@@ -11,7 +11,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
-import javafx.scene.control.MenuItem;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
@@ -70,6 +69,21 @@ public class WebMenuBarController implements Initializable {
     @FXML
     public void switchToActivitiesScene(ActionEvent event) throws IOException {
         switchScene(event,"/auction_client/ActivitiesScene.fxml");
+    }
+
+    @FXML
+    public void switchToArtScene(ActionEvent event) throws IOException {
+        switchScene(event, "/auction_client/ArtScene.fxml");
+    }
+
+    @FXML
+    public void switchToElectronicScene(ActionEvent event) throws IOException {
+        switchScene(event, "/auction_client/ElectronicScene.fxml");
+    }
+
+    @FXML
+    public void switchToVehicleScene(ActionEvent event) throws IOException {
+        switchScene(event, "/auction_client/VehicleScene.fxml");
     }
 
     private void switchScene(javafx.event.Event event, String fxmlPath) throws IOException {

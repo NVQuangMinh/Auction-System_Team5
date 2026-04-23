@@ -22,9 +22,10 @@
         </Label>
       <MenuButton fx:id="productsMenuButton" alignment="CENTER" mnemonicParsing="false" prefHeight="55.0" prefWidth="200.0" style="-fx-background-color: transparent; -fx-font-weight: bold; -fx-font-size: 15;" stylesheets="@UnderlineButton.css" text="PRODUCTS" textFill="WHITE" HBox.hgrow="ALWAYS">
         <items>
-          <MenuItem mnemonicParsing="false" text="Art" />
-          <MenuItem mnemonicParsing="false" text="Electronics" />
-            <MenuItem mnemonicParsing="false" text="Vehicles" />
+            <MenuItem mnemonicParsing="false" onAction="#switchToProductScene" text="All Products" />
+          <MenuItem mnemonicParsing="false" onAction="#switchToArtScene" text="Art" />
+          <MenuItem mnemonicParsing="false" onAction="#switchToElectronicScene" text="Electronics" />
+            <MenuItem mnemonicParsing="false" onAction="#switchToVehicleScene" text="Vehicles" />
         </items>
       </MenuButton>
         <Region minWidth="0.0" prefHeight="55.0" prefWidth="149.0" HBox.hgrow="ALWAYS" />
