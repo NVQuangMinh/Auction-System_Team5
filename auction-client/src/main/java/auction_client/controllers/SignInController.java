@@ -73,6 +73,7 @@ public class SignInController {
         User user = new User("01",username, password);
         NetworkMessage msg = new NetworkMessage("LOGIN",user);
         ClientService.getInstance().sendMessage(msg);
+        // anh em them conditional o day nhe!
         return user;
     }
 

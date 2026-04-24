@@ -32,6 +32,7 @@ public class ClientHandler implements Runnable{
         if ("BID".equals(msg.getAction())) {}
         else if ("SELL".equals(msg.getAction())){}
         else if ("LOGIN".equals(msg.getAction())){
+            // anh em check database o day sau do gui lai confirmation cho client nhe!
             System.out.println(((User) msg.getData()).getUsername() + " successfully login");
         }
         else if ("GET_PRODUCTS".equals(msg.getAction())){

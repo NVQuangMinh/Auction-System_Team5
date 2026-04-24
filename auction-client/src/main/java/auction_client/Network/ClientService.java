@@ -15,6 +15,8 @@ public class ClientService {
     private ObjectOutputStream out;
     private ObjectInputStream in;
     private boolean isRunning = false;
+
+
     private Consumer<List<Auction>> auctionListCallback;
 
     public void setAuctionListCallback(Consumer<List<Auction>> callback) {
@@ -78,6 +80,12 @@ public class ClientService {
             List<Auction> auctions = (List<Auction>) response.getData();
             if (auctionListCallback != null) {
                 auctionListCallback.accept(auctions);
+            }
+        }
+        if (response.getAction().equals("LOGIN")){
+            Boolean confirmation = (Boolean) response.getData();
+            if (confirmation){
+
             }
         }
         else {
