@@ -1,8 +1,10 @@
 package auction_server.Network;
 
+import auction_server.core.AuctionManager;
 import auction_shared.Network.NetworkMessage;
 import auction_shared.entities.User;
 
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -31,6 +33,14 @@ public class ClientHandler implements Runnable{
         else if ("SELL".equals(msg.getAction())){}
         else if ("LOGIN".equals(msg.getAction())){
             System.out.println(((User) msg.getData()).getUsername() + " successfully login");
+        }
+        else if ("GET_PRODUCTS".equals(msg.getAction())){
+            try{
+                out.writeObject(new NetworkMessage("GET_PRODUCTS",AuctionManager.getInstance().getAllRooms()));
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

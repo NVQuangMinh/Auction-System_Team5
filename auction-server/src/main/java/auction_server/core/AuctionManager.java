@@ -1,5 +1,8 @@
 package auction_server.core;
 
+import auction_shared.entities.Auction;
+
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -21,7 +24,11 @@ public class AuctionManager {
         return activeRooms.get(itemId);
     }
 
-    public Map<String, AuctionRoom> getAllRooms() {
-        return activeRooms;
+    public ArrayList<Auction> getAllRooms() {
+        ArrayList<Auction> rooms = new ArrayList<>();
+        for (String i : activeRooms.keySet()){
+            rooms.add(activeRooms.get(i).getAuction());
+        }
+        return rooms;
     }
 }

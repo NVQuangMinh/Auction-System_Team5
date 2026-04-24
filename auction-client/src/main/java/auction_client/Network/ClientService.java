@@ -1,8 +1,12 @@
 package auction_client.Network;
 
 import auction_shared.Network.NetworkMessage;
+import auction_shared.entities.Auction;
+
 import java.io.*;
 import java.net.Socket;
+import java.util.List;
+import java.util.function.Consumer;
 
 
 public class ClientService {
@@ -11,6 +15,12 @@ public class ClientService {
     private ObjectOutputStream out;
     private ObjectInputStream in;
     private boolean isRunning = false;
+    private Consumer<List<Auction>> auctionListCallback;
+
+    public void setAuctionListCallback(Consumer<List<Auction>> callback) {
+        this.auctionListCallback = callback;
+    }
+
 
     private ClientService(){}
 
@@ -64,9 +74,17 @@ public class ClientService {
 
 
     private void handleServerResponse(NetworkMessage response) {
-        // Sau này dùng Interface hoặc Platform.runLater()
-        // để cập nhật giao diện JavaFX tại đây.
-        System.out.println("receive from server: " + response.getAction());
+        if (response.getAction().equals("GET_PRODUCTS")){
+            List<Auction> auctions = (List<Auction>) response.getData();
+            if (auctionListCallback != null) {
+                auctionListCallback.accept(auctions);
+            }
+        }
+        else {
+            System.out.println("Receive from server: " + response.getAction());
+        }
+
+
     }
 
 }
