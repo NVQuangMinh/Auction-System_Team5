@@ -23,9 +23,13 @@ public abstract class Item extends Entity implements Serializable {
         this.endTime = endTime;
         this.owner = owner;
     }
-    public String getDetail(){
-        return null;
+    public String getName(){
+        return this.itemName;
     }
+    public String getDescription(){
+        return this.description;
+    }
+
 
 }
 

@@ -11,7 +11,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
-import javafx.scene.control.MenuItem;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
@@ -64,18 +63,42 @@ public class WebMenuBarController implements Initializable {
 
     @FXML
     public void switchToProductScene(ActionEvent event) throws IOException {
-        switchScene(event, "/auction_client/BidProductScene.fxml");
+        switchSceneFromMenuItem("/auction_client/BidProductScene.fxml");
     }
 
     @FXML
     public void switchToActivitiesScene(ActionEvent event) throws IOException {
-        switchScene(event,"/auction_client/ActivitiesScene.fxml");
+        switchScene(event, "/auction_client/ActivitiesScene.fxml");
+    }
+
+    @FXML
+    public void switchToArtScene(ActionEvent event) throws IOException {
+        switchSceneFromMenuItem("/auction_client/ArtScene.fxml");
+    }
+
+    @FXML
+    public void switchToElectronicScene(ActionEvent event) throws IOException {
+        switchSceneFromMenuItem("/auction_client/ElectronicScene.fxml");
+    }
+
+    @FXML
+    public void switchToVehicleScene(ActionEvent event) throws IOException {
+        switchSceneFromMenuItem("/auction_client/VehicleScene.fxml");
     }
 
     private void switchScene(javafx.event.Event event, String fxmlPath) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(fxmlPath));
         Parent root = fxmlLoader.load();
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.getScene().setRoot(root);
+        stage.centerOnScreen();
+        stage.show();
+    }
+
+    private void switchSceneFromMenuItem(String fxmlPath) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(fxmlPath));
+        Parent root = fxmlLoader.load();
+        Stage stage = (Stage) productsMenuButton.getScene().getWindow();
         stage.getScene().setRoot(root);
         stage.centerOnScreen();
         stage.show();

@@ -1,48 +1,37 @@
 package auction_client.controllers;
 
+import auction_client.Network.ClientService;
+import auction_shared.Network.NetworkMessage;
+import auction_shared.entities.Auction;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.StackPane;
-import javafx.scene.shape.Rectangle;
 
 
 
 public class ProductCardController {
     @FXML
-    private Label itemNameLabel;
+    protected Label itemName;
     @FXML
-    private Label stateLabel;
+    protected Label itemState;
     @FXML
-    private StackPane productImageStackPane;
+    protected Label currentPrice;
     @FXML
-    private ImageView productImageView;
-    @FXML
-    private Label currentPriceLabel;
-    @FXML
-    private Button buyOutButton;
-    @FXML
-    private Label descriptionLabel;
-    @FXML
-    public void initialize() {
-        Rectangle clip = new Rectangle(
-            productImageView.getFitWidth(), 
-            productImageView.getFitHeight()
-        );
-        clip.setArcWidth(40);
-        clip.setArcHeight(40);
-        productImageView.setClip(clip);
+    protected Label description;
+
+    Auction auction = null;
+
+    public void setData(Auction auction) {
+        this.auction = auction;
+        itemName.setText(auction.getItem().getName());
+        itemState.setText(auction.getState());
+        currentPrice.setText(String.valueOf(auction.getCurrentHighestBid()));
+        description.setText(auction.getItem().getDescription());
     }
 
-    public void setData(String name, String state, String price, String description, Image image) {
-        itemNameLabel.setText(name);
-        stateLabel.setText(state);
-        currentPriceLabel.setText(price);
-        descriptionLabel.setText(description);
-        if (image != null) {
-            productImageView.setImage(image);
-        }
+    @FXML
+    public void buyOut(ActionEvent event){
+        ClientService.getInstance().sendMessage(new NetworkMessage("BUY_OUT", auction));
+
     }
 }
