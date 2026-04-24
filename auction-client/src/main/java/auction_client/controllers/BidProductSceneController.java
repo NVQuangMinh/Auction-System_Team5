@@ -38,6 +38,12 @@ public class BidProductSceneController implements Initializable {
                     ProductCardController cardController = loader.getController();
                     cardController.setData(auction);
 
+                    card.setOnMouseClicked(event -> {
+                        if (event.getClickCount() == 2){ //double click nha
+                            openAuctionDetail(auction);
+                        }
+                    });
+
                     productFlowPane.getChildren().add(card);
 
                 } catch (IOException e) {
@@ -46,5 +52,10 @@ public class BidProductSceneController implements Initializable {
                 }
             }
         });
+    }
+
+    private void openAuctionDetail(Auction auction) {
+        //switch scene sang SellProductInfo
+        //dung parameter auction de lay thong tin nha wibu
     }
 }
