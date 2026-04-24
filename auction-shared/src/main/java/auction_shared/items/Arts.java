@@ -5,8 +5,8 @@ import auction_shared.entities.User;
 
 import java.time.LocalDateTime;
 
-public class Art extends Item {
-    public Art(String id, String itemName, String description, double startingPrice, double currentMaxPrice, LocalDateTime endTime, User owner) {
+public class Arts extends Item {
+    public Arts(String id, String itemName, String description, double startingPrice, double currentMaxPrice, LocalDateTime endTime, User owner) {
         super(id,itemName,description,startingPrice,currentMaxPrice,endTime,owner);
     }
 }

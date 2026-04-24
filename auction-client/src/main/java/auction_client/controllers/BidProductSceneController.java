@@ -1,4 +1,50 @@
 package auction_client.controllers;
 
-public class BidProductSceneController {
+import auction_client.Network.ClientService;
+import auction_shared.Network.NetworkMessage;
+import auction_shared.entities.Auction;
+import javafx.application.Platform;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.layout.FlowPane;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.List;
+import java.util.ResourceBundle;
+
+public class BidProductSceneController implements Initializable {
+    @FXML
+    private FlowPane productFlowPane;
+
+
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        ClientService.getInstance().setAuctionListCallback(this::updateProductList);
+        ClientService.getInstance().sendMessage(new NetworkMessage("GET_PRODUCTS", null));
+    }
+
+    public void updateProductList(List<Auction> auctions) {
+        Platform.runLater(() -> {
+            // 1. Xóa các card cũ để tránh trùng lặp khi cập nhật
+            productFlowPane.getChildren().clear();
+
+            for (Auction auction : auctions) {
+                try {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/auction_client/ProductCard.fxml"));
+                    Parent card = loader.load();
+
+                    ProductCardController cardController = loader.getController();
+                    cardController.setData(auction);
+
+                    productFlowPane.getChildren().add(card);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    System.err.println("Không thể load ProductCard!");
+                }
+            }
+        });
+    }
 }
