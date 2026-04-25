@@ -55,6 +55,7 @@ public class BidProductSceneController implements Initializable {
     }
 
     private void openAuctionDetail(Auction auction) {
+
         //switch scene sang SellProductInfo
         //dung parameter auction de lay thong tin nha wibu
     }

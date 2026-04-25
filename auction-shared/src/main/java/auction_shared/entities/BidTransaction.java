@@ -18,4 +18,7 @@ public class BidTransaction implements Serializable {
     public User getBidder() {
         return bidder;
     }
+    public Auction getAuction(){
+        return auction;
+    }
 }
