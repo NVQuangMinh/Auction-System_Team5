@@ -1,5 +1,6 @@
 package auction_client.controllers;
 
+import auction_client.AuctionUpdateListener;
 import auction_client.Network.ClientService;
 import auction_shared.Network.NetworkMessage;
 import auction_shared.entities.Auction;
@@ -15,13 +16,13 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class BidProductSceneController implements Initializable {
+public class BidProductSceneController implements Initializable, AuctionUpdateListener {
     @FXML
     private FlowPane productFlowPane;
 
 
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        ClientService.getInstance().setAuctionListCallback(this::updateProductList);
+        ClientService.getInstance().addListener(this);
         ClientService.getInstance().sendMessage(new NetworkMessage("GET_PRODUCTS", null));
     }
 
@@ -48,7 +49,7 @@ public class BidProductSceneController implements Initializable {
 
                 } catch (IOException e) {
                     e.printStackTrace();
-                    System.err.println("Không thể load ProductCard!");
+                    System.err.println("Unable to load ProductCard!");
                 }
             }
         });
@@ -58,5 +59,16 @@ public class BidProductSceneController implements Initializable {
 
         //switch scene sang SellProductInfo
         //dung parameter auction de lay thong tin nha wibu
+    }
+
+    public void onUpdateReceived(NetworkMessage msg) {
+        String action = msg.getAction();
+        if (action.equals("GET_PRODUCTS")){
+            List<Auction> auctions = (List<Auction>) msg.getData();
+            Platform.runLater(() -> updateProductList(auctions));
+        }
+        else if (action.equals("UPDATE_BID")){
+
+        }
     }
 }

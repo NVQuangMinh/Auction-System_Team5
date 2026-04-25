@@ -44,7 +44,7 @@ public class ClientHandler implements Runnable{
             if (auctionRoom != null) {
                 if (auctionRoom.placeBid(bid)) {
                     sendMessage(new NetworkMessage("BID_SUCCESS", null));
-                    AuctionManager.getInstance().broadCast(new NetworkMessage("UPDATE_PRICE", null));
+                    AuctionManager.getInstance().broadCast(new NetworkMessage("UPDATE_BID", null));
                 }
                 else{
                     sendMessage(new NetworkMessage("BID_FAILED", null));
@@ -54,7 +54,7 @@ public class ClientHandler implements Runnable{
         }
         else if ("SELL".equals(msg.getAction())){}
         else if ("LOGIN".equals(msg.getAction())){
-            // anh em check database o day sau do gui lai confirmation cho client nhe!
+            /// anh em check database o day sau do gui lai confirmation (isSuccess) cho client nhe!
             System.out.println(((User) msg.getData()).getUsername() + " successfully login");
         }
         else if ("GET_PRODUCTS".equals(msg.getAction())){

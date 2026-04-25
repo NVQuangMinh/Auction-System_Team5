@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="background" prefHeight="600.0" prefWidth="1066.0" style="-fx-background-color: #f6f8ef;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction_client.controllers.SignInController">
+<AnchorPane fx:id="background" prefHeight="600.0" prefWidth="1066.0" style="-fx-background-color: #f6f8ef;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction_client.controllers.SignInController">
    <children>
       <ImageView layoutX="-14.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <image>
@@ -36,7 +36,7 @@
                         </ImageView>
                         <HBox alignment="CENTER" fillHeight="false" prefHeight="55.0" prefWidth="408.0" spacing="23.0">
                            <children>
-                              <Button fx:id="signInButton" maxHeight="31.0" maxWidth="115.0" mnemonicParsing="false" onAction="#switchToSignInScene" prefHeight="31.0" prefWidth="115.0" style="-fx-background-color: white; -fx-background-radius: 500;" text="Sign In">
+                              <Button fx:id="signInButton" maxHeight="31.0" maxWidth="115.0" mnemonicParsing="false" onAction="#onSignInClicked" prefHeight="31.0" prefWidth="115.0" style="-fx-background-color: white; -fx-background-radius: 500;" text="Sign In">
                                  <font>
                                     <Font name="System Bold" size="15.0" />
                                  </font>
@@ -71,7 +71,7 @@
                                     <Insets top="18.0" />
                                  </VBox.margin>
                               </Region>
-                              <Button fx:id="loginButton" mnemonicParsing="false" onAction="#switchToMainScene" prefHeight="34.0" prefWidth="120.0" style="-fx-background-color: white; -fx-background-radius: 500;" text="LOGIN">
+                              <Button fx:id="loginButton" mnemonicParsing="false" onAction="#onSignInClicked" prefHeight="34.0" prefWidth="120.0" style="-fx-background-color: white; -fx-background-radius: 500;" text="LOGIN">
                                  <font>
                                     <Font name="System Bold" size="15.0" />
                                  </font>

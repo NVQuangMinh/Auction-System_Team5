@@ -3,19 +3,17 @@ package auction_client.launcher;
 import auction_client.Network.ClientService;
 import javafx.application.Application;
 
-import java.io.IOException;
-
 public class Launcher {
     public static void main(String[] args) {
-        try{
+        try {
             ClientService clientService = ClientService.getInstance();
-            clientService.connect("localhost",8080);
+            clientService.connect("localhost", 8080);
+            System.out.println("Connected to server successfully!");
+        } catch (Exception e) {
+            System.err.println("Could not connect to server: " + e.getMessage());
+            System.err.println("The application will continue without server connection.");
         }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+
         Application.launch(ClientLauncher.class, args);
-
-
     }
 }
