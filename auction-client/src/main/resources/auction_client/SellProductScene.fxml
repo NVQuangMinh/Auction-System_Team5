@@ -1,18 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.Cursor?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.FlowPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-<StackPane xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction_client.controllers.SellProductSceneController">
+<StackPane xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction_client.controllers.SellProductSceneController">
    <children>
       <BorderPane prefHeight="600.0" prefWidth="1200.0">
          <top>
@@ -40,7 +33,7 @@
                               <Insets bottom="20.0" left="90.0" right="90.0" top="20.0" />
                            </padding>
                         </HBox>
-                        <FlowPane hgap="20.0" vgap="20.0">
+                        <FlowPane fx:id="productFlowPane" hgap="20.0" vgap="20.0">
                            <padding>
                               <Insets left="60.0" right="60.0" />
                            </padding>

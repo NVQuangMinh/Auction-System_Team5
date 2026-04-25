@@ -10,5 +10,7 @@ module auction.client {
     opens auction_client.controllers to javafx.fxml, javafx.graphics;
     opens auction_client.Network to auction.shared;
     opens auction_client to javafx.fxml;
+    exports auction_client.product;
+    opens auction_client.product to javafx.fxml, javafx.graphics;
 
 }

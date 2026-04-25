@@ -6,7 +6,7 @@ import auction_shared.entities.User;
 import java.time.LocalDateTime;
 
 public class Electronics extends Item {
-    public Electronics(String id, String itemName, String description, double startingPrice, double currentMaxPrice, LocalDateTime endTime, User owner) {
-        super(id,itemName,description,startingPrice,currentMaxPrice,endTime,owner);
+    public Electronics(String id, String itemName, String description, double startingPrice, double buyOutPrice, double productTickRate, LocalDateTime endTime, User owner) {
+        super(id, itemName, description, startingPrice, buyOutPrice, productTickRate, endTime, owner);
     }
 }

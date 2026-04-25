@@ -1,28 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.effect.DropShadow?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.paint.Color?>
-<?import javafx.scene.text.Font?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
 
-<VBox alignment="TOP_CENTER" prefHeight="350.0" prefWidth="240.0" style="-fx-background-color: #f0f0f0; -fx-background-radius: 15; -fx-border-color: #dcdcdc; -fx-border-width: 2; -fx-border-radius: 15;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction_client.controllers.ProductCardController">
+<VBox alignment="TOP_CENTER" onMouseClicked="#handleCardClick" prefHeight="350.0" prefWidth="260.0" style="-fx-background-color: E5E7EB; -fx-background-radius: 15; -fx-border-color: #D1D5DB; -fx-border-width: 2; -fx-border-radius: 15;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction_client.controllers.ProductCardController">
    <children>
-      <HBox prefHeight="92.0" prefWidth="202.0">
+      <HBox prefHeight="50.0" prefWidth="202.0">
          <children>
-            <Label fx:id="itemName" prefHeight="46.0" prefWidth="317.0" style="-fx-font-size: 16; -fx-font-weight: bold;" text=" Item Name" textFill="#fe5721cc">
+            <Label fx:id="itemName" prefHeight="152.0" prefWidth="345.0" style="-fx-font-size: 16; -fx-font-weight: bold;" text=" Item Name" textFill="#fe5721cc" HBox.hgrow="ALWAYS">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
             </Label>
             <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-            <Label fx:id="itemState" alignment="CENTER_RIGHT" prefHeight="59.0" prefWidth="231.0" style="-fx-font-size: 16; -fx-font-weight: Bold;" text="STATE" textAlignment="CENTER" textFill="#fe5721">
+            <Label fx:id="itemState" alignment="CENTER_RIGHT" prefHeight="117.0" prefWidth="253.0" style="-fx-font-size: 16; -fx-font-weight: Bold;" text="STATE" textAlignment="CENTER" textFill="#fe5721" HBox.hgrow="ALWAYS">
                <font>
                   <Font size="14.0" />
                </font>
@@ -32,29 +29,52 @@
             <Insets />
          </VBox.margin>
       </HBox>
-      <StackPane fx:id="productImage" prefHeight="177.0" prefWidth="202.0" style="-fx-background-color: #e9e4de; -fx-background-radius: 15;">
+      <StackPane fx:id="productImage" prefHeight="8.0" prefWidth="202.0" style="-fx-background-color: #e9e4de; -fx-background-radius: 15;">
          <children>
-            <ImageView fitHeight="117.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="itemIMage" fitHeight="122.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
          </children>
          <VBox.margin>
-            <Insets />
+            <Insets bottom="15.0" />
          </VBox.margin>
       </StackPane>
-      <Region prefHeight="96.0" prefWidth="202.0" />
-      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="15.0">
+      <HBox prefHeight="65.0" prefWidth="244.0">
          <children>
-            <Label fx:id="currentPrice" text="Current Price" />
-            <Button contentDisplay="CENTER" mnemonicParsing="false" onAction="#buyOut" prefHeight="25.0" prefWidth="75.0" style="-fx-background-radius: 15; -fx-background-color: #fe5721;" text="Buy Out" textFill="WHITE">
-               <font>
-                  <Font name="System Bold" size="12.0" />
-               </font>
-            </Button>
+            <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <Label alignment="CENTER" prefHeight="20.0" prefWidth="152.0" style="-fx-font-size: 14;" text="Current Price" textAlignment="CENTER" textFill="#9ca3af" />
+                  <HBox spacing="1.0">
+                     <children>
+                        <Label alignment="TOP_RIGHT" prefHeight="45.0" prefWidth="135.0" style="-fx-font-size: 20; -fx-font-weight: bold;" text="\$" />
+                        <Label fx:id="currentPrice" alignment="TOP_LEFT" prefHeight="45.0" prefWidth="149.0" style="-fx-font-size: 20; -fx-font-weight: bold;" text="00" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+            <Separator depthTest="DISABLE" orientation="VERTICAL" prefHeight="200.0">
+               <HBox.margin>
+                  <Insets left="13.0" right="7.0" />
+               </HBox.margin>
+            </Separator>
+            <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <Label alignment="CENTER" prefHeight="17.0" prefWidth="233.0" style="-fx-font-size: 14;" text="Buy Out" textFill="#9ca3af" />
+                  <HBox prefHeight="65.0" prefWidth="47.0" spacing="1.0">
+                     <children>
+                        <Label alignment="TOP_RIGHT" prefHeight="45.0" prefWidth="136.0" style="-fx-font-size: 20; -fx-font-weight: bold;" text="\$" />
+                        <Label fx:id="buyOutPrice" alignment="TOP_LEFT" prefHeight="45.0" prefWidth="149.0" style="-fx-font-size: 20; -fx-font-weight: bold;" text="00" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
          </children>
+         <VBox.margin>
+            <Insets bottom="10.0" />
+         </VBox.margin>
       </HBox>
-      <Label fx:id="description" prefHeight="123.0" prefWidth="241.0" text="Description" />
+      <Label fx:id="productDescription" alignment="TOP_LEFT" prefHeight="62.0" prefWidth="202.0" text="Description" />
    </children>
    <padding>
-      <Insets left="17.0" right="17.0" top="10.0" />
+      <Insets left="17.0" right="17.0" top="5.0" />
    </padding>
    <effect>
       <DropShadow offsetY="2.0">
@@ -63,4 +83,7 @@
          </color>
       </DropShadow>
    </effect>
+   <cursor>
+      <Cursor fx:constant="HAND" />
+   </cursor>
 </VBox>
