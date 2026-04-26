@@ -26,7 +26,7 @@ public class SellProductInfoController implements AuctionUpdateListener {
 
     public void initData(Auction auction){
         this.auction = auction;
-
+        updateData();
         ClientService.getInstance().addListener(this);
 
     }
