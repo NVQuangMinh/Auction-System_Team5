@@ -24,12 +24,12 @@
                     <children>
                         <VBox prefHeight="475.0" prefWidth="323.0" HBox.hgrow="ALWAYS">
                             <children>
-                                <Label prefHeight="57.0" prefWidth="498.0" style="-fx-font-size: 25; -fx-font-weight: bold;" text="Product Name" textFill="#fc5421">
+                                <Label fx:id="itemName" prefHeight="57.0" prefWidth="498.0" style="-fx-font-size: 25; -fx-font-weight: bold;" text="Product Name" textFill="#fc5421">
                                     <opaqueInsets>
                                         <Insets />
                                     </opaqueInsets>
                                 </Label>
-                                <Label prefHeight="42.0" prefWidth="465.0" style="-fx-font-size: 16;" text="Description">
+                                <Label fx:id="description" prefHeight="42.0" prefWidth="465.0" style="-fx-font-size: 16;" text="Description">
                                     <VBox.margin>
                                         <Insets bottom="14.0" />
                                     </VBox.margin>
@@ -66,7 +66,7 @@
                                                 <Insets left="15.0" />
                                             </padding>
                                         </Label>
-                                        <Label prefHeight="105.0" prefWidth="193.0" style="-fx-font-size: 30; -fx-font-weight: bold;" text="\$00" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.valignment="TOP" GridPane.vgrow="ALWAYS">
+                                        <Label fx:id="currentPrice" prefHeight="105.0" prefWidth="193.0" style="-fx-font-size: 30; -fx-font-weight: bold;" text="\$00" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.valignment="TOP" GridPane.vgrow="ALWAYS">
                                             <padding>
                                                 <Insets left="15.0" />
                                             </padding>

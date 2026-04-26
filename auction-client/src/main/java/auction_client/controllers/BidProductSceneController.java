@@ -9,7 +9,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.layout.FlowPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
@@ -56,9 +59,27 @@ public class BidProductSceneController implements Initializable, AuctionUpdateLi
     }
 
     private void openAuctionDetail(Auction auction) {
+        try{
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/auction_client/SellProductInfo.fxml"));
+            Parent root = loader.load();
 
-        //switch scene sang SellProductInfo
-        //dung parameter auction de lay thong tin nha wibu
+            SellProductInfoController controller = loader.getController();
+            controller.initData(auction);
+
+            Stage sellProductInfoStage = new Stage();
+            sellProductInfoStage.setTitle("Auction Detail");
+            sellProductInfoStage.setResizable(false);
+            sellProductInfoStage.initModality(Modality.APPLICATION_MODAL);
+            sellProductInfoStage.setScene(new Scene(root));
+            sellProductInfoStage.setOnCloseRequest(event -> {
+                controller.cleanUp();
+            });
+            sellProductInfoStage.show();
+
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void onUpdateReceived(NetworkMessage msg) {
@@ -66,9 +87,6 @@ public class BidProductSceneController implements Initializable, AuctionUpdateLi
         if (action.equals("GET_PRODUCTS")){
             List<Auction> auctions = (List<Auction>) msg.getData();
             Platform.runLater(() -> updateProductList(auctions));
-        }
-        else if (action.equals("UPDATE_BID")){
-
         }
     }
 }

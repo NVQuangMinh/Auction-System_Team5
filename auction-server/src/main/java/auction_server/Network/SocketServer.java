@@ -1,5 +1,7 @@
 package auction_server.Network;
 
+import auction_server.core.AuctionManager;
+
 import java.io.IOException;
 import java.net.Socket;
 import java.net.ServerSocket;
@@ -15,7 +17,9 @@ public class SocketServer {
             while (true) {
                 Socket clientSocket = serverSocket.accept();
                 System.out.println("A new client connected!");
-                executor.submit(new ClientHandler(clientSocket));
+                ClientHandler clientHandler = new ClientHandler(clientSocket);
+                AuctionManager.getInstance().addClient(clientHandler);
+                executor.submit(clientHandler);
             }
         }
         catch (IOException e) {

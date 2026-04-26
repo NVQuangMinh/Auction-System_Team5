@@ -10,16 +10,14 @@ public abstract class Item extends Entity implements Serializable {
     protected String itemName;
     protected String description;
     protected double startingPrice;
-    protected double currentMaxPrice;
     protected LocalDateTime endTime;
     protected User owner;
 
-    public Item(String id, String itemName, String description, double startingPrice, double currentMaxPrice, LocalDateTime endTime, User owner) {
+    public Item(String id, String itemName, String description, double startingPrice, LocalDateTime endTime, User owner) {
         super(id);
         this.itemName = itemName;
         this.description = description;
         this.startingPrice = startingPrice;
-        this.currentMaxPrice = currentMaxPrice;
         this.endTime = endTime;
         this.owner = owner;
     }
@@ -28,6 +26,9 @@ public abstract class Item extends Entity implements Serializable {
     }
     public String getDescription(){
         return this.description;
+    }
+    public double getStartingPrice(){
+        return this.startingPrice;
     }
 
 
