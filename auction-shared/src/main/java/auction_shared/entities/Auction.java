@@ -1,22 +1,42 @@
 package auction_shared.entities;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Auction implements Serializable {
     Item item;
+    double startingPrice;
+    double buyOutPrice;
+    double tickSize;
+    LocalDateTime startTime;
+    LocalDateTime endTime;
     double currentHighestBid;
-    String status;
 
-    public Auction(Item item, double currentHighestBid, String status) {
+    // BID HISTORY LIST
+    private List<BidTransaction> bidHistory = new ArrayList<>();
+
+    public Auction(Item item,double startingPrice,double buyOutPrice, double tickSize, LocalDateTime startTime, LocalDateTime endTime) {
         this.item = item;
-        this.currentHighestBid = currentHighestBid;
-        this.status = status;
+        this.startingPrice = startingPrice;
+        this.buyOutPrice = buyOutPrice;
+        this.tickSize = tickSize;
+        this.startTime = startTime;
+        this.endTime = endTime;
     }
 
-    public void addTransaction(BidTransaction transaction){}
+    public void addTransaction(BidTransaction transaction){
+        bidHistory.add(transaction);
+    }
 
     public double getCurrentHighestBid() {
-        return currentHighestBid;
+        if (bidHistory.isEmpty()){
+            return startingPrice;
+        }
+        else{
+            return currentHighestBid;
+        }
     }
 
     public void setCurrentHighestBid(double currentHighestBid) {
@@ -25,9 +45,6 @@ public class Auction implements Serializable {
 
     public Item getItem() {
         return item;
-    }
-    public String getState(){
-        return status;
     }
 
 }

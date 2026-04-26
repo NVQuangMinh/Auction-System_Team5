@@ -1,5 +1,6 @@
 package auction_server.core;
 
+import auction_server.Network.ClientHandler;
 import auction_shared.entities.Auction;
 import auction_shared.entities.BidTransaction;
 import java.util.concurrent.locks.ReentrantLock;
@@ -12,12 +13,11 @@ public class AuctionRoom {
     public boolean placeBid(BidTransaction transaction){
         lock.lock();
         try{
-            if (transaction.getBidAmount() > auction.getCurrentHighestBid()){
-                System.out.println(transaction.getBidder() + " have successfully placed the bid for item: " + auction.getItem());
-                //logic bla bla change the price and broadcast it to all the clients(not my job)
-
+            if (transaction.getBidAmount() > auction.getCurrentHighestBid() && auction.getItem().getOwner() != transaction.getBidder()){
+                // I guess this shit is gonna be used to build the diagram.
+                // oh yeah and this shit is gonna be used to determine who is the winner too.
                 auction.addTransaction(transaction);
-                auction.setCurrentHighestBid(transaction.getBidAmount());
+                auction.setCurrentHighestBid(transaction.getBidAmount()); //this line is good, leave it!
                 return true;
             }
             else{
@@ -28,7 +28,14 @@ public class AuctionRoom {
             lock.unlock();
         }
     }
-
+    public boolean buyOut(BidTransaction transaction){
+        if (transaction.getBidder() != auction.getItem().getOwner()){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
     public Auction getAuction() {
         return auction;
     }
