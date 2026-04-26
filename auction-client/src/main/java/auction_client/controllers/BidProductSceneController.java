@@ -8,11 +8,13 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.io.IOException;
 import java.net.URL;
@@ -70,6 +72,9 @@ public class BidProductSceneController implements Initializable, AuctionUpdateLi
             sellProductInfoStage.setTitle("Auction Detail");
             sellProductInfoStage.setResizable(false);
             sellProductInfoStage.initModality(Modality.APPLICATION_MODAL);
+            sellProductInfoStage.initStyle(StageStyle.DECORATED);
+
+            sellProductInfoStage.centerOnScreen();
             sellProductInfoStage.setScene(new Scene(root));
             sellProductInfoStage.setOnCloseRequest(event -> {
                 controller.cleanUp();
