@@ -14,6 +14,8 @@ public class AuctionRoom {
         lock.lock();
         try{
             if (transaction.getBidAmount() > auction.getCurrentHighestBid() && auction.getItem().getOwner() != transaction.getBidder()){
+                // we also have to deal with the price that exceed the buy out price
+
                 // I guess this shit is gonna be used to build the diagram.
                 // oh yeah and this shit is gonna be used to determine who is the winner too.
                 auction.addTransaction(transaction);
