@@ -44,6 +44,7 @@ public class SignInController implements Initializable, AuctionUpdateListener {
         }
 
         User user = new User("id", inputUsername, inputPassword);
+        UserSession.getInstance().setUser(user);
         NetworkMessage msg = new NetworkMessage("LOGIN", user);
         ClientService.getInstance().sendMessage(msg);
 
@@ -59,6 +60,7 @@ public class SignInController implements Initializable, AuctionUpdateListener {
                     UserSession.getInstance().setUsername(username.getText().trim());
                     switchToMainScene();
                 } else {
+                    UserSession.getInstance().setUser(null);
                     showAlert("Thất bại", "Tài khoản hoặc mật khẩu không chính xác!", Alert.AlertType.ERROR);
                 }
             });
