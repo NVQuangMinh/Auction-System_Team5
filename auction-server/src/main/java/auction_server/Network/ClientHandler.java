@@ -5,13 +5,16 @@ import auction_server.core.AuctionRoom;
 import auction_shared.Network.NetworkMessage;
 import auction_shared.entities.Auction;
 import auction_shared.entities.BidTransaction;
+import auction_shared.entities.Item;
 import auction_shared.entities.User;
+import auction_shared.items.Arts;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.Socket;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,6 +66,11 @@ public class ClientHandler implements Runnable{
             System.out.println(((User) msg.getData()).getUsername() + " successfully login");
         }
         else if ("GET_PRODUCTS".equals(action)){
+            User user1 = new User("id","vuminh","123456");
+            Item item1 = new Arts("01","MONA_LISA","A beautiful girl",user1);
+            Auction auction1 = new Auction(item1, 100, 1000,10, LocalDateTime.now(),LocalDateTime.now().plusMinutes(5));
+            AuctionRoom room1 = new AuctionRoom(auction1);
+            AuctionManager.getInstance().addRoom(room1);
             sendMessage(new NetworkMessage("GET_PRODUCTS", AuctionManager.getInstance().getAllRooms()));
         }
         else if ("BUY_OUT".equals(action)){
@@ -75,10 +83,9 @@ public class ClientHandler implements Runnable{
         }
         else if ("GET_MY_LIST".equals(action)){
             List<Auction> myList = new ArrayList<>();
-            User user = (User) msg.getData();
-            String id = user.getId();
+            String userName = (String) msg.getData();
             for (Auction auction : AuctionManager.getInstance().getAllRooms()){
-                if (id.equals(auction.getItem().getOwner().getId())){
+                if (userName.equals(auction.getItem().getOwner().getUsername())){
                     myList.add(auction);
                 }
             }

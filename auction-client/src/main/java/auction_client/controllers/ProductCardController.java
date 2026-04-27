@@ -25,7 +25,7 @@ public class ProductCardController {
     public void setData(Auction auction) {
         this.auction = auction;
         itemName.setText(auction.getItem().getName());
-        itemState.setText(auction.getState());
+        itemState.setText("ON-GOING");
         currentPrice.setText(String.valueOf(auction.getCurrentHighestBid()));
         description.setText(auction.getItem().getDescription());
     }

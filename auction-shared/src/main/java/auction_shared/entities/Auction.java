@@ -46,5 +46,4 @@ public class Auction implements Serializable {
     public Item getItem() {
         return item;
     }
-
 }
