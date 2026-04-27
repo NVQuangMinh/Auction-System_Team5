@@ -16,7 +16,7 @@
    <children>
       <HBox prefHeight="92.0" prefWidth="202.0">
          <children>
-            <Label fx:id="itemName" alignment="CENTER" contentDisplay="CENTER" prefHeight="46.0" prefWidth="215.0" style="-fx-font-size: 16; -fx-font-weight: bold;" text=" Item Name" textFill="#fe5721cc">
+            <Label fx:id="itemName" alignment="CENTER" contentDisplay="CENTER" prefHeight="51.0" prefWidth="225.0" style="-fx-font-size: 16; -fx-font-weight: bold;" text="ITEM NAME" textFill="#ff3c00cc">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>

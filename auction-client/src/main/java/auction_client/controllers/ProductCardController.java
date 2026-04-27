@@ -1,10 +1,10 @@
 package auction_client.controllers;
 
 import auction_client.Network.ClientService;
+import auction_client.UserSession;
 import auction_shared.Network.NetworkMessage;
 import auction_shared.entities.Auction;
 import auction_shared.entities.BidTransaction;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
@@ -31,9 +31,10 @@ public class ProductCardController {
     }
 
     @FXML
-    public void buyOut(ActionEvent event){
+    public void buyOut(){
         //null == BidTransaction nhe anh em!
-        ClientService.getInstance().sendMessage(new NetworkMessage("BUY_OUT", null));
+        BidTransaction transaction = new BidTransaction(auction, UserSession.getInstance().getUser(), 0);
+        ClientService.getInstance().sendMessage(new NetworkMessage("BUY_OUT", transaction));
 
     }
 }

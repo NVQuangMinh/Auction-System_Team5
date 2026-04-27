@@ -7,7 +7,6 @@ import auction_shared.Network.NetworkMessage;
 import auction_shared.entities.Auction;
 import auction_shared.entities.BidTransaction;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
