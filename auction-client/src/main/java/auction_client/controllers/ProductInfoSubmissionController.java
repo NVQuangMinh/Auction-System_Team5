@@ -27,7 +27,7 @@ public class ProductInfoSubmissionController {
     @FXML
     private ImageView addImageButton;
     @FXML
-    private Button submitButton;
+    public Button submitButton;
 
     @FXML
     private void handleAddImage() {
@@ -45,6 +45,17 @@ public class ProductInfoSubmissionController {
 
         System.out.println("Product Submitted: " + name);
     }
+
+    @FXML
+    public void addItem(ActionEvent event){
+        // create a user as owner
+        // create an Item object
+        // create an auction object
+        // new NetworkMessage("SELL",auction);
+        //close the window after finish adding item
+        switchToUserProductList(event);
+    }
+
     @FXML
     private void switchToUserProductList(ActionEvent event) {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();

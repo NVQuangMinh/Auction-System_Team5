@@ -28,8 +28,6 @@ public class SellProductSceneController implements Initializable, AuctionUpdateL
     @FXML
     public AnchorPane overlayPane;
     @FXML
-    private WebMenuBarController menuBarController;
-    @FXML
     FlowPane myListFlowPane;
 
     @FXML
