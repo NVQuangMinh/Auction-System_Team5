@@ -43,6 +43,8 @@ public class SellProductInfoController implements AuctionUpdateListener {
         Platform.runLater(() ->{
             currentPrice.setText(String.valueOf(auction.getCurrentHighestBid()));
             itemName.setText(auction.getItem().getName());
+            buyOut.setText(String.valueOf(auction.getBuyOutPrice()));
+            tickRate.setText(String.valueOf(auction.getTickSize()));
             description.setText(auction.getItem().getDescription());
         });
     }

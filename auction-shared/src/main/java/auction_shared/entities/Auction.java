@@ -6,16 +6,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Auction implements Serializable {
-    Item item;
-    double startingPrice;
-    double buyOutPrice;
-    double tickSize;
-    LocalDateTime startTime;
-    LocalDateTime endTime;
-    double currentHighestBid;
+    private final Item item;
+    private final double startingPrice;
+    private final double buyOutPrice;
+    private final double tickSize;
+    private final LocalDateTime startTime;
+    private LocalDateTime endTime;
+    private double currentHighestBid;
 
     // BID HISTORY LIST
-    private List<BidTransaction> bidHistory = new ArrayList<>();
+    private final List<BidTransaction> bidHistory = new ArrayList<>();
 
     public Auction(Item item,double startingPrice,double buyOutPrice, double tickSize, LocalDateTime startTime, LocalDateTime endTime) {
         this.item = item;
@@ -45,5 +45,25 @@ public class Auction implements Serializable {
 
     public Item getItem() {
         return item;
+    }
+
+    public double getStartingPrice() {
+        return startingPrice;
+    }
+
+    public double getBuyOutPrice() {
+        return buyOutPrice;
+    }
+
+    public double getTickSize() {
+        return tickSize;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        return endTime;
     }
 }
