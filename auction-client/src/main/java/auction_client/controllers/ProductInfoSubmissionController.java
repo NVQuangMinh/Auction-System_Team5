@@ -48,7 +48,7 @@ public class ProductInfoSubmissionController {
 
     @FXML
     public void addItem(ActionEvent event){
-        // create a user as owner
+        // owner = UserSession.getUser();
         // create an Item object
         // create an auction object
         // new NetworkMessage("SELL",auction);
