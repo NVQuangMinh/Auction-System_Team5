@@ -50,6 +50,8 @@ public class ClientHandler implements Runnable{
         String action = msg.getAction();
         if ("PLACE_BID".equals(action)) {
             BidTransactionDTO transactionDTO = (BidTransactionDTO) msg.getData();
+            // create a user by searching in database using transactionDTO.getBidder().getId()
+            // and then when creating transaction, replace null = user.
             BidTransaction transaction = new BidTransaction(
                 AuctionManager.getInstance().getRoom(transactionDTO.getAuction().getItem().getId()),
                 null,
@@ -81,6 +83,8 @@ public class ClientHandler implements Runnable{
         }
         else if ("BUY_OUT".equals(action)){
             BidTransactionDTO transactionDTO = (BidTransactionDTO) msg.getData();
+            // create a user by searching in database using transactionDTO.getBidder().getId()
+            // and then when creating transaction, replace null = user.
             BidTransaction transaction = new BidTransaction(
                 AuctionManager.getInstance().getRoom(transactionDTO.getAuction().getItem().getId()),
                 null,
