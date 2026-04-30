@@ -1,13 +1,13 @@
 package auction_server.Network;
 
 import auction_server.core.AuctionManager;
-import auction_server.core.AuctionRoom;
+import auction_server.entities.Auction;
+import auction_server.entities.BidTransaction;
+import auction_server.entities.Item;
+import auction_server.entities.User;
+import auction_server.entities.items.Arts;
+import auction_server.mapper.Mappers;
 import auction_shared.Network.NetworkMessage;
-import auction_shared.entities.Auction;
-import auction_shared.entities.BidTransaction;
-import auction_shared.entities.Item;
-import auction_shared.entities.User;
-import auction_shared.items.Arts;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -46,11 +46,15 @@ public class ClientHandler implements Runnable{
     }
     private void handleRequest(NetworkMessage msg) {
         String action = msg.getAction();
+        User user1 = new User("id","vuminh","123456");
+        Item item1 = new Arts("01","MONA_LISA","A beautiful girl",user1);
+        Auction auction1 = new Auction(item1, 100, 1000,10, LocalDateTime.now(),LocalDateTime.now().plusMinutes(5));
+        AuctionManager.getInstance().addRoom(auction1);
         if ("PLACE_BID".equals(action)) {
             BidTransaction transaction = (BidTransaction) msg.getData();
-            AuctionRoom auctionRoom = AuctionManager.getInstance().getRoom(transaction.getAuction().getItem().getId());
-            if (auctionRoom != null) {
-                if (auctionRoom.placeBid(transaction)) {
+            Auction auction = AuctionManager.getInstance().getRoom(transaction.getAuction().getItem().getId());
+            if (auction != null) {
+                if (auction.placeBid(transaction)) {
                     sendMessage(new NetworkMessage("BID_SUCCESS", null));
                     AuctionManager.getInstance().broadCast(new NetworkMessage("UPDATE_BID", null));
                 }
@@ -66,17 +70,12 @@ public class ClientHandler implements Runnable{
             System.out.println(((User) msg.getData()).getUsername() + " successfully login");
         }
         else if ("GET_PRODUCTS".equals(action)){
-            User user1 = new User("id","vuminh","123456");
-            Item item1 = new Arts("01","MONA_LISA","A beautiful girl",user1);
-            Auction auction1 = new Auction(item1, 100, 1000,10, LocalDateTime.now(),LocalDateTime.now().plusMinutes(5));
-            AuctionRoom room1 = new AuctionRoom(auction1);
-            AuctionManager.getInstance().addRoom(room1);
-            sendMessage(new NetworkMessage("GET_PRODUCTS", AuctionManager.getInstance().getAllRooms()));
+            sendMessage(new NetworkMessage("GET_PRODUCTS", (Serializable) Mappers.toAuctionDTOList(AuctionManager.getInstance().getAllRooms())));
         }
         else if ("BUY_OUT".equals(action)){
             BidTransaction transaction = (BidTransaction) msg.getData();
-            AuctionRoom auctionRoom = AuctionManager.getInstance().getRoom(transaction.getAuction().getItem().getId());
-            if (auctionRoom.buyOut(transaction)){
+            Auction auction = AuctionManager.getInstance().getRoom(transaction.getAuction().getItem().getId());
+            if (auction.buyOut(transaction)){
                 sendMessage(new NetworkMessage("BUYOUT_SUCCESS", null));
                 AuctionManager.getInstance().broadCast(new NetworkMessage("UPDATE_BID",null));
             }
@@ -89,7 +88,7 @@ public class ClientHandler implements Runnable{
                     myList.add(auction);
                 }
             }
-            sendMessage(new NetworkMessage("GET_MY_LIST",(Serializable) myList));
+            sendMessage(new NetworkMessage("GET_MY_LIST",(Serializable) Mappers.toAuctionDTOList(myList)));
         }
         else if ("CREATE_ACCOUNT".equals(action)){
             //Check database to see if this user existed

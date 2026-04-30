@@ -3,7 +3,7 @@ package auction_client.controllers;
 import auction_client.AuctionUpdateListener;
 import auction_client.Network.ClientService;
 import auction_shared.Network.NetworkMessage;
-import auction_shared.entities.Auction;
+import auction_shared.dto.AuctionDTO;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -30,12 +30,12 @@ public class BidProductSceneController implements Initializable, AuctionUpdateLi
         ClientService.getInstance().sendMessage(new NetworkMessage("GET_PRODUCTS", null));
     }
 
-    public void updateProductList(List<Auction> auctions) {
+    public void updateProductList(List<AuctionDTO> auctions) {
         Platform.runLater(() -> {
             // 1. Xóa các card cũ để tránh trùng lặp khi cập nhật
             productFlowPane.getChildren().clear();
 
-            for (Auction auction : auctions) {
+            for (AuctionDTO auction : auctions) {
                 try {
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("/auction_client/ProductCard.fxml"));
                     Parent card = loader.load();
@@ -59,7 +59,7 @@ public class BidProductSceneController implements Initializable, AuctionUpdateLi
         });
     }
 
-    private void openAuctionDetail(Auction auction) {
+    private void openAuctionDetail(AuctionDTO auction) {
         try{
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/auction_client/SellProductInfo.fxml"));
             Parent root = loader.load();
@@ -89,7 +89,7 @@ public class BidProductSceneController implements Initializable, AuctionUpdateLi
     public void onUpdateReceived(NetworkMessage msg) {
         String action = msg.getAction();
         if (action.equals("GET_PRODUCTS")){
-            List<Auction> auctions = (List<Auction>) msg.getData();
+            List<AuctionDTO> auctions = (List<AuctionDTO>) msg.getData();
             Platform.runLater(() -> updateProductList(auctions));
         }
     }

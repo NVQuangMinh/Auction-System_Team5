@@ -4,7 +4,7 @@ import auction_client.AuctionUpdateListener;
 import auction_client.Network.ClientService;
 import auction_client.UserSession;
 import auction_shared.Network.NetworkMessage;
-import auction_shared.entities.Auction;
+import auction_shared.dto.AuctionDTO;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -48,10 +48,10 @@ public class SellProductSceneController implements Initializable, AuctionUpdateL
         stage.show();
     }
 
-    public void updateMyList(List<Auction> auctions){
+    public void updateMyList(List<AuctionDTO> auctions){
         Platform.runLater(()->{
             myListFlowPane.getChildren().clear();
-            for (Auction auction : auctions) {
+            for (AuctionDTO auction : auctions) {
                 try {
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("/auction_client/ProductCard.fxml"));
                     Parent card = loader.load();
@@ -80,7 +80,7 @@ public class SellProductSceneController implements Initializable, AuctionUpdateL
     public void onUpdateReceived(NetworkMessage msg) {
         String action = msg.getAction();
         if (action.equals("GET_MY_LIST")){
-            List<Auction> auctions = (List<Auction>) msg.getData();
+            List<AuctionDTO> auctions = (List<AuctionDTO>) msg.getData();
             Platform.runLater(() -> updateMyList(auctions));
         }
 
@@ -92,7 +92,7 @@ public class SellProductSceneController implements Initializable, AuctionUpdateL
         ClientService.getInstance().sendMessage(new NetworkMessage("GET_MY_LIST", UserSession.getInstance().getUsername()));
     }
 
-    private void openAuctionDetail(Auction auction) {
+    private void openAuctionDetail(AuctionDTO auction) {
         try{
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/auction_client/SellProductInfo.fxml"));
             Parent root = loader.load();

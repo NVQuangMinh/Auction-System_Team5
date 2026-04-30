@@ -3,7 +3,7 @@ package auction_client.controllers;
 import auction_client.AuctionUpdateListener;
 import auction_client.Network.ClientService;
 import auction_client.UserSession;
-import auction_shared.entities.User;
+import auction_shared.dto.UserDTO;
 import auction_shared.Network.NetworkMessage;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -43,7 +43,7 @@ public class SignInController implements Initializable, AuctionUpdateListener {
             return;
         }
 
-        User user = new User("id", inputUsername, inputPassword);
+        UserDTO user = new UserDTO("id", inputUsername);
         UserSession.getInstance().setUser(user);
         NetworkMessage msg = new NetworkMessage("LOGIN", user);
         ClientService.getInstance().sendMessage(msg);

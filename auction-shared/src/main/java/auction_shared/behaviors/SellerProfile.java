@@ -1,6 +1,6 @@
 package auction_shared.behaviors;
 
-import auction_shared.entities.Item;
+import auction_server.entities.Item;
 import auction_shared.interfaces.SellerAction;
 
 import java.io.Serializable;

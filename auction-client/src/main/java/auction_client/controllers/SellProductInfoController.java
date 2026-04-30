@@ -4,8 +4,8 @@ import auction_client.AuctionUpdateListener;
 import auction_client.Network.ClientService;
 import auction_client.UserSession;
 import auction_shared.Network.NetworkMessage;
-import auction_shared.entities.Auction;
-import auction_shared.entities.BidTransaction;
+import auction_shared.dto.AuctionDTO;
+import auction_shared.dto.BidTransactionDTO;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -29,10 +29,10 @@ public class SellProductInfoController implements AuctionUpdateListener {
     @FXML
     TextField bidAmount;
 
-    Auction auction = null;
+    AuctionDTO auction = null;
 
 
-    public void initData(Auction auction){
+    public void initData(AuctionDTO auction){
         this.auction = auction;
         updateData();
         ClientService.getInstance().addListener(this);
@@ -52,7 +52,7 @@ public class SellProductInfoController implements AuctionUpdateListener {
     public void onUpdateReceived(NetworkMessage msg) {
         String action = msg.getAction();
         if (action.equals("UPDATE_BID")){
-            Auction updatedAuction = (Auction) msg.getData();
+            AuctionDTO updatedAuction = (AuctionDTO) msg.getData();
             if (updatedAuction.getItem().getId().equals(auction.getItem().getId())){
                 this.auction = updatedAuction;
                 updateData();
@@ -63,7 +63,7 @@ public class SellProductInfoController implements AuctionUpdateListener {
 
     @FXML
     public void placeBidRequest(){
-        BidTransaction transaction = new BidTransaction(auction, UserSession.getInstance().getUser(),Double.parseDouble(bidAmount.getText()));
+        BidTransactionDTO transaction = new BidTransactionDTO(auction, UserSession.getInstance().getUser(),Double.parseDouble(bidAmount.getText()));
         ClientService.getInstance().sendMessage(new NetworkMessage("PLACE_BID", transaction));
     }
 

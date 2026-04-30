@@ -1,0 +1,61 @@
+package auction_server.mapper;
+
+import auction_server.entities.Auction;
+import auction_server.entities.BidTransaction;
+import auction_server.entities.Item;
+import auction_server.entities.User;
+import auction_shared.dto.AuctionDTO;
+import auction_shared.dto.BidTransactionDTO;
+import auction_shared.dto.ItemDTO;
+import auction_shared.dto.UserDTO;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Mappers {
+    
+    public static UserDTO toDTO(User user) {
+        if (user == null) return null;
+        return new UserDTO(user.getId(), user.getUsername());
+    }
+
+    public static ItemDTO toDTO(Item item) {
+        if (item == null) return null;
+        return new ItemDTO(
+            item.getId(),
+            item.getName(),
+            item.getDescription(),
+            toDTO(item.getOwner())
+        );
+    }
+
+    public static AuctionDTO toDTO(Auction auction) {
+        if (auction == null) return null;
+        return new AuctionDTO(
+            toDTO(auction.getItem()),
+            auction.getStartingPrice(),
+            auction.getBuyOutPrice(),
+            auction.getTickSize(),
+            auction.getStartTime(),
+            auction.getEndTime(),
+            auction.getCurrentHighestBid()
+        );
+    }
+
+    public static BidTransactionDTO toDTO(BidTransaction transaction) {
+        if (transaction == null) return null;
+        return new BidTransactionDTO(
+            toDTO(transaction.getAuction()),
+            toDTO(transaction.getBidder()),
+            transaction.getBidAmount()
+        );
+    }
+
+    public static List<AuctionDTO> toAuctionDTOList(List<Auction> auctions) {
+        List<AuctionDTO> dtos = new ArrayList<>();
+        for (Auction auction : auctions) {
+            dtos.add(toDTO(auction));
+        }
+        return dtos;
+    }
+}
