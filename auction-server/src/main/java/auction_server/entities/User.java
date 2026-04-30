@@ -1,9 +1,9 @@
 package auction_server.entities;
 
 import auction_server.base.Entity;
-import auction_shared.behaviors.AdminProfile;
-import auction_shared.interfaces.BidderAction;
-import auction_shared.interfaces.SellerAction;
+import auction_server.behaviors.AdminProfile;
+import auction_server.interfaces.BidderAction;
+import auction_server.interfaces.SellerAction;
 
 import java.io.Serializable;
 

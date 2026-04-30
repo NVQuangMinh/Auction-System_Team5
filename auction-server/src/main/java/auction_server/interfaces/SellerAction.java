@@ -1,4 +1,4 @@
-package auction_shared.interfaces;
+package auction_server.interfaces;
 
 import auction_server.entities.Item;
 

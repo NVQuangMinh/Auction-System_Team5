@@ -1,4 +1,4 @@
-package auction_shared.behaviors;
+package auction_server.behaviors;
 
 import auction_server.entities.Auction;
 import auction_server.entities.User;
