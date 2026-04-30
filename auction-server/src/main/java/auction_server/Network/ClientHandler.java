@@ -110,6 +110,7 @@ public class ClientHandler implements Runnable{
             //Check database to see if this user existed
             //Send isSuccess to confirm the action
             //that's all (:
+            sendMessage(new NetworkMessage("CREATE_ACCOUNT",(Boolean) true));
         }
     }
 

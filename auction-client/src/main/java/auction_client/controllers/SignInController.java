@@ -34,7 +34,7 @@ public class SignInController implements Initializable, AuctionUpdateListener {
     }
 
     @FXML
-    public void onSignInClicked(ActionEvent event) {
+    public void onSignInClicked() {
         String inputUsername = username.getText().trim();
         String inputPassword = password.getText();
 
