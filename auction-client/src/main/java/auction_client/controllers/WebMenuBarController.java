@@ -66,7 +66,6 @@ public class WebMenuBarController implements Initializable {
 
     @FXML
     public void switchToProductScene(ActionEvent event) throws IOException {
-        ClientService.getInstance().sendMessage(new NetworkMessage("GET_PRODUCTS", null));
         switchSceneFromMenuItem("/auction_client/BidProductScene.fxml");
     }
 
