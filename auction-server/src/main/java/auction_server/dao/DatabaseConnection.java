@@ -5,15 +5,15 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DatabaseConnection {
-    // Thay đổi thông tin theo cấu hình PostgreSQL của bạn
+    // Thay đổi thông tin theo cấu hình PostgreSQL
     private static final String URL = "jdbc:postgresql://localhost:5432/auction_db";
     private static final String USER = "postgres";
-    private static final String PASSWORD = "your_password"; // Nhập mật khẩu của bạn ở đây
+    private static final String PASSWORD = "811168";
 
     private static Connection connection = null;
 
     private DatabaseConnection() {
-        // Private constructor to prevent instantiation
+      //Singleton
     }
 
     public static Connection getConnection() {
