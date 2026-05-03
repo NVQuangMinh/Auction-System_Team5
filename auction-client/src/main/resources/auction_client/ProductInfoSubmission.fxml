@@ -75,19 +75,25 @@
             </TextField>
          </children>
       </HBox>
-      <TextField fx:id="tickSize" prefHeight="50.0" prefWidth="438.0" promptText="Tick Size" style="-fx-background-radius: 10;">
-         <font>
-            <Font size="15.0" />
-         </font>
-         <cursor>
-            <Cursor fx:constant="TEXT" />
-         </cursor>
-      </TextField>
-      <HBox prefHeight="37.0" prefWidth="438.0">
+      <HBox prefHeight="50.0" prefWidth="438.0">
          <children>
-            <ChoiceBox prefHeight="50.0" prefWidth="195.5" />
+            <TextField fx:id="tickSize" prefHeight="50.0" prefWidth="205.0" promptText="Tick Size" style="-fx-background-radius: 10;">
+               <font>
+                  <Font size="15.0" />
+               </font>
+               <cursor>
+                  <Cursor fx:constant="TEXT" />
+               </cursor>
+            </TextField>
+            <Region prefHeight="50.0" prefWidth="31.0" />
+            <ChoiceBox fx:id="types" prefHeight="40.0" prefWidth="207.0" />
+         </children>
+      </HBox>
+      <HBox prefHeight="40.0" prefWidth="438.0">
+         <children>
+            <ChoiceBox prefHeight="40.0" prefWidth="195.5" />
             <Region prefHeight="37.0" prefWidth="14.0" HBox.hgrow="ALWAYS" />
-            <DatePicker prefHeight="50.0" prefWidth="195.5" promptText="End Bid Date" />
+            <DatePicker prefHeight="40.0" prefWidth="195.5" promptText="End Bid Date" />
          </children>
       </HBox>
       <HBox alignment="CENTER_RIGHT" prefHeight="33.0" prefWidth="438.0">
