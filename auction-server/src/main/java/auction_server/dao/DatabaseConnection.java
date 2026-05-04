@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DatabaseConnection {
-    // Thay đổi thông tin theo cấu hình PostgreSQL
+    // Cấu hình PostgreSQL
     private static final String URL = "jdbc:postgresql://localhost:5432/auction_db";
     private static final String USER = "postgres";
     private static final String PASSWORD = "811168";
