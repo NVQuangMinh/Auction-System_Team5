@@ -7,8 +7,10 @@ import auction_server.entities.Item;
 import auction_server.entities.User;
 import auction_server.entities.items.Arts;
 import auction_server.mapper.Mappers;
+import auction_server.service.UserService;
 import auction_shared.Network.NetworkMessage;
 import auction_shared.dto.BidTransactionDTO;
+import auction_shared.dto.SignUpDTO;
 import auction_shared.dto.UserDTO;
 
 import java.io.IOException;
@@ -24,6 +26,7 @@ public class ClientHandler implements Runnable{
     private Socket socket;
     private ObjectOutputStream out;
     private ObjectInputStream in;
+    private final UserService userService = new UserService();
 
     public ClientHandler(Socket socket) { this.socket = socket; }
 
@@ -70,9 +73,11 @@ public class ClientHandler implements Runnable{
         }
         else if ("SELL".equals(action)){}
         else if ("LOGIN".equals(action)){
-            /// anh em check database o day sau do gui lai confirmation (isSuccess) cho client nhe!
-            sendMessage(new NetworkMessage("LOGIN", (Boolean) true));
-            System.out.println(((UserDTO) msg.getData()).getUsername() + " successfully login");
+            SignUpDTO dto = (SignUpDTO) msg.getData();
+            User user = userService.login(dto.getUsername(), dto.getPassword());
+            boolean isSuccess = user != null;
+            sendMessage(new NetworkMessage("LOGIN", isSuccess));
+            System.out.println(dto.getUsername() + (isSuccess ? " successfully login" : " failed to login"));
         }
         else if ("GET_PRODUCTS".equals(action)){
             User user1 = new User("id","vuminh","123456");
@@ -107,10 +112,10 @@ public class ClientHandler implements Runnable{
             sendMessage(new NetworkMessage("GET_MY_LIST",(Serializable) Mappers.toAuctionDTOList(myList)));
         }
         else if ("CREATE_ACCOUNT".equals(action)){
-            //Check database to see if this user existed
-            //Send isSuccess to confirm the action
-            //that's all (:
-            sendMessage(new NetworkMessage("CREATE_ACCOUNT",(Boolean) true));
+            SignUpDTO dto = (SignUpDTO) msg.getData();
+            User newUser = new User(dto.getId(), dto.getUsername(), dto.getPassword());
+            boolean isSuccess = userService.register(newUser);
+            sendMessage(new NetworkMessage("CREATE_ACCOUNT", isSuccess));
         }
     }
 
