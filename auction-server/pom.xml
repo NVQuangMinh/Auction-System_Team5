@@ -24,6 +24,13 @@
             <artifactId>postgresql</artifactId>
             <version>42.7.3</version>
         </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <!-- không cần khai báo version, kế thừa từ parent pom rồi nhá-->
+        </dependency>
+
     </dependencies>
 
     <build>
