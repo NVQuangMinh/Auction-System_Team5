@@ -2,6 +2,9 @@ package auction_client.Network;
 
 import auction_client.AuctionUpdateListener;
 import auction_shared.Network.NetworkMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
 import java.net.Socket;
 import java.util.List;
@@ -63,7 +66,7 @@ public class ClientService {
                     handleServerResponse(response);
                 }
             } catch (Exception e) {
-                System.out.println("Lost connection to server.");
+                log.info("Lost connection to server.");
                 isRunning = false;
             }
         });
