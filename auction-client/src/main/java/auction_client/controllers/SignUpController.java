@@ -20,6 +20,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.UUID;
 
 public class SignUpController implements Initializable, AuctionUpdateListener {
     @FXML
@@ -70,9 +71,11 @@ public class SignUpController implements Initializable, AuctionUpdateListener {
                 confirmpassword.clear();
                 return;
             }
+            // Bộ sinh số ngẫu nhiên để tránh trùng với id (id và primary key)
+            String newId = UUID.randomUUID().toString();
 
-            SignUpDTO request = new SignUpDTO("id",inputUsername,inputPassword);
-            UserSession.getInstance().setUser(new UserDTO("id", inputUsername));
+            SignUpDTO request = new SignUpDTO(newId, inputUsername, inputPassword);
+            UserSession.getInstance().setUser(new UserDTO(newId, inputUsername));
             ClientService.getInstance().sendMessage(new NetworkMessage("CREATE_ACCOUNT", request));
         }
     }
