@@ -12,6 +12,8 @@ import auction_shared.Network.NetworkMessage;
 import auction_shared.dto.BidTransactionDTO;
 import auction_shared.dto.SignUpDTO;
 import auction_shared.dto.UserDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -23,6 +25,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ClientHandler implements Runnable{
+
+    private static final Logger log = LoggerFactory.getLogger(SocketServer.class);
+
     private Socket socket;
     private ObjectOutputStream out;
     private ObjectInputStream in;
@@ -46,7 +51,7 @@ public class ClientHandler implements Runnable{
             out.writeObject(msg);
             out.flush();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.info("fail to send message",e);
         }
     }
     private void handleRequest(NetworkMessage msg) {
@@ -77,7 +82,7 @@ public class ClientHandler implements Runnable{
             User user = userService.login(dto.getUsername(), dto.getPassword());
             boolean isSuccess = user != null;
             sendMessage(new NetworkMessage("LOGIN", isSuccess));
-            System.out.println(dto.getUsername() + (isSuccess ? " successfully login" : " failed to login"));
+            log.info(dto.getUsername() + (isSuccess ? " successfully login" : " failed to login"));
         }
         else if ("GET_PRODUCTS".equals(action)){
             User user1 = new User("id","vuminh","123456");
