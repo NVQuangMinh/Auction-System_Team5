@@ -26,7 +26,7 @@ import java.util.List;
 
 public class ClientHandler implements Runnable{
 
-    private static final Logger log = LoggerFactory.getLogger(SocketServer.class);
+    private static final Logger log = LoggerFactory.getLogger(ClientHandler.class);
 
     private Socket socket;
     private ObjectOutputStream out;
