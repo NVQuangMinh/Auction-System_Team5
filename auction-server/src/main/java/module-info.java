@@ -2,6 +2,8 @@ module auction.server {
 
     requires auction.shared;
     requires java.sql;
+    requires org.slf4j;
+    requires ch.qos.logback.classic;
 
     exports auction_server.core;
     exports auction_server.entities;
