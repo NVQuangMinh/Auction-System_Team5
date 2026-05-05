@@ -10,6 +10,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 
 public class ClientService {
+    private static final Logger log = LoggerFactory.getLogger(ClientService.class);
+
     private static ClientService instance;
     private Socket socket;
     private ObjectOutputStream out;

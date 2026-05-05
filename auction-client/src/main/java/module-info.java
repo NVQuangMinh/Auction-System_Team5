@@ -3,6 +3,9 @@ module auction.client {
     requires javafx.fxml;
     requires java.desktop;
     requires auction.shared;
+    requires org.slf4j;
+    requires ch.qos.logback.classic;
+
 
     exports auction_client.launcher;
     exports auction_client.controllers;
