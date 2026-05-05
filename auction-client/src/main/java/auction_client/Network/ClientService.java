@@ -66,7 +66,7 @@ public class ClientService {
                     handleServerResponse(response);
                 }
             } catch (Exception e) {
-                log.info("Lost connection to server.");
+                log.warn("Lost connection to server.");
                 isRunning = false;
             }
         });
