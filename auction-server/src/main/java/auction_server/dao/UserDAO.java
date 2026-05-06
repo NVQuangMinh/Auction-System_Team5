@@ -8,7 +8,10 @@ import java.sql.SQLException;
 
 public class UserDAO {
     public boolean insertUser(User user) {
+
+        // Dùng ? để chống SQL Injection.
         String sql = "INSERT INTO users (id, username, password) VALUES (?, ?, ?)";
+
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
@@ -26,6 +29,9 @@ public class UserDAO {
 
     public User getUserByUsername(String username) {
         String sql = "SELECT * FROM users WHERE username = ?";
+
+        // Cấu trúc try - with - resource tự động gọi close() đóng tài nguyên mỗi khi kết thúc
+        // cho nên không cần lệnh close connection
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
