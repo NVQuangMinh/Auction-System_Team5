@@ -4,6 +4,7 @@ module auction.server {
     requires java.sql;
     requires org.slf4j;
     requires ch.qos.logback.classic;
+    requires com.zaxxer.hikari;
 
     exports auction_server.core;
     exports auction_server.entities;

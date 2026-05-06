@@ -1,51 +1,40 @@
 package auction_server.dao;
 
-import auction_server.Network.ClientHandler;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DatabaseConnection {
 
     private static final Logger log = LoggerFactory.getLogger(DatabaseConnection.class);
+    private static HikariDataSource dataSource = null;
 
-    // Cấu hình PostgreSQL
-    private static final String URL = "jdbc:postgresql://localhost:5432/auction_db";
-    private static final String USER = "postgres";
-    private static final String PASSWORD = "811168";
+    private DatabaseConnection() {}
 
-    private static Connection connection = null;
-
-    private DatabaseConnection() {
-      //Singleton
+    private static synchronized void init() {
+        if (dataSource != null) return;
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl(System.getenv("DB_URL"));
+        config.setUsername(System.getenv("DB_USER"));
+        config.setPassword(System.getenv("DB_PASSWORD"));
+        config.setMaximumPoolSize(10);
+        dataSource = new HikariDataSource(config);
+        log.info("Database connection pool initialized.");
     }
 
-    public static Connection getConnection() {
-        try {
-            if (connection == null || connection.isClosed()) {
-                // Đăng ký driver (không bắt buộc với các bản JDBC mới nhưng nên có để ổn định)
-                Class.forName("org.postgresql.Driver");
-                connection = DriverManager.getConnection(URL, USER, PASSWORD);
-                log.info("Kết nối tới PostgreSQL thành công!");
-            }
-        } catch (ClassNotFoundException | SQLException e) {
-            log.info("Lỗi kết nối Database: {}" ,e.getMessage());
-
-        }
-        return connection;
+    public static Connection getConnection() throws SQLException {
+        if (dataSource == null) init();
+        return dataSource.getConnection();
     }
 
-    public static void closeConnection() {
-        if (connection != null) {
-            try {
-                connection.close();
-                log.info("Đã đóng kết nối Database.");
-            } catch (SQLException e) {
-                log.info("Lỗi khi đóng kết nối: {}", e.getMessage());
-            }
+    public static void closePool() {
+        if (dataSource != null) {
+            dataSource.close();
+            log.info("Database connection pool closed.");
         }
     }
 }
