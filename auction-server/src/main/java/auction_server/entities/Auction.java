@@ -90,7 +90,7 @@ public class Auction implements Serializable {
 
     public boolean buyOut(BidTransaction transaction) {
         lock.lock();
-        try{
+        try {
             if (transaction.getBidder() != getItem().getOwner()) {
                 return true;
             } else {
