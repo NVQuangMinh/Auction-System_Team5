@@ -1,55 +1,46 @@
 package auction_server.dao;
 
+import auction_server.dao.interfaces.UserDAO;
+import auction_server.entities.User;
 import auction_server.behaviors.AdminProfile;
 import auction_server.behaviors.BidderProfile;
 import auction_server.behaviors.SellerProfile;
-import auction_server.dao.interfaces.UserDAO;
-import auction_server.entities.User;
 
-import javax.sql.DataSource;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserDAOImpl implements UserDAO {
 
-    private final DataSource dataSource;
-
-    public UserDAOImpl(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
-
     @Override
-    public User findUserByUsername(String username) {
-        // TODO: Hoàn thiện câu lệnh SQL cho phù hợp với schema của bạn
-        String userSQL = "SELECT id, username, password_hash, created_at FROM users WHERE username = ?";
-        String rolesSQL = "SELECT role_name FROM user_roles WHERE user_id = ?";
-        User user = null;
+    public User findByUsername(String username) {
+        String sqlUser = "SELECT * FROM users WHERE username = ?";
+        String sqlRoles = "SELECT role_name FROM user_roles WHERE user_id = ?";
 
-        try (Connection conn = dataSource.getConnection();
-             PreparedStatement userPstmt = conn.prepareStatement(userSQL)) {
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmtUser = conn.prepareStatement(sqlUser)) {
 
-            userPstmt.setString(1, username);
-            try (ResultSet rs = userPstmt.executeQuery()) {
-                if (rs.next()) {
-                    long userId = rs.getLong("id");
-                    user = new User(
-                            userId,
-                            rs.getString("username"),
-                            rs.getString("password_hash")
+            pstmtUser.setString(1, username);
+            try (ResultSet rsUser = pstmtUser.executeQuery()) {
+                if (rsUser.next()) {
+                    User user = new User(
+                            rsUser.getString("id"),
+                            rsUser.getString("username"),
+                            rsUser.getString("password_hash")
                     );
-                    // user.createdAt có thể được set nếu cần
 
-                    // Sau khi tìm thấy user, truy vấn vai trò của họ
-                    try (PreparedStatement rolesPstmt = conn.prepareStatement(rolesSQL)) {
-                        rolesPstmt.setLong(1, userId);
-                        try (ResultSet rolesRs = rolesPstmt.executeQuery()) {
-                            while (rolesRs.next()) {
-                                String roleName = rolesRs.getString("role_name");
-                                switch (roleName.toUpperCase()) {
+                    // Lấy các vai trò (Roles) để đắp Profile cho User (Composition)
+                    try (PreparedStatement pstmtRoles = conn.prepareStatement(sqlRoles)) {
+                        pstmtRoles.setString(1, user.getId());
+                        try (ResultSet rsRoles = pstmtRoles.executeQuery()) {
+                            while (rsRoles.next()) {
+                                String role = rsRoles.getString("role_name");
+                                switch (role) {
                                     case "BIDDER":
-                                        user.setBidderProfile(new BidderProfile());
+                                        user.setBidderProfile(new BidderProfile(0.0)); // Khởi tạo logic mặc định
                                         break;
                                     case "SELLER":
-                                        user.setSellerProfile(new SellerProfile());
+                                        user.setSellerProfile(new SellerProfile(0));
                                         break;
                                     case "ADMIN":
                                         user.setAdminProfile(new AdminProfile());
@@ -58,38 +49,49 @@ public class UserDAOImpl implements UserDAO {
                             }
                         }
                     }
+                    return user;
                 }
             }
         } catch (SQLException e) {
-            // Trong ứng dụng thực tế, nên sử dụng một exception tùy chỉnh
-            throw new RuntimeException("Database error finding user by username", e);
+            throw new RuntimeException("Lỗi DB khi tìm User theo username", e);
         }
-        return user;
+        return null;
     }
 
     @Override
     public void save(User user) {
-        // TODO: Hoàn thiện câu lệnh SQL
-        String sql = "INSERT INTO users (username, password_hash, created_at) VALUES (?, ?, ?)";
+        String sqlUser = "INSERT INTO users (id, username, password_hash, created_at) VALUES (?, ?, ?, ?)";
+        String sqlRole = "INSERT INTO user_roles (user_id, role_name) VALUES (?, ?)";
 
-        try (Connection conn = dataSource.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            conn.setAutoCommit(false); // Bắt đầu Transaction
 
-            pstmt.setString(1, user.getUsername());
-            pstmt.setString(2, user.getPasswordHash());
-            pstmt.setTimestamp(3, Timestamp.valueOf(user.getCreatedAt()));
-
-            int affectedRows = pstmt.executeUpdate();
-
-            if (affectedRows > 0) {
-                try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
-                    if (generatedKeys.next()) {
-                        user.setId(generatedKeys.getLong(1)); // Cập nhật ID cho đối tượng User
-                    }
-                }
+            try (PreparedStatement pstmtUser = conn.prepareStatement(sqlUser)) {
+                pstmtUser.setString(1, user.getId());
+                pstmtUser.setString(2, user.getUsername());
+                pstmtUser.setString(3, user.getPasswordHash());
+                pstmtUser.setTimestamp(4, Timestamp.valueOf(user.getCreatedAt()));
+                pstmtUser.executeUpdate();
             }
+
+            // Lưu các Profile (Roles) vào bảng phụ
+            try (PreparedStatement pstmtRole = conn.prepareStatement(sqlRole)) {
+                List<String> roles = new ArrayList<>();
+                if (user.hasRole("BIDDER")) roles.add("BIDDER");
+                if (user.hasRole("SELLER")) roles.add("SELLER");
+                if (user.hasRole("ADMIN")) roles.add("ADMIN");
+
+                for (String role : roles) {
+                    pstmtRole.setString(1, user.getId());
+                    pstmtRole.setString(2, role);
+                    pstmtRole.addBatch();
+                }
+                pstmtRole.executeBatch();
+            }
+
+            conn.commit(); // Hoàn tất Transaction
         } catch (SQLException e) {
-            throw new RuntimeException("Database error saving user", e);
+            throw new RuntimeException("Lỗi DB khi lưu User", e);
         }
     }
 }

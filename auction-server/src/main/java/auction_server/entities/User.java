@@ -16,6 +16,12 @@ public class User extends Entity {
     private SellerProfile sellerProfile;
     private AdminProfile adminProfile;
 
+    public User(String username, String passwordHash) {
+        super(); // Tự động tạo UUID
+        this.username = username;
+        this.passwordHash = passwordHash;
+    }
+    
     public User(String id, String username, String passwordHash) {
         super(id);
         this.username = username;
@@ -24,67 +30,31 @@ public class User extends Entity {
 
     public boolean login(String password) {
         // TODO: Implement proper password hashing and comparison.
-        // This is a placeholder and is NOT secure.
         return this.passwordHash.equals(password);
     }
 
     public boolean hasRole(Class<?> roleType) {
-        if (roleType == BidderProfile.class && bidderProfile != null) {
-            return true;
-        }
-        if (roleType == SellerProfile.class && sellerProfile != null) {
-            return true;
-        }
-        if (roleType == AdminProfile.class && adminProfile != null) {
-            return true;
-        }
+        if (roleType == BidderProfile.class && bidderProfile != null) return true;
+        if (roleType == SellerProfile.class && sellerProfile != null) return true;
+        if (roleType == AdminProfile.class && adminProfile != null) return true;
         return false;
     }
 
     public List<Object> getActiveProfiles() {
         List<Object> profiles = new ArrayList<>();
-        if (bidderProfile != null) {
-            profiles.add(bidderProfile);
-        }
-        if (sellerProfile != null) {
-            profiles.add(sellerProfile);
-        }
-        if (adminProfile != null) {
-            profiles.add(adminProfile);
-        }
+        if (bidderProfile != null) profiles.add(bidderProfile);
+        if (sellerProfile != null) profiles.add(sellerProfile);
+        if (adminProfile != null) profiles.add(adminProfile);
         return profiles;
     }
 
-    // Getters and Setters for profiles
-    public BidderProfile getBidderProfile() {
-        return bidderProfile;
-    }
-
-    public void setBidderProfile(BidderProfile bidderProfile) {
-        this.bidderProfile = bidderProfile;
-    }
-
-    public SellerProfile getSellerProfile() {
-        return sellerProfile;
-    }
-
-    public void setSellerProfile(SellerProfile sellerProfile) {
-        this.sellerProfile = sellerProfile;
-    }
-
-    public AdminProfile getAdminProfile() {
-        return adminProfile;
-    }
-
-    public void setAdminProfile(AdminProfile adminProfile) {
-        this.adminProfile = adminProfile;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getPasswordHash() {
-        return passwordHash;
-    }
+    // Getters and Setters
+    public String getUsername() { return username; }
+    public String getPasswordHash() { return passwordHash; }
+    public BidderProfile getBidderProfile() { return bidderProfile; }
+    public void setBidderProfile(BidderProfile bidderProfile) { this.bidderProfile = bidderProfile; }
+    public SellerProfile getSellerProfile() { return sellerProfile; }
+    public void setSellerProfile(SellerProfile sellerProfile) { this.sellerProfile = sellerProfile; }
+    public AdminProfile getAdminProfile() { return adminProfile; }
+    public void setAdminProfile(AdminProfile adminProfile) { this.adminProfile = adminProfile; }
 }

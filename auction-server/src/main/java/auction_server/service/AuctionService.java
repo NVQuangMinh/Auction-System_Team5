@@ -21,7 +21,7 @@ public class AuctionService {
         this.bidTransactionDAO = bidTransactionDAO;
     }
 
-    public Auction placeBid(Long auctionId, User user, double bidAmount) throws Exception {
+    public Auction placeBid(String auctionId, User user, double bidAmount) throws Exception {
         Auction auction = auctionDAO.findById(auctionId);
 
         if (auction == null) {
@@ -38,22 +38,22 @@ public class AuctionService {
 
         auction.getLock().lock();
         try {
-            // Re-check condition after acquiring lock to prevent race conditions
+            // Re-check condition sau khi có lock để chống race conditions
             if (bidAmount >= auction.getCurrentHighestBid() + auction.getTickSize()) {
-                
-                // Kiểm tra xem giá đặt có vượt qua giá mua đứt không
+
+                // Kiểm tra xem giá đặt có vượt qua giá mua đứt không (Mua đứt > 0 mới tính)
                 if (auction.getBuyOutPrice() > 0 && bidAmount >= auction.getBuyOutPrice()) {
                     auction.setCurrentHighestBid(auction.getBuyOutPrice());
                     auction.setStatus("CLOSED");
                 } else {
                     auction.setCurrentHighestBid(bidAmount);
                 }
-                
+
                 BidTransaction transaction = new BidTransaction(null, auction, user, auction.getCurrentHighestBid());
 
                 bidTransactionDAO.save(transaction);
                 auctionDAO.update(auction);
-                
+
                 return auction;
             } else {
                 throw new Exception("Another bid was placed just before yours. Please try again.");
@@ -67,8 +67,9 @@ public class AuctionService {
         return auctionDAO.findAllActive();
     }
 
-    public List<Auction> getAuctionsByOwner(Long userId) {
-        // TODO: Implement this method in AuctionDAO
+    // Đã sửa Long userId -> String userId
+    public List<Auction> getAuctionsByOwner(String userId) {
+        // TODO: Mở khóa hàm này trong AuctionDAO khi cần
         // return auctionDAO.findByOwnerId(userId);
         return List.of();
     }

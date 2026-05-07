@@ -24,7 +24,7 @@ public class Mappers {
                 item.getName(),
                 item.getDescription(),
                 toUserDTO(item.getOwner()),
-                item.getDetails() // Lấy thông tin chi tiết (brand, artist...)
+                item.getDetails()
         );
     }
 

@@ -5,9 +5,9 @@ import auction_server.entities.BidTransaction;
 
 import javax.sql.DataSource;
 import java.sql.*;
+import java.util.UUID;
 
 public class BidTransactionDAOImpl implements BidTransactionDAO {
-
     private final DataSource dataSource;
 
     public BidTransactionDAOImpl(DataSource dataSource) {
@@ -16,24 +16,23 @@ public class BidTransactionDAOImpl implements BidTransactionDAO {
 
     @Override
     public void save(BidTransaction transaction) {
-        // TODO: Hoàn thiện câu lệnh SQL
-        String sql = "INSERT INTO bid_transactions (auction_id, bidder_id, bid_amount, timestamp) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO bid_transactions (id, auction_id, bidder_id, bid_amount, timestamp) VALUES (?, ?, ?, ?, ?)";
+
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setLong(1, transaction.getAuction().getId());
-            pstmt.setLong(2, transaction.getBidder().getId());
-            pstmt.setDouble(3, transaction.getBidAmount());
-            pstmt.setTimestamp(4, Timestamp.valueOf(transaction.getTimestamp()));
+            // Nếu id chưa được sinh ra từ hàm khởi tạo, sinh mới ở đây
+            String txId = transaction.getId() != null ? transaction.getId() : UUID.randomUUID().toString();
+            transaction.setId(txId);
 
-            int affectedRows = pstmt.executeUpdate();
-            if (affectedRows > 0) {
-                try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
-                    if (generatedKeys.next()) {
-                        transaction.setId(generatedKeys.getLong(1));
-                    }
-                }
-            }
+            pstmt.setString(1, txId);
+            pstmt.setString(2, transaction.getAuction().getId());
+            pstmt.setString(3, transaction.getBidder().getId());
+            pstmt.setDouble(4, transaction.getBidAmount());
+            pstmt.setTimestamp(5, Timestamp.valueOf(transaction.getTimestamp()));
+
+            pstmt.executeUpdate();
+
         } catch (SQLException e) {
             throw new RuntimeException("Database error saving bid transaction", e);
         }

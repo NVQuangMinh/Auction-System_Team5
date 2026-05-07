@@ -12,7 +12,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class AuctionManager {
     private static volatile AuctionManager instance;
-    private final Map<Long, Auction> activeAuctions = new ConcurrentHashMap<>();
+    private final Map<String, Auction> activeAuctions = new ConcurrentHashMap<>();
     private final List<ClientHandler> activeClients = new CopyOnWriteArrayList<>();
 
     private AuctionManager() {}

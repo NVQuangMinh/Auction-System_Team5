@@ -11,24 +11,24 @@ import javax.sql.DataSource;
 import java.sql.*;
 
 public class ItemDAOImpl implements ItemDAO {
-
     private final DataSource dataSource;
 
     public ItemDAOImpl(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
-    @Override
-    public Item findById(long id) {
-        // TODO: Hoàn thiện câu lệnh SQL. Cần JOIN với bảng User để lấy thông tin owner
-        String sql = "SELECT * FROM items WHERE id = ?";
+    public Item findById(String id) {
+        // Dùng JOIN để lấy luôn thông tin User sở hữu
+        String sql = "SELECT i.*, u.username, u.password_hash " +
+                "FROM items i JOIN users u ON i.owner_id = u.id " +
+                "WHERE i.id = ?";
+
         try (Connection conn = dataSource.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setLong(1, id);
+            pstmt.setString(1, id);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
-                    // Tái tạo lại đúng đối tượng Item dựa vào cột 'type'
                     return mapRowToItem(rs);
                 }
             }
@@ -39,57 +39,56 @@ public class ItemDAOImpl implements ItemDAO {
     }
 
     @Override
+    public Item findById(long id) {
+        return null;
+    }
+
+    @Override
     public void save(Item item) {
-        // TODO: Hoàn thiện câu lệnh SQL. Cần các cột đặc tả như artist_name, brand...
-        String sql = "INSERT INTO items (name, description, owner_id, type, created_at, artist_name, brand) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO items (id, name, description, owner_id, type, created_at, artist_name, brand) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setString(1, item.getName());
-            pstmt.setString(2, item.getDescription());
-            pstmt.setLong(3, item.getOwner().getId());
-            pstmt.setTimestamp(5, Timestamp.valueOf(item.getCreatedAt()));
+            pstmt.setString(1, item.getId()); // UUID String
+            pstmt.setString(2, item.getName());
+            pstmt.setString(3, item.getDescription());
+            pstmt.setString(4, item.getOwner().getId());
+            pstmt.setString(5, item.getClass().getSimpleName().toLowerCase()); // art, electronics, vehicle
+            pstmt.setTimestamp(6, Timestamp.valueOf(item.getCreatedAt()));
 
-            // Xử lý các thuộc tính riêng của từng loại Item
             if (item instanceof Art) {
-                pstmt.setString(4, "art");
-                pstmt.setString(6, ((Art) item).getArtistName());
-                pstmt.setNull(7, Types.VARCHAR);
+                pstmt.setString(7, ((Art) item).getArtistName());
+                pstmt.setNull(8, Types.VARCHAR);
             } else if (item instanceof Electronics) {
-                pstmt.setString(4, "electronics");
-                pstmt.setNull(6, Types.VARCHAR);
-                pstmt.setString(7, ((Electronics) item).getBrand());
+                pstmt.setNull(7, Types.VARCHAR);
+                pstmt.setString(8, ((Electronics) item).getBrand());
             } else if (item instanceof Vehicle) {
-                pstmt.setString(4, "vehicle");
-                pstmt.setNull(6, Types.VARCHAR);
-                pstmt.setString(7, ((Vehicle) item).getBrand());
+                pstmt.setNull(7, Types.VARCHAR);
+                pstmt.setString(8, ((Vehicle) item).getBrand());
             }
 
-            int affectedRows = pstmt.executeUpdate();
-            if (affectedRows > 0) {
-                try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
-                    if (generatedKeys.next()) {
-                        item.setId(generatedKeys.getLong(1));
-                    }
-                }
-            }
+            pstmt.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException("Database error saving item", e);
         }
     }
 
     private Item mapRowToItem(ResultSet rs) throws SQLException {
-        long itemId = rs.getLong("id");
+        // Khởi tạo đối tượng User thực tế từ thông tin JOIN
+        User owner = new User(
+                rs.getString("owner_id"),
+                rs.getString("username"),
+                rs.getString("password_hash")
+        );
+
+        String type = rs.getString("type");
+        String itemId = rs.getString("id");
         String name = rs.getString("name");
         String description = rs.getString("description");
-        String itemType = rs.getString("type");
 
-        // TODO: Cần fetch đầy đủ đối tượng User từ DB, đây là ví dụ đơn giản
-        long ownerId = rs.getLong("owner_id");
-        User owner = new User(ownerId, "temp_owner", ""); // Tạm thời
-
-        switch (itemType.toLowerCase()) {
+        switch (type.toLowerCase()) {
             case "art":
                 return new Art(itemId, name, description, owner, rs.getString("artist_name"));
             case "electronics":
@@ -97,7 +96,7 @@ public class ItemDAOImpl implements ItemDAO {
             case "vehicle":
                 return new Vehicle(itemId, name, description, owner, rs.getString("brand"));
             default:
-                throw new IllegalArgumentException("Unknown item type in database: " + itemType);
+                throw new IllegalArgumentException("Unknown item type in DB: " + type);
         }
     }
 }

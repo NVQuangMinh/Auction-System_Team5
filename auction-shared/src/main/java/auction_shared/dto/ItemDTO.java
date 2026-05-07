@@ -7,12 +7,15 @@ public class ItemDTO implements Serializable {
     private String itemName;
     private String description;
     private UserDTO owner;
+    private String details; // Bổ sung trường này
 
-    public ItemDTO(String id, String itemName, String description, UserDTO owner) {
+    // Cập nhật constructor để nhận 5 tham số
+    public ItemDTO(String id, String itemName, String description, UserDTO owner, String details) {
         this.id = id;
         this.itemName = itemName;
         this.description = description;
         this.owner = owner;
+        this.details = details;
     }
 
     public String getId() {
@@ -29,5 +32,9 @@ public class ItemDTO implements Serializable {
 
     public UserDTO getOwner() {
         return owner;
+    }
+
+    public String getDetails() {
+        return details;
     }
 }

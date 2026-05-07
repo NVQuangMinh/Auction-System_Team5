@@ -4,17 +4,17 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 public class AuctionDTO implements Serializable {
-    private Long id;
+    private String id;
     private ItemDTO item;
     private double startingPrice;
-    private double buyOutPrice; // Mới
-    private double tickSize;    // Mới
+    private double buyOutPrice;
+    private double tickSize;
     private double currentHighestBid;
     private String status;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
 
-    public AuctionDTO(Long id, ItemDTO item, double startingPrice, double buyOutPrice, double tickSize, double currentHighestBid, String status, LocalDateTime startTime, LocalDateTime endTime) {
+    public AuctionDTO(String id, ItemDTO item, double startingPrice, double buyOutPrice, double tickSize, double currentHighestBid, String status, LocalDateTime startTime, LocalDateTime endTime) {
         this.id = id;
         this.item = item;
         this.startingPrice = startingPrice;
@@ -27,7 +27,7 @@ public class AuctionDTO implements Serializable {
     }
 
     // Getters
-    public Long getId() { return id; }
+    public String getId() { return id; }
     public ItemDTO getItem() { return item; }
     public double getStartingPrice() { return startingPrice; }
     public double getBuyOutPrice() { return buyOutPrice; }
