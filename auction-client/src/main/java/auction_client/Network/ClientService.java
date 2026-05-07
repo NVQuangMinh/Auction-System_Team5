@@ -1,6 +1,6 @@
 package auction_client.Network;
 
-import auction_client.AuctionUpdateListener;
+import auction_client.interfaces.AuctionUpdateListener;
 import auction_shared.Network.NetworkMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
