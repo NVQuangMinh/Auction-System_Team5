@@ -11,42 +11,49 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class AuctionManager {
-    private static AuctionManager manager = null;
-    private final Map<String, Auction> activeRooms = new ConcurrentHashMap<>();
-    private static List<ClientHandler> activeClients = new CopyOnWriteArrayList<>();
-    private AuctionManager(){}
-    public static synchronized AuctionManager getInstance(){
-        if (manager != null){
-            return manager;
+    private static volatile AuctionManager instance;
+    private final Map<Long, Auction> activeAuctions = new ConcurrentHashMap<>();
+    private final List<ClientHandler> activeClients = new CopyOnWriteArrayList<>();
+
+    private AuctionManager() {}
+
+    public static AuctionManager getInstance() {
+        if (instance == null) {
+            synchronized (AuctionManager.class) {
+                if (instance == null) {
+                    instance = new AuctionManager();
+                }
+            }
         }
-        manager = new AuctionManager();
-        return manager;
-    }
-    public void addRoom(Auction auction){
-        activeRooms.put(auction.getItem().getId(), auction);
-    }
-    public Auction getRoom(String itemId) {
-        return activeRooms.get(itemId);
+        return instance;
     }
 
-    public ArrayList<Auction> getAllRooms() {
-        ArrayList<Auction> rooms = new ArrayList<>();
-        for (String i : activeRooms.keySet()){
-            rooms.add(activeRooms.get(i));
-        }
-        return rooms;
+    public void addAuction(Auction auction) {
+        activeAuctions.put(auction.getId(), auction);
     }
 
-    public static void addClient(ClientHandler client) {
+    public Auction getAuction(Long auctionId) {
+        return activeAuctions.get(auctionId);
+    }
+
+    public void removeAuction(Long auctionId) {
+        activeAuctions.remove(auctionId);
+    }
+
+    public List<Auction> getAllAuctions() {
+        return new ArrayList<>(activeAuctions.values());
+    }
+
+    public void addClient(ClientHandler client) {
         activeClients.add(client);
     }
 
-    public static void removeClient(ClientHandler client) {
+    public void removeClient(ClientHandler client) {
         activeClients.remove(client);
     }
 
-    public void broadCast(NetworkMessage msg){
-        for (ClientHandler client : activeClients){
+    public void broadCast(NetworkMessage msg) {
+        for (ClientHandler client : activeClients) {
             client.sendMessage(msg);
         }
     }

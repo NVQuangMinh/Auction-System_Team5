@@ -1,11 +1,10 @@
 package auction_server.behaviors;
 
 import auction_server.entities.Auction;
-import auction_server.entities.User;
 
-import java.io.Serializable;
-
-public class AdminProfile implements Serializable {
-    public void cancelAuction(Auction auction){}
-    public void banUser(User user){}
+public class AdminProfile {
+    public void cancelAuction(Auction auction) {
+        // TODO: Implement the logic for canceling an auction.
+        // This might involve changing the auction's status and notifying users.
+    }
 }

@@ -2,45 +2,89 @@ package auction_server.entities;
 
 import auction_server.base.Entity;
 import auction_server.behaviors.AdminProfile;
-import auction_server.interfaces.BidderAction;
-import auction_server.interfaces.SellerAction;
+import auction_server.behaviors.BidderProfile;
+import auction_server.behaviors.SellerProfile;
 
-import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
-public class User extends Entity implements Serializable {
-    protected String username;
-    protected String password;
-    protected BidderAction bidder = null;
-    protected SellerAction seller = null;
-    protected AdminProfile adminProfile = null;
+public class User extends Entity {
+    private String username;
+    private String passwordHash;
 
-    public User(String id, String username, String password) {
+    private BidderProfile bidderProfile;
+    private SellerProfile sellerProfile;
+    private AdminProfile adminProfile;
+
+    public User(Long id, String username, String passwordHash) {
         super(id);
         this.username = username;
-        this.password = password;
+        this.passwordHash = passwordHash;
     }
 
-    public void setBidder(BidderAction bidder) {
-        this.bidder = bidder;
+    public boolean login(String password) {
+        // TODO: Implement proper password hashing and comparison.
+        // This is a placeholder and is NOT secure.
+        return this.passwordHash.equals(password);
     }
 
-    public void setSeller(SellerAction seller) {
-        this.seller = seller;
+    public boolean hasRole(Class<?> roleType) {
+        if (roleType == BidderProfile.class && bidderProfile != null) {
+            return true;
+        }
+        if (roleType == SellerProfile.class && sellerProfile != null) {
+            return true;
+        }
+        if (roleType == AdminProfile.class && adminProfile != null) {
+            return true;
+        }
+        return false;
     }
 
-    public void performBid(String itemId, double amount) {
-        if (bidder != null) bidder.placeBid(itemId, amount);
+    public List<Object> getActiveProfiles() {
+        List<Object> profiles = new ArrayList<>();
+        if (bidderProfile != null) {
+            profiles.add(bidderProfile);
+        }
+        if (sellerProfile != null) {
+            profiles.add(sellerProfile);
+        }
+        if (adminProfile != null) {
+            profiles.add(adminProfile);
+        }
+        return profiles;
     }
 
-    public void performPost(Item item) {
-        if (seller != null) seller.postItem(item);
+    // Getters and Setters for profiles
+    public BidderProfile getBidderProfile() {
+        return bidderProfile;
+    }
+
+    public void setBidderProfile(BidderProfile bidderProfile) {
+        this.bidderProfile = bidderProfile;
+    }
+
+    public SellerProfile getSellerProfile() {
+        return sellerProfile;
+    }
+
+    public void setSellerProfile(SellerProfile sellerProfile) {
+        this.sellerProfile = sellerProfile;
+    }
+
+    public AdminProfile getAdminProfile() {
+        return adminProfile;
+    }
+
+    public void setAdminProfile(AdminProfile adminProfile) {
+        this.adminProfile = adminProfile;
     }
 
     public String getUsername() {
         return username;
     }
 
-    public String getPassword() {
-        return password;
+    public String getPasswordHash() {
+        return passwordHash;
     }
 }
