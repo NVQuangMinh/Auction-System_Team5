@@ -7,24 +7,20 @@ import auction_server.entities.items.Art;
 import auction_server.entities.items.Electronics;
 import auction_server.entities.items.Vehicle;
 
-import javax.sql.DataSource;
 import java.sql.*;
 import java.util.UUID;
 
 public class ItemDAOImpl implements ItemDAO {
 
-    private final DataSource dataSource;
+    public ItemDAOImpl() {}
 
-    public ItemDAOImpl(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
-
+    @Override
     public Item findById(String id) {
         String sql = "SELECT i.*, u.username, u.password_hash " +
                 "FROM items i JOIN users u ON i.owner_id = u.id " +
                 "WHERE i.id = ?";
 
-        try (Connection conn = dataSource.getConnection();
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, id);
@@ -44,7 +40,7 @@ public class ItemDAOImpl implements ItemDAO {
         String sql = "INSERT INTO items (id, name, description, owner_id, type, created_at, artist_name, brand) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try (Connection conn = dataSource.getConnection();
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             if (item.getId() == null) item.setId(UUID.randomUUID().toString());

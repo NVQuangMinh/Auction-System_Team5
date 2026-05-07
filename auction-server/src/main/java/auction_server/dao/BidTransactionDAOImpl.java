@@ -3,23 +3,18 @@ package auction_server.dao;
 import auction_server.dao.interfaces.BidTransactionDAO;
 import auction_server.entities.BidTransaction;
 
-import javax.sql.DataSource;
 import java.sql.*;
 import java.util.UUID;
 
 public class BidTransactionDAOImpl implements BidTransactionDAO {
 
-    private final DataSource dataSource;
-
-    public BidTransactionDAOImpl(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
+    public BidTransactionDAOImpl() {}
 
     @Override
     public void save(BidTransaction transaction) {
         String sql = "INSERT INTO bid_transactions (id, auction_id, bidder_id, bid_amount, timestamp) VALUES (?, ?, ?, ?, ?)";
 
-        try (Connection conn = dataSource.getConnection();
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             String txId = transaction.getId() != null ? transaction.getId() : UUID.randomUUID().toString();

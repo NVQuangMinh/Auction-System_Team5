@@ -6,7 +6,6 @@ import auction_server.behaviors.AdminProfile;
 import auction_server.behaviors.BidderProfile;
 import auction_server.behaviors.SellerProfile;
 
-import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,18 +13,14 @@ import java.util.UUID;
 
 public class UserDAOImpl implements UserDAO {
 
-    private final DataSource dataSource;
+    public UserDAOImpl() {} // Constructor rỗng
 
-    // Constructor nhận DataSource từ SocketServer
-    public UserDAOImpl(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
-
+    @Override
     public User findByUsername(String username) {
         String sqlUser = "SELECT * FROM users WHERE username = ?";
         String sqlRoles = "SELECT role_name FROM user_roles WHERE user_id = ?";
 
-        try (Connection conn = dataSource.getConnection();
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmtUser = conn.prepareStatement(sqlUser)) {
 
             pstmtUser.setString(1, username);
@@ -71,8 +66,8 @@ public class UserDAOImpl implements UserDAO {
         String sqlUser = "INSERT INTO users (id, username, password_hash, created_at) VALUES (?, ?, ?, ?)";
         String sqlRole = "INSERT INTO user_roles (user_id, role_name) VALUES (?, ?)";
 
-        try (Connection conn = dataSource.getConnection()) {
-            conn.setAutoCommit(false); // Bắt đầu Transaction
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            conn.setAutoCommit(false); // Bắt đầu Transaction để đảm bảo tính toàn vẹn
 
             try (PreparedStatement pstmtUser = conn.prepareStatement(sqlUser)) {
                 if (user.getId() == null) user.setId(UUID.randomUUID().toString());
@@ -87,9 +82,9 @@ public class UserDAOImpl implements UserDAO {
             // Lưu các Profile (Roles) vào bảng phụ
             try (PreparedStatement pstmtRole = conn.prepareStatement(sqlRole)) {
                 List<String> roles = new ArrayList<>();
-                if (user.hasRole("BIDDER".getClass())) roles.add("BIDDER");
-                if (user.hasRole("SELLER".getClass())) roles.add("SELLER");
-                if (user.hasRole("ADMIN".getClass())) roles.add("ADMIN");
+                if (user.hasRole(BidderProfile.class)) roles.add("BIDDER");
+                if (user.hasRole(SellerProfile.class)) roles.add("SELLER");
+                if (user.hasRole(AdminProfile.class)) roles.add("ADMIN");
 
                 for (String role : roles) {
                     pstmtRole.setString(1, user.getId());

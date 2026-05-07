@@ -8,7 +8,6 @@ import auction_server.entities.items.Art;
 import auction_server.entities.items.Electronics;
 import auction_server.entities.items.Vehicle;
 
-import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,11 +15,7 @@ import java.util.UUID;
 
 public class AuctionDAOImpl implements AuctionDAO {
 
-    private final DataSource dataSource;
-
-    public AuctionDAOImpl(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
+    public AuctionDAOImpl() {}
 
     @Override
     public Auction findById(String id) {
@@ -32,7 +27,7 @@ public class AuctionDAOImpl implements AuctionDAO {
                 "JOIN users u ON i.owner_id = u.id " +
                 "WHERE a.id = ?";
 
-        try (Connection conn = dataSource.getConnection();
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, id);
@@ -58,7 +53,7 @@ public class AuctionDAOImpl implements AuctionDAO {
                 "JOIN users u ON i.owner_id = u.id " +
                 "WHERE a.status = 'ACTIVE'";
 
-        try (Connection conn = dataSource.getConnection();
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql);
              ResultSet rs = pstmt.executeQuery()) {
 
@@ -76,7 +71,7 @@ public class AuctionDAOImpl implements AuctionDAO {
         String sql = "INSERT INTO auctions (id, item_id, starting_price, buy_out_price, tick_size, current_highest_bid, status, start_time, end_time) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try (Connection conn = dataSource.getConnection();
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             if (auction.getId() == null) auction.setId(UUID.randomUUID().toString());
@@ -100,7 +95,7 @@ public class AuctionDAOImpl implements AuctionDAO {
     @Override
     public void update(Auction auction) {
         String sql = "UPDATE auctions SET current_highest_bid = ?, status = ? WHERE id = ?";
-        try (Connection conn = dataSource.getConnection();
+        try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setDouble(1, auction.getCurrentHighestBid());
