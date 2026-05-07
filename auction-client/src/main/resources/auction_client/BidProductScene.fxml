@@ -12,9 +12,9 @@
    <center>
       <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" BorderPane.alignment="CENTER">
          <content>
-            <FlowPane fx:id="productFlowPane" hgap="20.0" prefHeight="200.0" prefWidth="200.0" vgap="20.0">
+            <FlowPane fx:id="productFlowPane" alignment="CENTER" hgap="80.0" prefHeight="200.0" prefWidth="200.0" vgap="50.0">
                <padding>
-                  <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                  <Insets top="70.0" />
                </padding>
             </FlowPane>
          </content>

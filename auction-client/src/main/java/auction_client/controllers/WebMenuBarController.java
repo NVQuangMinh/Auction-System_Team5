@@ -1,6 +1,8 @@
 package auction_client.controllers;
 
+import auction_client.Network.ClientService;
 import auction_client.UserSession;
+import auction_shared.Network.NetworkMessage;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -58,6 +60,7 @@ public class WebMenuBarController implements Initializable {
 
     @FXML
     public void switchToUserProductListScene(ActionEvent event) throws IOException {
+        ClientService.getInstance().sendMessage(new NetworkMessage("GET_MY_LIST", UserSession.getInstance().getUsername()));
         switchScene(event, "/auction_client/SellProductScene.fxml");
     }
 
@@ -112,6 +115,7 @@ public class WebMenuBarController implements Initializable {
         logOutAlert.setContentText("Are you sure you want to logout?");
 
         if (logOutAlert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
+            UserSession.getInstance().closeApp();
             switchScene(event, "/auction_client/SignInScene.fxml");
         }
     }

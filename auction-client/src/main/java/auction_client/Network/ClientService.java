@@ -1,29 +1,29 @@
 package auction_client.Network;
 
+import auction_client.interfaces.AuctionUpdateListener;
 import auction_shared.Network.NetworkMessage;
-import auction_shared.entities.Auction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.Socket;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 
 
 public class ClientService {
+    private static final Logger log = LoggerFactory.getLogger(ClientService.class);
+
     private static ClientService instance;
     private Socket socket;
     private ObjectOutputStream out;
     private ObjectInputStream in;
     private boolean isRunning = false;
-    private Consumer<List<Auction>> auctionListCallback;
-
-    public void setAuctionListCallback(Consumer<List<Auction>> callback) {
-        this.auctionListCallback = callback;
-    }
+    private final List<AuctionUpdateListener> listeners = new CopyOnWriteArrayList<>();
 
 
     private ClientService(){}
-
     public static synchronized ClientService getInstance(){
         if (instance != null){
             return instance;
@@ -31,6 +31,7 @@ public class ClientService {
         instance = new ClientService();
         return instance;
     }
+
     public void connect(String host, int port) throws IOException {
         if (socket == null || socket.isClosed()) {
             this.socket = new Socket(host, port);
@@ -56,6 +57,7 @@ public class ClientService {
 
 
     private void startListening() {
+        ///NOTE để sau chuyển thành virtual thread.
         Thread listenerThread = new Thread(() -> {
             try {
                 while (isRunning) {
@@ -64,7 +66,7 @@ public class ClientService {
                     handleServerResponse(response);
                 }
             } catch (Exception e) {
-                System.out.println("Lost connection to server.");
+                log.warn("Lost connection to server.");
                 isRunning = false;
             }
         });
@@ -73,18 +75,20 @@ public class ClientService {
     }
 
 
+
+    public void addListener(AuctionUpdateListener listener) {
+        listeners.add(listener);
+    }
+
+
+    public void removeListener(AuctionUpdateListener listener) {
+        listeners.remove(listener);
+    }
+
     private void handleServerResponse(NetworkMessage response) {
-        if (response.getAction().equals("GET_PRODUCTS")){
-            List<Auction> auctions = (List<Auction>) response.getData();
-            if (auctionListCallback != null) {
-                auctionListCallback.accept(auctions);
-            }
+        for (AuctionUpdateListener listener : listeners){
+            listener.onUpdateReceived(response);
         }
-        else {
-            System.out.println("Receive from server: " + response.getAction());
-        }
-
-
     }
 
 }

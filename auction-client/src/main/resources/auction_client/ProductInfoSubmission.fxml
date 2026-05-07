@@ -21,15 +21,15 @@
       <HBox alignment="CENTER" fillHeight="false" prefHeight="25.0" prefWidth="438.0">
          <children>
             <Label prefHeight="56.0" prefWidth="281.0" style="-fx-font-size: 23; -fx-font-weight: Bold;" text="Add New Item" textFill="#007bff" />
-            <Region prefHeight="55.0" prefWidth="238.0" HBox.hgrow="ALWAYS" />
-            <ImageView fitHeight="63.0" fitWidth="77.0" pickOnBounds="true" preserveRatio="true">
+            <Region prefHeight="55.0" prefWidth="157.0" HBox.hgrow="ALWAYS" />
+            <ImageView fitHeight="63.0" fitWidth="82.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@images/AddPictureImg.png" />
+                  <Image url="@images/linechartIcon.png" />
                </image>
             </ImageView>
          </children>
       </HBox>
-      <TextField prefHeight="50.0" prefWidth="440.0" promptText="Product Name" style="-fx-background-radius: 10;">
+      <TextField fx:id="productName" prefHeight="50.0" prefWidth="440.0" promptText="Product Name" style="-fx-background-radius: 10;">
          <font>
             <Font size="15.0" />
          </font>
@@ -40,7 +40,7 @@
             <Insets top="15.0" />
          </VBox.margin>
       </TextField>
-      <TextArea prefHeight="50.0" prefWidth="438.0" promptText="Product Description" style="-fx-background-radius: 10;">
+      <TextArea fx:id="productDescription" prefHeight="50.0" prefWidth="438.0" promptText="Product Description" style="-fx-background-radius: 10;">
          <font>
             <Font size="15.0" />
          </font>
@@ -56,7 +56,7 @@
       </TextArea>
       <HBox alignment="CENTER" prefHeight="50.0" prefWidth="438.0">
          <children>
-            <TextField prefHeight="50.0" prefWidth="195.5" promptText="Starting Price" style="-fx-background-radius: 10;" HBox.hgrow="ALWAYS">
+            <TextField fx:id="startingPrice" prefHeight="50.0" prefWidth="195.5" promptText="Starting Price" style="-fx-background-radius: 10;" HBox.hgrow="ALWAYS">
                <font>
                   <Font size="15.0" />
                </font>
@@ -65,7 +65,7 @@
                </cursor>
             </TextField>
             <Region prefHeight="46.0" prefWidth="28.0" />
-            <TextField prefHeight="50.0" prefWidth="195.5" promptText="Buyout Price" style="-fx-background-radius: 10;" HBox.hgrow="ALWAYS">
+            <TextField fx:id="buyoutPrice" prefHeight="50.0" prefWidth="195.5" promptText="Buyout Price" style="-fx-background-radius: 10;" HBox.hgrow="ALWAYS">
                <font>
                   <Font size="15.0" />
                </font>
@@ -75,24 +75,30 @@
             </TextField>
          </children>
       </HBox>
-      <TextField prefHeight="50.0" prefWidth="438.0" promptText="Tick Size" style="-fx-background-radius: 10;">
-         <font>
-            <Font size="15.0" />
-         </font>
-         <cursor>
-            <Cursor fx:constant="TEXT" />
-         </cursor>
-      </TextField>
-      <HBox prefHeight="37.0" prefWidth="438.0">
+      <HBox prefHeight="50.0" prefWidth="438.0">
          <children>
-            <ChoiceBox prefHeight="50.0" prefWidth="195.5" />
+            <TextField fx:id="tickSize" prefHeight="50.0" prefWidth="205.0" promptText="Tick Size" style="-fx-background-radius: 10;">
+               <font>
+                  <Font size="15.0" />
+               </font>
+               <cursor>
+                  <Cursor fx:constant="TEXT" />
+               </cursor>
+            </TextField>
+            <Region prefHeight="50.0" prefWidth="31.0" />
+            <ChoiceBox fx:id="types" prefHeight="40.0" prefWidth="207.0" />
+         </children>
+      </HBox>
+      <HBox prefHeight="40.0" prefWidth="438.0">
+         <children>
+            <ChoiceBox prefHeight="40.0" prefWidth="195.5" />
             <Region prefHeight="37.0" prefWidth="14.0" HBox.hgrow="ALWAYS" />
-            <DatePicker prefHeight="50.0" prefWidth="195.5" promptText="End Bid Date" />
+            <DatePicker prefHeight="40.0" prefWidth="195.5" promptText="End Bid Date" />
          </children>
       </HBox>
       <HBox alignment="CENTER_RIGHT" prefHeight="33.0" prefWidth="438.0">
          <children>
-            <CheckBox contentDisplay="CENTER" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" prefHeight="27.0" prefWidth="154.0" style="-fx-font-size: 13;" text="Enable Anti-Snipping" />
+            <CheckBox fx:id="antiSnippingCheckbox" contentDisplay="CENTER" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" prefHeight="27.0" prefWidth="154.0" style="-fx-font-size: 13;" text="Enable Anti-Snipping" />
          </children>
       </HBox>
       <HBox alignment="CENTER_LEFT" prefHeight="80.0" prefWidth="438.0" VBox.vgrow="ALWAYS">
@@ -102,7 +108,7 @@
                   <Cursor fx:constant="HAND" />
                </cursor></Button>
             <Region prefHeight="200.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
-            <Button mnemonicParsing="false" style="-fx-font-size: 15; -fx-font-weight: bold; -fx-padding: 15 67 15 67; -fx-background-radius: 10; -fx-background-color: #007bff;" text="ADD ITEM" textFill="WHITE" HBox.hgrow="ALWAYS">
+            <Button fx:id="submitButton" mnemonicParsing="false" onAction="#addItem" style="-fx-font-size: 15; -fx-font-weight: bold; -fx-padding: 15 67 15 67; -fx-background-radius: 10; -fx-background-color: #007bff;" text="ADD ITEM" textFill="WHITE" HBox.hgrow="ALWAYS">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor></Button>

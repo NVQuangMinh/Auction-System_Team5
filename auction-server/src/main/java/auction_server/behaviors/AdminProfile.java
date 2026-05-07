@@ -1,7 +1,7 @@
-package auction_shared.behaviors;
+package auction_server.behaviors;
 
-import auction_shared.entities.Auction;
-import auction_shared.entities.User;
+import auction_server.entities.Auction;
+import auction_server.entities.User;
 
 import java.io.Serializable;
 

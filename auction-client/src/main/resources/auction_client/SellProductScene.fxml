@@ -40,9 +40,9 @@
                               <Insets bottom="20.0" left="90.0" right="90.0" top="20.0" />
                            </padding>
                         </HBox>
-                        <FlowPane hgap="20.0" vgap="20.0">
+                        <FlowPane fx:id="myListFlowPane" alignment="CENTER" hgap="80.0" vgap="50.0">
                            <padding>
-                              <Insets left="60.0" right="60.0" />
+                              <Insets bottom="30.0" left="40.0" right="40.0" top="30.0" />
                            </padding>
                         </FlowPane>
                      </children>
