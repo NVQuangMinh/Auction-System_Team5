@@ -55,25 +55,25 @@ public class BidProductSceneController implements Initializable, AuctionUpdateLi
 
     public void openAuctionDetail(AuctionDTO auction) {
         try{
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/auction_client/SellProductInfo.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/auction_client/BidProductInfo.fxml"));
             Parent root = loader.load();
 
-            SellProductInfoController controller = loader.getController();
-            controller.initData(auction);
+            BidProductInfoController controller = loader.getController();
+            controller.updateData();
 
-            Stage sellProductInfoStage = new Stage();
-            sellProductInfoStage.setTitle("Auction Detail");
-            sellProductInfoStage.initModality(Modality.APPLICATION_MODAL);
+            Stage bidProductInfoStage = new Stage();
+            bidProductInfoStage.setTitle("Auction Detail");
+            bidProductInfoStage.initModality(Modality.APPLICATION_MODAL);
 
-            sellProductInfoStage.initStyle(StageStyle.TRANSPARENT);
+            bidProductInfoStage.initStyle(StageStyle.TRANSPARENT);
             Scene scene = new Scene(root);
             scene.setFill(null);
 
-            sellProductInfoStage.setScene(scene);
-            sellProductInfoStage.centerOnScreen();
+            bidProductInfoStage.setScene(scene);
+            bidProductInfoStage.centerOnScreen();
 
-            sellProductInfoStage.setOnCloseRequest(event -> controller.cleanUp());
-            sellProductInfoStage.show();
+            bidProductInfoStage.setOnCloseRequest(event -> controller.cleanUp());
+            bidProductInfoStage.show();
         }
         catch (IOException e) {
             e.printStackTrace();

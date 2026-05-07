@@ -97,17 +97,17 @@ public class SellProductSceneController implements Initializable, AuctionUpdateL
 
             Stage sellProductInfoStage = new Stage();
             sellProductInfoStage.setTitle("Auction Detail");
-            sellProductInfoStage.setResizable(false);
             sellProductInfoStage.initModality(Modality.APPLICATION_MODAL);
-            sellProductInfoStage.initStyle(StageStyle.DECORATED);
 
+            sellProductInfoStage.initStyle(StageStyle.TRANSPARENT);
+            Scene scene = new Scene(root);
+            scene.setFill(null);
+
+            sellProductInfoStage.setScene(scene);
             sellProductInfoStage.centerOnScreen();
-            sellProductInfoStage.setScene(new Scene(root));
-            sellProductInfoStage.setOnCloseRequest(event -> {
-                controller.cleanUp();
-            });
-            sellProductInfoStage.show();
 
+            sellProductInfoStage.setOnCloseRequest(event -> controller.cleanUp());
+            sellProductInfoStage.show();
         }
         catch (IOException e) {
             e.printStackTrace();
