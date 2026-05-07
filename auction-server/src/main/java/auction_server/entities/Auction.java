@@ -8,20 +8,24 @@ import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Auction extends Entity {
-    private Item item;
-    private double startingPrice;
+    private final Item item;
+    private final double startingPrice;
+    private final double buyOutPrice; // Mua đứt
+    private final double tickSize;    // Bước giá tối thiểu
     private double currentHighestBid;
     private String status; // e.g., "ACTIVE", "CLOSED", "CANCELLED"
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
+    private final LocalDateTime startTime;
+    private final LocalDateTime endTime;
 
     private final List<BidTransaction> bidHistory = new ArrayList<>();
     private final ReentrantLock lock = new ReentrantLock();
 
-    public Auction(Long id, Item item, double startingPrice, LocalDateTime startTime, LocalDateTime endTime) {
+    public Auction(String id, Item item, double startingPrice, double buyOutPrice, double tickSize, LocalDateTime startTime, LocalDateTime endTime) {
         super(id);
         this.item = item;
         this.startingPrice = startingPrice;
+        this.buyOutPrice = buyOutPrice;
+        this.tickSize = tickSize;
         this.currentHighestBid = startingPrice;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -38,13 +42,21 @@ public class Auction extends Entity {
         return lock;
     }
 
-    // Getters and Setters
+    // Getters
     public Item getItem() {
         return item;
     }
 
     public double getStartingPrice() {
         return startingPrice;
+    }
+
+    public double getBuyOutPrice() {
+        return buyOutPrice;
+    }
+
+    public double getTickSize() {
+        return tickSize;
     }
 
     public double getCurrentHighestBid() {

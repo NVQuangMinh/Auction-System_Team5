@@ -10,7 +10,7 @@ public class BidTransaction extends Entity {
     private double bidAmount;
     private LocalDateTime timestamp;
 
-    public BidTransaction(Long id, Auction auction, User bidder, double bidAmount) {
+    public BidTransaction(String id, Auction auction, User bidder, double bidAmount) {
         super(id);
         this.auction = auction;
         this.bidder = bidder;

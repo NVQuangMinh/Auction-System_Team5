@@ -9,7 +9,7 @@ public abstract class Item extends Entity implements Serializable {
     protected String description;
     protected User owner;
 
-    public Item(Long id, String name, String description, User owner) {
+    public Item(String id, String name, String description, User owner) {
         super(id);
         this.name = name;
         this.description = description;

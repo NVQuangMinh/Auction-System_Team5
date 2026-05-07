@@ -7,8 +7,7 @@ public class AuctionDAO {
 
     public Auction findById(Long auctionId) {
         // TODO: Implement JDBC/JPA logic to find an auction by its ID.
-        // Example: "SELECT * FROM auctions WHERE id = ?"
-        // You will also need to fetch the associated Item and its Owner.
+        // "SELECT * FROM auctions WHERE id = ?"
         return null;
     }
 

@@ -16,7 +16,7 @@ public class User extends Entity {
     private SellerProfile sellerProfile;
     private AdminProfile adminProfile;
 
-    public User(Long id, String username, String passwordHash) {
+    public User(String id, String username, String passwordHash) {
         super(id);
         this.username = username;
         this.passwordHash = passwordHash;
