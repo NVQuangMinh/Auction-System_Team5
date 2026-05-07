@@ -48,6 +48,7 @@ public class ClientService {
 
     public void sendMessage(NetworkMessage msg) {
         try {
+            System.out.println("Da vao ClientService");
             out.writeObject(msg);
             out.flush();
         } catch (IOException e) {

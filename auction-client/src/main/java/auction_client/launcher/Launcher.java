@@ -8,7 +8,7 @@ public class Launcher {
         try {
             ClientService clientService = ClientService.getInstance();
             String host = System.getenv("SERVER_HOST") != null ? System.getenv("SERVER_HOST") : "localhost";
-            int port = System.getenv("SERVER_PORT") != null ? Integer.parseInt(System.getenv("SERVER_PORT")) : 8080;
+            int port = System.getenv("SERVER_PORT") != null ? Integer.parseInt(System.getenv("SERVER_PORT")) : 9999;
             clientService.connect(host, port);
             System.out.println("Connected to server successfully!");
         } catch (Exception e) {

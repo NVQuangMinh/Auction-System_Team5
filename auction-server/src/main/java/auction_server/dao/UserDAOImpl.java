@@ -96,7 +96,8 @@ public class UserDAOImpl implements UserDAO {
 
             conn.commit(); // Hoàn tất Transaction
         } catch (SQLException e) {
-            throw new RuntimeException("Lỗi DB khi lưu User", e);
+            e.printStackTrace();
+            throw new RuntimeException("Lỗi DB khi lưu User");
         }
     }
 }

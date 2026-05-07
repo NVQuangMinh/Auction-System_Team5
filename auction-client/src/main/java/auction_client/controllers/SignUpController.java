@@ -44,13 +44,17 @@ public class SignUpController implements Initializable, AuctionUpdateListener {
 
     @Override
     public void onUpdateReceived(NetworkMessage msg) {
+        System.out.println("SignUp da nhan tin nhan");
         String action = (String) msg.getAction();
+        System.out.println(action);
         if (action.equals("CREATE_ACCOUNT")){
             Boolean isSuccess = (Boolean) msg.getData();
+            System.out.println(isSuccess);
             Platform.runLater(() ->{
                 if (isSuccess){
                     UserSession.getInstance().setUsername(inputUsername);
                     switchToMainScene();
+                    System.out.println("Da khoi tao main");
                 }
                 else{
                     UserSession.getInstance().setUser(null);
@@ -77,6 +81,8 @@ public class SignUpController implements Initializable, AuctionUpdateListener {
             SignUpDTO request = new SignUpDTO(newId, inputUsername, inputPassword);
             UserSession.getInstance().setUser(new UserDTO(newId, inputUsername));
             ClientService.getInstance().sendMessage(new NetworkMessage("CREATE_ACCOUNT", request));
+
+            System.out.println("Da an vao nut Sign Up");
         }
     }
 

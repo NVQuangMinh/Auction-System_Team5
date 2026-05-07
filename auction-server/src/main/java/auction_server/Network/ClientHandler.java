@@ -124,10 +124,15 @@ public class ClientHandler implements Runnable {
     private void handleSignUp(NetworkMessage msg) {
         SignUpDTO dto = (SignUpDTO) msg.getData();
         try {
+            System.out.println("Da vao ClientHandler");
             userService.register(dto.getUsername(), dto.getPassword());
-            sendMessage(new NetworkMessage("SIGNUP_SUCCESS", null));
+            sendMessage(new NetworkMessage("CREATE_ACCOUNT", (Boolean) true));
+            log.info("User '{}' registered successfully.", dto.getUsername());
+            System.out.println("ClientHandler da gui xong");
         } catch (Exception e) {
             sendMessage(new NetworkMessage("SIGNUP_FAILED", e.getMessage()));
+            System.out.println(e.getMessage());
+            log.info("User '{}' registered not successfully.", dto.getUsername());
         }
     }
 
