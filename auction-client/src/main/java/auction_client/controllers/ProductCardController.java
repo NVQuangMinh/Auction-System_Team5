@@ -33,12 +33,16 @@ public class ProductCardController {
         description.setText(auction.getItem().getDescription());
     }
 
-    private void handleCardClicked(MouseEvent event) {
-        if (event.getClickCount() == 2){
-            if (cardClickedListener != null) {
-                cardClickedListener.openAuctionDetail(auction);
-            }
-        }
+//    @FXML
+//    private void handleCardClick(MouseEvent event) {
+//        if (event.getClickCount() == 2){
+//            if (cardClickedListener != null) {
+//                cardClickedListener.openAuctionDetail(auction);
+//            }
+//        }
+//    }
+    public void handleCardClick(){
+        this.cardClickedListener.openAuctionDetail(this.auction);
     }
 
     @FXML

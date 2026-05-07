@@ -97,4 +97,7 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.close();
     }
+    public void cleanUp(){
+        ClientService.getInstance().removeListener(this);
+    }
 }
