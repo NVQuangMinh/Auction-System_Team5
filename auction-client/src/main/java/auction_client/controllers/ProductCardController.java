@@ -2,12 +2,13 @@ package auction_client.controllers;
 
 import auction_client.Network.ClientService;
 import auction_client.UserSession;
+import auction_client.interfaces.HandleCardClicked;
 import auction_shared.Network.NetworkMessage;
 import auction_shared.dto.AuctionDTO;
 import auction_shared.dto.BidTransactionDTO;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-
+import javafx.scene.input.MouseEvent;
 
 
 public class ProductCardController {
@@ -20,14 +21,24 @@ public class ProductCardController {
     @FXML
     protected Label description;
 
-    AuctionDTO auction = null;
+    private AuctionDTO auction = null;
+    private HandleCardClicked cardClickedListener = null;
 
-    public void setData(AuctionDTO auction) {
+    public void setData(AuctionDTO auction, HandleCardClicked openAuctionDetail) {
         this.auction = auction;
+        this.cardClickedListener = openAuctionDetail;
         itemName.setText(auction.getItem().getName());
         itemState.setText("ON-GOING");
         currentPrice.setText(String.valueOf(auction.getCurrentHighestBid()));
         description.setText(auction.getItem().getDescription());
+    }
+
+    private void handleCardClicked(MouseEvent event) {
+        if (event.getClickCount() == 2){
+            if (cardClickedListener != null) {
+                cardClickedListener.openAuctionDetail(auction);
+            }
+        }
     }
 
     @FXML

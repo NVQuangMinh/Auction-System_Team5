@@ -1,8 +1,9 @@
 package auction_client.controllers;
 
-import auction_client.AuctionUpdateListener;
+import auction_client.interfaces.AuctionUpdateListener;
 import auction_client.Network.ClientService;
 import auction_client.UserSession;
+import auction_client.interfaces.HandleCardClicked;
 import auction_shared.Network.NetworkMessage;
 import auction_shared.dto.AuctionDTO;
 import javafx.application.Platform;
@@ -24,7 +25,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class SellProductSceneController implements Initializable, AuctionUpdateListener {
+public class SellProductSceneController implements Initializable, AuctionUpdateListener, HandleCardClicked {
     @FXML
     public AnchorPane overlayPane;
     @FXML
@@ -49,22 +50,17 @@ public class SellProductSceneController implements Initializable, AuctionUpdateL
     }
 
     public void updateMyList(List<AuctionDTO> auctions){
-        Platform.runLater(()->{
+        Platform.runLater(() -> {
+            // 1. Xóa các card cũ để tránh trùng lặp khi cập nhật
             myListFlowPane.getChildren().clear();
+
             for (AuctionDTO auction : auctions) {
                 try {
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("/auction_client/ProductCard.fxml"));
                     Parent card = loader.load();
 
                     ProductCardController cardController = loader.getController();
-                    cardController.setData(auction);
-
-                    card.setOnMouseClicked(event -> {
-                        if (event.getClickCount() == 2){ //double click nha
-                            openAuctionDetail(auction);
-                        }
-                    });
-
+                    cardController.setData(auction, this::openAuctionDetail);
                     myListFlowPane.getChildren().add(card);
 
                 } catch (IOException e) {
@@ -72,7 +68,6 @@ public class SellProductSceneController implements Initializable, AuctionUpdateL
                     System.err.println("Unable to load ProductCard!");
                 }
             }
-
         });
     }
 
@@ -92,7 +87,7 @@ public class SellProductSceneController implements Initializable, AuctionUpdateL
         ClientService.getInstance().sendMessage(new NetworkMessage("GET_MY_LIST", UserSession.getInstance().getUsername()));
     }
 
-    private void openAuctionDetail(AuctionDTO auction) {
+    public void openAuctionDetail(AuctionDTO auction) {
         try{
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/auction_client/SellProductInfo.fxml"));
             Parent root = loader.load();

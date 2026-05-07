@@ -1,6 +1,6 @@
 package auction_client.controllers;
 
-import auction_client.AuctionUpdateListener;
+import auction_client.interfaces.AuctionUpdateListener;
 import auction_client.Network.ClientService;
 import auction_client.UserSession;
 import auction_shared.Network.NetworkMessage;
@@ -8,8 +8,11 @@ import auction_shared.dto.AuctionDTO;
 import auction_shared.dto.BidTransactionDTO;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
 
 
 public class SellProductInfoController implements AuctionUpdateListener {
@@ -59,6 +62,12 @@ public class SellProductInfoController implements AuctionUpdateListener {
             }
 
         }
+    }
+
+    @FXML
+    private void switchToUserProductList(MouseEvent event) {
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.close();
     }
 
     @FXML
