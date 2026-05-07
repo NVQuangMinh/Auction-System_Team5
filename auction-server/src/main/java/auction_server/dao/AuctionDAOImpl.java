@@ -12,8 +12,10 @@ import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class AuctionDAOImpl implements AuctionDAO {
+
     private final DataSource dataSource;
 
     public AuctionDAOImpl(DataSource dataSource) {
@@ -21,9 +23,33 @@ public class AuctionDAOImpl implements AuctionDAO {
     }
 
     @Override
+    public Auction findById(String id) {
+        String sql = "SELECT a.*, " +
+                "i.name as item_name, i.description as item_desc, i.type as item_type, i.brand, i.artist_name, " +
+                "u.id as owner_id, u.username, u.password_hash " +
+                "FROM auctions a " +
+                "JOIN items i ON a.item_id = i.id " +
+                "JOIN users u ON i.owner_id = u.id " +
+                "WHERE a.id = ?";
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, id);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return mapRowToAuction(rs);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Lỗi DB khi tìm Auction theo ID", e);
+        }
+        return null;
+    }
+
+    @Override
     public List<Auction> findAllActive() {
         List<Auction> auctions = new ArrayList<>();
-        // Lấy full thông tin
         String sql = "SELECT a.*, " +
                 "i.name as item_name, i.description as item_desc, i.type as item_type, i.brand, i.artist_name, " +
                 "u.id as owner_id, u.username, u.password_hash " +
@@ -40,34 +66,35 @@ public class AuctionDAOImpl implements AuctionDAO {
                 auctions.add(mapRowToAuction(rs));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Database error finding active auctions", e);
+            throw new RuntimeException("Lỗi DB khi lấy danh sách Auction ACTIVE", e);
         }
         return auctions;
     }
 
     @Override
-    public Auction findById(String id) {
-        String sql = "SELECT a.*, " +
-                "i.name as item_name, i.description as item_desc, i.type as item_type, i.brand, i.artist_name, " +
-                "u.id as owner_id, u.username, u.password_hash " +
-                "FROM auctions a " +
-                "JOIN items i ON a.item_id = i.id " +
-                "JOIN users u ON i.owner_id = u.id " +
-                "WHERE a.id = ?";
+    public void save(Auction auction) {
+        String sql = "INSERT INTO auctions (id, item_id, starting_price, buy_out_price, tick_size, current_highest_bid, status, start_time, end_time) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try (Connection conn = DatabaseConnection.getConnection();
+        try (Connection conn = dataSource.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setString(1, id);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    return mapRowToAuction(rs); // Sử dụng lại hàm mapRowToAuction đã viết ở bài trước
-                }
-            }
+            if (auction.getId() == null) auction.setId(UUID.randomUUID().toString());
+
+            pstmt.setString(1, auction.getId());
+            pstmt.setString(2, auction.getItem().getId());
+            pstmt.setDouble(3, auction.getStartingPrice());
+            pstmt.setDouble(4, auction.getBuyOutPrice());
+            pstmt.setDouble(5, auction.getTickSize());
+            pstmt.setDouble(6, auction.getCurrentHighestBid());
+            pstmt.setString(7, auction.getStatus());
+            pstmt.setTimestamp(8, Timestamp.valueOf(auction.getCreatedAt())); // start_time
+            pstmt.setTimestamp(9, Timestamp.valueOf(auction.getCreatedAt().plusDays(7))); // end_time
+
+            pstmt.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Lỗi DB khi tìm Auction theo ID", e);
+            throw new RuntimeException("Lỗi DB khi tạo phiên đấu giá", e);
         }
-        return null;
     }
 
     @Override
@@ -82,15 +109,13 @@ public class AuctionDAOImpl implements AuctionDAO {
             pstmt.executeUpdate();
 
         } catch (SQLException e) {
-            throw new RuntimeException("Database error updating auction", e);
+            throw new RuntimeException("Lỗi DB khi cập nhật trạng thái đấu giá", e);
         }
     }
 
     private Auction mapRowToAuction(ResultSet rs) throws SQLException {
-        // 1. Tạo User
         User owner = new User(rs.getString("owner_id"), rs.getString("username"), rs.getString("password_hash"));
 
-        // 2. Tạo Item
         Item item;
         String type = rs.getString("item_type").toLowerCase();
         String itemId = rs.getString("item_id");
@@ -105,7 +130,6 @@ public class AuctionDAOImpl implements AuctionDAO {
             item = new Vehicle(itemId, name, desc, owner, rs.getString("brand"));
         }
 
-        // 3. Trả về Auction hoàn chỉnh
         return new Auction(
                 rs.getString("id"),
                 item,

@@ -9,8 +9,10 @@ import auction_server.entities.items.Vehicle;
 
 import javax.sql.DataSource;
 import java.sql.*;
+import java.util.UUID;
 
 public class ItemDAOImpl implements ItemDAO {
+
     private final DataSource dataSource;
 
     public ItemDAOImpl(DataSource dataSource) {
@@ -18,7 +20,6 @@ public class ItemDAOImpl implements ItemDAO {
     }
 
     public Item findById(String id) {
-        // Dùng JOIN để lấy luôn thông tin User sở hữu
         String sql = "SELECT i.*, u.username, u.password_hash " +
                 "FROM items i JOIN users u ON i.owner_id = u.id " +
                 "WHERE i.id = ?";
@@ -33,13 +34,8 @@ public class ItemDAOImpl implements ItemDAO {
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Database error finding item by id", e);
+            throw new RuntimeException("Lỗi DB khi tìm Item", e);
         }
-        return null;
-    }
-
-    @Override
-    public Item findById(long id) {
         return null;
     }
 
@@ -51,11 +47,13 @@ public class ItemDAOImpl implements ItemDAO {
         try (Connection conn = dataSource.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setString(1, item.getId()); // UUID String
+            if (item.getId() == null) item.setId(UUID.randomUUID().toString());
+
+            pstmt.setString(1, item.getId());
             pstmt.setString(2, item.getName());
             pstmt.setString(3, item.getDescription());
             pstmt.setString(4, item.getOwner().getId());
-            pstmt.setString(5, item.getClass().getSimpleName().toLowerCase()); // art, electronics, vehicle
+            pstmt.setString(5, item.getClass().getSimpleName().toLowerCase());
             pstmt.setTimestamp(6, Timestamp.valueOf(item.getCreatedAt()));
 
             if (item instanceof Art) {
@@ -71,32 +69,31 @@ public class ItemDAOImpl implements ItemDAO {
 
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Database error saving item", e);
+            throw new RuntimeException("Lỗi DB khi lưu Item", e);
         }
     }
 
     private Item mapRowToItem(ResultSet rs) throws SQLException {
-        // Khởi tạo đối tượng User thực tế từ thông tin JOIN
         User owner = new User(
                 rs.getString("owner_id"),
                 rs.getString("username"),
                 rs.getString("password_hash")
         );
 
-        String type = rs.getString("type");
+        String type = rs.getString("type").toLowerCase();
         String itemId = rs.getString("id");
         String name = rs.getString("name");
-        String description = rs.getString("description");
+        String desc = rs.getString("description");
 
-        switch (type.toLowerCase()) {
+        switch (type) {
             case "art":
-                return new Art(itemId, name, description, owner, rs.getString("artist_name"));
+                return new Art(itemId, name, desc, owner, rs.getString("artist_name"));
             case "electronics":
-                return new Electronics(itemId, name, description, owner, rs.getString("brand"));
+                return new Electronics(itemId, name, desc, owner, rs.getString("brand"));
             case "vehicle":
-                return new Vehicle(itemId, name, description, owner, rs.getString("brand"));
+                return new Vehicle(itemId, name, desc, owner, rs.getString("brand"));
             default:
-                throw new IllegalArgumentException("Unknown item type in DB: " + type);
+                throw new IllegalArgumentException("Dữ liệu type Item trong DB không hợp lệ: " + type);
         }
     }
 }

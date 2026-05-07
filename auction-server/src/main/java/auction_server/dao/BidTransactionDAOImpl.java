@@ -8,6 +8,7 @@ import java.sql.*;
 import java.util.UUID;
 
 public class BidTransactionDAOImpl implements BidTransactionDAO {
+
     private final DataSource dataSource;
 
     public BidTransactionDAOImpl(DataSource dataSource) {
@@ -21,7 +22,6 @@ public class BidTransactionDAOImpl implements BidTransactionDAO {
         try (Connection conn = dataSource.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            // Nếu id chưa được sinh ra từ hàm khởi tạo, sinh mới ở đây
             String txId = transaction.getId() != null ? transaction.getId() : UUID.randomUUID().toString();
             transaction.setId(txId);
 
@@ -34,7 +34,7 @@ public class BidTransactionDAOImpl implements BidTransactionDAO {
             pstmt.executeUpdate();
 
         } catch (SQLException e) {
-            throw new RuntimeException("Database error saving bid transaction", e);
+            throw new RuntimeException("Lỗi DB khi lưu giao dịch đặt giá", e);
         }
     }
 }

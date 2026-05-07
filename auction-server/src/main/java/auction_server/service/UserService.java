@@ -11,7 +11,7 @@ public class UserService {
     }
 
     public void register(String username, String password) throws Exception {
-        if (userDAO.findUserByUsername(username) != null) {
+        if (userDAO.findByUsername(username) != null) {
             throw new Exception("Username already exists.");
         }
         // TODO: Implement password hashing here
@@ -21,7 +21,7 @@ public class UserService {
     }
 
     public User login(String username, String password) throws Exception {
-        User user = userDAO.findUserByUsername(username);
+        User user = userDAO.findByUsername(username);
         // TODO: Implement password hashing comparison here
         if (user != null && user.getPasswordHash().equals(password)) {
             return user;
