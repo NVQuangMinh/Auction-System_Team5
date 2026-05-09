@@ -71,7 +71,7 @@ public class SignUpController implements Initializable, AuctionUpdateListener {
                 confirmpassword.clear();
                 return;
             }
-            // Bộ sinh số ngẫu nhiên để tránh trùng với id (id và primary key)
+            // Bộ sinh số ngẫu nhiên để tránh trùng với id ( vì id là primary key)
             String newId = UUID.randomUUID().toString();
 
             SignUpDTO request = new SignUpDTO(newId, inputUsername, inputPassword);
