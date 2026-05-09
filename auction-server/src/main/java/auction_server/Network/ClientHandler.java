@@ -9,6 +9,7 @@ import auction_server.entities.items.Arts;
 import auction_server.mapper.Mappers;
 import auction_server.service.UserService;
 import auction_shared.Network.NetworkMessage;
+import auction_shared.dto.AuctionDTO;
 import auction_shared.dto.BidTransactionDTO;
 import auction_shared.dto.SignUpDTO;
 import auction_shared.dto.UserDTO;
@@ -70,14 +71,30 @@ public class ClientHandler implements Runnable{
             if (auction != null) {
                 if (auction.placeBid(transaction)) {
                     sendMessage(new NetworkMessage("BID_SUCCESS", null));
-                    AuctionManager.getInstance().broadCast(new NetworkMessage("UPDATE_BID", null));
+                    AuctionManager.getInstance().broadCast(new NetworkMessage("UPDATE_BID", null)); // null = updated auctionDTO
+                    // I think we should just send to client one auctionDTO that have just been updated, then on client, we search through the displayed auction and update the one that share the same id.(on all products scene and specific item scene)
+
                 }
                 else{
                     sendMessage(new NetworkMessage("BID_FAILED", null));
                 }
             }
         }
-        else if ("SELL".equals(action)){}
+        else if ("SELL".equals(action)){
+            AuctionDTO auction = (AuctionDTO) msg.getData();
+            //maybe we will send this to admins for verification
+
+            Auction room = new Auction(
+                    null, //auction.getItem(),
+                    auction.getStartingPrice(),
+                    auction.getBuyOutPrice(),
+                    auction.getTickSize(),
+                    auction.getStartTime(),
+                    auction.getEndTime()
+            );
+            AuctionManager.getInstance().addRoom(room);
+
+        }
         else if ("LOGIN".equals(action)){
             SignUpDTO dto = (SignUpDTO) msg.getData();
             User user = userService.login(dto.getUsername(), dto.getPassword());
@@ -86,7 +103,7 @@ public class ClientHandler implements Runnable{
             log.info("{}{}", dto.getUsername(), isSuccess ? " successfully login" : " failed to login");
         }
         else if ("GET_PRODUCTS".equals(action)){
-            User user1 = new User("id","vuminh","123456");
+            User user1 = new User("id","vuminh","123");
             Item item1 = new Arts("01","MONA_LISA","A beautiful girl",user1);
             Auction auction1 = new Auction(item1, 100, 1000,10, LocalDateTime.now(),LocalDateTime.now().plusMinutes(5));
             AuctionManager.getInstance().addRoom(auction1);
