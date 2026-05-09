@@ -31,6 +31,11 @@ public class SellProductSceneController implements Initializable, AuctionUpdateL
     @FXML
     FlowPane myListFlowPane;
 
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        ClientService.getInstance().addListener(this);
+        ClientService.getInstance().sendMessage(new NetworkMessage("GET_MY_LIST", UserSession.getInstance().getUsername()));
+    }
+
     @FXML
     public void handleUserAddItem(ActionEvent event) throws IOException{
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/auction_client/ProductInfoSubmission.fxml"));
@@ -79,12 +84,6 @@ public class SellProductSceneController implements Initializable, AuctionUpdateL
             Platform.runLater(() -> updateMyList(auctions));
         }
 
-    }
-
-
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        ClientService.getInstance().addListener(this);
-        ClientService.getInstance().sendMessage(new NetworkMessage("GET_MY_LIST", UserSession.getInstance().getUsername()));
     }
 
     public void openAuctionDetail(AuctionDTO auction) {

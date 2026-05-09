@@ -1,29 +1,24 @@
 package auction_client.controllers;
 
 import auction_client.Network.ClientService;
+import auction_client.UserSession;
 import auction_client.interfaces.AuctionUpdateListener;
 import auction_shared.Network.NetworkMessage;
 import auction_shared.dto.AuctionDTO;
+import auction_shared.dto.BidTransactionDTO;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
-import java.io.IOException;
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
 
 public class BidProductInfoController implements Initializable, AuctionUpdateListener {
@@ -85,7 +80,7 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
         }
     }
 
-    public void setData(AuctionDTO auction) {
+    public void initData(AuctionDTO auction) {
         itemName.setText(auction.getItem().getName());
         description.setText(auction.getItem().getDescription());
         currentPrice.setText(String.valueOf(auction.getCurrentHighestBid()));
@@ -97,6 +92,13 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.close();
     }
+
+    @FXML
+    public void placeBidRequest(){
+        BidTransactionDTO transaction = new BidTransactionDTO(auction, UserSession.getInstance().getUser(),Double.parseDouble(bidAmount.getText()));
+        ClientService.getInstance().sendMessage(new NetworkMessage("PLACE_BID", transaction));
+    }
+
     public void cleanUp(){
         ClientService.getInstance().removeListener(this);
     }

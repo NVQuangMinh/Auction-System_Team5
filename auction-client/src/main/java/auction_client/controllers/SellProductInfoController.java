@@ -29,9 +29,6 @@ public class SellProductInfoController implements AuctionUpdateListener {
     @FXML
     Label timeLeft; // I still don't know what to do with this shit;
 
-    @FXML
-    TextField bidAmount;
-
     AuctionDTO auction = null;
 
 
@@ -68,13 +65,6 @@ public class SellProductInfoController implements AuctionUpdateListener {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.close();
     }
-
-    @FXML
-    public void placeBidRequest(){
-        BidTransactionDTO transaction = new BidTransactionDTO(auction, UserSession.getInstance().getUser(),Double.parseDouble(bidAmount.getText()));
-        ClientService.getInstance().sendMessage(new NetworkMessage("PLACE_BID", transaction));
-    }
-
 
     public void cleanUp(){
         ClientService.getInstance().removeListener(this);

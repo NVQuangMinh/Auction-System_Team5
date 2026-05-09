@@ -47,7 +47,6 @@ public class ProductCardController {
 
     @FXML
     public void buyOut(){
-        //null == BidTransaction nhe anh em!
         BidTransactionDTO transaction = new BidTransactionDTO(auction, UserSession.getInstance().getUser(), 0);
         ClientService.getInstance().sendMessage(new NetworkMessage("BUY_OUT", transaction));
 

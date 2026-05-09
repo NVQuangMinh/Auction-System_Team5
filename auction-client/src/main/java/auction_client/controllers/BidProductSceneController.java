@@ -59,7 +59,7 @@ public class BidProductSceneController implements Initializable, AuctionUpdateLi
             Parent root = loader.load();
 
             BidProductInfoController controller = loader.getController();
-            controller.updateData();
+            controller.initData(auction);
 
             Stage bidProductInfoStage = new Stage();
             bidProductInfoStage.setTitle("Auction Detail");
