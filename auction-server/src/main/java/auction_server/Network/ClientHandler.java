@@ -34,6 +34,7 @@ public class ClientHandler implements Runnable{
     private ObjectInputStream in;
     private final UserService userService = new UserService();
 
+
     public ClientHandler(Socket socket) { this.socket = socket; }
 
     public void run() {
@@ -111,21 +112,26 @@ public class ClientHandler implements Runnable{
             Item item1 = new Arts("01","MONA_LISA","A beautiful girl",user1);
             Auction auction1 = new Auction(item1, 100, 1000,10, LocalDateTime.now(),LocalDateTime.now().plusMinutes(5));
             AuctionManager.getInstance().addRoom(auction1);
+
             sendMessage(new NetworkMessage("GET_PRODUCTS", (Serializable) Mappers.toAuctionDTOList(AuctionManager.getInstance().getAllRooms())));
         }
         else if ("BUY_OUT".equals(action)){
             BidTransactionDTO transactionDTO = (BidTransactionDTO) msg.getData();
-            // create a user by searching in database using transactionDTO.getBidder().getId()
-            // and then when creating transaction, replace null = user.
+
+            User bidder = UserDAO.getUserByUsername(transactionDTO.getBidder().getUsername());
             BidTransaction transaction = new BidTransaction(
                 AuctionManager.getInstance().getRoom(transactionDTO.getAuction().getItem().getId()),
-                null,
+                bidder,
                 transactionDTO.getBidAmount()
             );
             Auction auction = AuctionManager.getInstance().getRoom(transactionDTO.getAuction().getItem().getId());
             if (auction.buyOut(transaction)){
+                AuctionManager.getInstance().removeRoom(auction);
                 sendMessage(new NetworkMessage("BUYOUT_SUCCESS", null));
-                AuctionManager.getInstance().broadCast(new NetworkMessage("UPDATE_BID",null));
+                AuctionManager.getInstance().broadCast(new NetworkMessage(
+                        "UPDATE_BID",
+                        (Serializable) Mappers.toAuctionDTOList(AuctionManager.getInstance().getAllRooms())
+                ));
             }
         }
         else if ("GET_MY_LIST".equals(action)){

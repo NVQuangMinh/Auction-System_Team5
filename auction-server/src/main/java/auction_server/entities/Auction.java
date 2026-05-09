@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Auction implements Serializable {
-    private final Item item;
-    private final double startingPrice;
-    private final double buyOutPrice;
-    private final double tickSize;
-    private final LocalDateTime startTime;
+    private Item item;
+    private double startingPrice;
+    private double buyOutPrice;
+    private double tickSize;
+    private LocalDateTime startTime;
     private LocalDateTime endTime;
     private double currentHighestBid;
 
@@ -91,7 +91,8 @@ public class Auction implements Serializable {
     public boolean buyOut(BidTransaction transaction) {
         lock.lock();
         try {
-            if (transaction.getBidder() != getItem().getOwner()) {
+            if (! transaction.getBidder().getUsername().equals(getItem().getOwner().getUsername())) {
+                item.setOwner(transaction.getBidder());
                 return true;
             } else {
                 return false;

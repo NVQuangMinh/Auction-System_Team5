@@ -2,17 +2,14 @@ package auction_client.controllers;
 
 import auction_client.interfaces.AuctionUpdateListener;
 import auction_client.Network.ClientService;
-import auction_client.UserSession;
 import auction_shared.Network.NetworkMessage;
 import auction_shared.dto.AuctionDTO;
-import auction_shared.dto.BidTransactionDTO;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+
+import java.util.List;
 
 
 public class SellProductInfoController implements AuctionUpdateListener {
@@ -51,18 +48,27 @@ public class SellProductInfoController implements AuctionUpdateListener {
     public void onUpdateReceived(NetworkMessage msg) {
         String action = msg.getAction();
         if (action.equals("UPDATE_BID")){
-            AuctionDTO updatedAuction = (AuctionDTO) msg.getData();
-            if (updatedAuction.getItem().getId().equals(auction.getItem().getId())){
-                this.auction = updatedAuction;
-                updateData();
+            List<AuctionDTO> allRooms = (List<AuctionDTO>) msg.getData();
+            boolean exist = false;
+            for (AuctionDTO room : allRooms){
+                if (room.getItem().getId().equals(auction.getItem().getId())){
+                    this.auction = room;
+                    exist = true;
+                    updateData();
+                    break;
+                }
             }
-
+            if (!exist){
+                cleanUp();
+                switchToUserProductList();
+            }
         }
     }
 
     @FXML
-    private void switchToUserProductList(MouseEvent event) {
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+    private void switchToUserProductList() {
+        Stage stage = (Stage) itemName.getScene().getWindow();
+        cleanUp();
         stage.close();
     }
 

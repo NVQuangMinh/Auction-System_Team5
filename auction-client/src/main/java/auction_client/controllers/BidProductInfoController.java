@@ -9,11 +9,9 @@ import auction_shared.dto.BidTransactionDTO;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
@@ -75,6 +73,10 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
             this.auction = (AuctionDTO) msg.getData();
             updateData();
         }
+        else if (action.equals("BUYOUT_SUCCESS")){
+            cleanUp();
+            switchToUserProductList();
+        }
     }
 
     public void initData(AuctionDTO auction) {
@@ -82,8 +84,9 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
         updateData();
     }
     @FXML
-    private void switchToUserProductList(MouseEvent event) {
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+    private void switchToUserProductList() {
+        Stage stage = (Stage) tickRate.getScene().getWindow();
+        cleanUp();
         stage.close();
     }
 

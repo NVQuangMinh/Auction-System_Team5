@@ -24,7 +24,7 @@ import java.util.ResourceBundle;
 public class BidProductSceneController implements Initializable, AuctionUpdateListener, HandleCardClicked {
     @FXML
     private FlowPane productFlowPane;
-
+    private List<AuctionDTO> auctions = null;
 
     public void initialize(URL url, ResourceBundle resourceBundle) {
         ClientService.getInstance().addListener(this);
@@ -83,11 +83,11 @@ public class BidProductSceneController implements Initializable, AuctionUpdateLi
     public void onUpdateReceived(NetworkMessage msg) {
         String action = msg.getAction();
         if (action.equals("GET_PRODUCTS")){
-            List<AuctionDTO> auctions = (List<AuctionDTO>) msg.getData();
+            this.auctions = (List<AuctionDTO>) msg.getData();
             Platform.runLater(() -> updateProductList(auctions));
         }
         else if (action.equals("UPDATE_BID")){
-            List<AuctionDTO> auctions = (List<AuctionDTO>) msg.getData();
+            this.auctions = (List<AuctionDTO>) msg.getData();
             Platform.runLater(() -> updateProductList(auctions));
         }
     }
