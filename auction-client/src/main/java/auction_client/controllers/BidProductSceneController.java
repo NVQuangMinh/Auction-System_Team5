@@ -86,5 +86,9 @@ public class BidProductSceneController implements Initializable, AuctionUpdateLi
             List<AuctionDTO> auctions = (List<AuctionDTO>) msg.getData();
             Platform.runLater(() -> updateProductList(auctions));
         }
+        else if (action.equals("UPDATE_BID")){
+            List<AuctionDTO> auctions = (List<AuctionDTO>) msg.getData();
+            Platform.runLater(() -> updateProductList(auctions));
+        }
     }
 }

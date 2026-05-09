@@ -1,6 +1,7 @@
 package auction_server.Network;
 
 import auction_server.core.AuctionManager;
+import auction_server.dao.UserDAO;
 import auction_server.entities.Auction;
 import auction_server.entities.BidTransaction;
 import auction_server.entities.Item;
@@ -12,7 +13,6 @@ import auction_shared.Network.NetworkMessage;
 import auction_shared.dto.AuctionDTO;
 import auction_shared.dto.BidTransactionDTO;
 import auction_shared.dto.SignUpDTO;
-import auction_shared.dto.UserDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +43,11 @@ public class ClientHandler implements Runnable{
 
             while (true) {
                 NetworkMessage msg = (NetworkMessage) in.readObject();
-                handleRequest(msg);
+                try {
+                    handleRequest(msg);
+                } catch (Exception e) {
+                    log.error("Error handling request: {}", e.getMessage(), e);
+                }
             }
         } catch (Exception e) { /* Xử lý khi Client thoát */ }
     }
@@ -59,23 +63,23 @@ public class ClientHandler implements Runnable{
         String action = msg.getAction();
         if ("PLACE_BID".equals(action)) {
             BidTransactionDTO transactionDTO = (BidTransactionDTO) msg.getData();
-            // create a user by searching in database using transactionDTO.getBidder().getId()
-            // and then when creating transaction, replace null = user.
-
+            User bidder = UserDAO.getUserByUsername(transactionDTO.getBidder().getUsername());
             BidTransaction transaction = new BidTransaction(
                 AuctionManager.getInstance().getRoom(transactionDTO.getAuction().getItem().getId()),
-                null,
+                bidder,
                 transactionDTO.getBidAmount()
             );
             Auction auction = AuctionManager.getInstance().getRoom(transactionDTO.getAuction().getItem().getId());
             if (auction != null) {
                 if (auction.placeBid(transaction)) {
-                    sendMessage(new NetworkMessage("BID_SUCCESS", null));
-                    AuctionManager.getInstance().broadCast(new NetworkMessage("UPDATE_BID", null)); // null = updated auctionDTO
-                    // I think we should just send to client one auctionDTO that have just been updated, then on client, we search through the displayed auction and update the one that share the same id.(on all products scene and specific item scene)
-
+                    sendMessage(new NetworkMessage("BID_SUCCESS", Mappers.toDTO(auction)));
+                    AuctionManager.getInstance().broadCast(new NetworkMessage(
+                            "UPDATE_BID",
+                            (Serializable) Mappers.toAuctionDTOList(AuctionManager.getInstance().getAllRooms())
+                    ));
                 }
                 else{
+                    log.info("An owner try to bid his own product");
                     sendMessage(new NetworkMessage("BID_FAILED", null));
                 }
             }

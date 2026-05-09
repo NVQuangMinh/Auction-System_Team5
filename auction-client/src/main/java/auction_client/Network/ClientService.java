@@ -31,7 +31,6 @@ public class ClientService {
         instance = new ClientService();
         return instance;
     }
-
     public void connect(String host, int port) throws IOException {
         if (socket == null || socket.isClosed()) {
             this.socket = new Socket(host, port);

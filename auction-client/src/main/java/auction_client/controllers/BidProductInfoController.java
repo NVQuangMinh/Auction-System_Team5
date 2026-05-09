@@ -71,21 +71,15 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
 
     public void onUpdateReceived(NetworkMessage msg) {
         String action = msg.getAction();
-        if (action.equals("UPDATE_BID")){
-            AuctionDTO updatedAuction = (AuctionDTO) msg.getData();
-            if (updatedAuction.getItem().getId().equals(auction.getItem().getId())){
-                this.auction = updatedAuction;
-                updateData();
-            }
+        if (action.equals("BID_SUCCESS")){
+            this.auction = (AuctionDTO) msg.getData();
+            updateData();
         }
     }
 
     public void initData(AuctionDTO auction) {
-        itemName.setText(auction.getItem().getName());
-        description.setText(auction.getItem().getDescription());
-        currentPrice.setText(String.valueOf(auction.getCurrentHighestBid()));
-        buyOut.setText(String.valueOf(auction.getBuyOutPrice()));
-        tickRate.setText((String.valueOf(auction.getTickSize())));
+        this.auction = auction;
+        updateData();
     }
     @FXML
     private void switchToUserProductList(MouseEvent event) {
