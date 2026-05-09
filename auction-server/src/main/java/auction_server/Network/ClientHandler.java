@@ -60,6 +60,7 @@ public class ClientHandler implements Runnable{
             BidTransactionDTO transactionDTO = (BidTransactionDTO) msg.getData();
             // create a user by searching in database using transactionDTO.getBidder().getId()
             // and then when creating transaction, replace null = user.
+
             BidTransaction transaction = new BidTransaction(
                 AuctionManager.getInstance().getRoom(transactionDTO.getAuction().getItem().getId()),
                 null,
@@ -82,7 +83,7 @@ public class ClientHandler implements Runnable{
             User user = userService.login(dto.getUsername(), dto.getPassword());
             boolean isSuccess = user != null;
             sendMessage(new NetworkMessage("LOGIN", isSuccess));
-            log.info(dto.getUsername() + (isSuccess ? " successfully login" : " failed to login"));
+            log.info("{}{}", dto.getUsername(), isSuccess ? " successfully login" : " failed to login");
         }
         else if ("GET_PRODUCTS".equals(action)){
             User user1 = new User("id","vuminh","123456");
