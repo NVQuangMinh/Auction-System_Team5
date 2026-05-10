@@ -24,6 +24,7 @@ public class SocketServer {
                 Socket clientSocket = serverSocket.accept();
                 log.info("A new client connected!");
                 ClientHandler clientHandler = new ClientHandler(clientSocket);
+                // add client vào list các client đang online
                 AuctionManager.getInstance().addClient(clientHandler);
                 executor.submit(clientHandler);
             }
