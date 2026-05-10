@@ -21,6 +21,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.paint.Color?>
+<?import javafx.scene.text.Font?>
 
 <StackPane style="-fx-background-color: transparent;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction_client.controllers.BidProductInfoController">
     <padding>
@@ -128,6 +129,11 @@
                                 <Insets top="14.0" />
                             </VBox.margin>
                         </HBox>
+                  <Label fx:id="error" text="Label" textFill="RED">
+                     <font>
+                        <Font name="System Bold Italic" size="14.0" />
+                     </font>
+                  </Label>
                         <Label prefHeight="32.0" prefWidth="490.0" style="-fx-font-size: 13;" text="Bidding in the last 30s extend the timer by 60s." textFill="#00000091" />
                     </children>
                 </VBox>

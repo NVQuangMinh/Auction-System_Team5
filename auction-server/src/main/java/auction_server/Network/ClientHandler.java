@@ -126,7 +126,7 @@ public class ClientHandler implements Runnable{
             );
             Auction auction = AuctionManager.getInstance().getRoom(transactionDTO.getAuction().getItem().getId());
             if (auction.buyOut(transaction)){
-                AuctionManager.getInstance().removeRoom(auction);
+                AuctionManager.getInstance().removeRoom(auction); // remove auction
                 sendMessage(new NetworkMessage("BUYOUT_SUCCESS", null));
                 AuctionManager.getInstance().broadCast(new NetworkMessage(
                         "UPDATE_BID",

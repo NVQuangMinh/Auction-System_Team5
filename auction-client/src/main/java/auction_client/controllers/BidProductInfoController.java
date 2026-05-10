@@ -14,6 +14,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.net.URL;
@@ -21,7 +22,7 @@ import java.util.ResourceBundle;
 
 public class BidProductInfoController implements Initializable, AuctionUpdateListener {
     @FXML
-    private FlowPane productFlowPane;
+    Label error;
     @FXML
     private CheckBox autoBidCheck;
     @FXML
@@ -53,6 +54,10 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
         autoBidContainer.managedProperty().bind(autoBidContainer.visibleProperty());
         autoBidContainer.visibleProperty().bind(autoBidCheck.selectedProperty());
         bidContainer.visibleProperty().bind(autoBidCheck.selectedProperty().not());
+        ///  make the error disappear
+        error.setOpacity(0.0);
+        error.setManaged(false);
+        error.setVisible(false);
 
     }
 
@@ -91,8 +96,31 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
 
     @FXML
     public void placeBidRequest(){
-        BidTransactionDTO transaction = new BidTransactionDTO(auction, UserSession.getInstance().getUser(),Double.parseDouble(bidAmount.getText()));
-        ClientService.getInstance().sendMessage(new NetworkMessage("PLACE_BID", transaction));
+        double amount = Double.parseDouble(bidAmount.getText());
+        if (amount >= auction.getBuyOutPrice()){
+            BidTransactionDTO transaction = new BidTransactionDTO(auction, UserSession.getInstance().getUser(), auction.getBuyOutPrice());
+            ClientService.getInstance().sendMessage(new NetworkMessage("BUY_OUT", transaction));
+            // change the label (notify) -> transparent
+            error.setOpacity(0.0);
+            error.setManaged(false);
+            error.setVisible(false);
+        }
+        else if ((amount - auction.getCurrentHighestBid()) % auction.getTickSize() == 0){
+            BidTransactionDTO transaction = new BidTransactionDTO(auction, UserSession.getInstance().getUser(),amount);
+            ClientService.getInstance().sendMessage(new NetworkMessage("PLACE_BID", transaction));
+            // change the label (notify) -> transparent
+            error.setOpacity(0.0);
+            error.setManaged(false);
+            error.setVisible(false);
+        }
+        else{
+            // notify invalid bidAmount
+            error.setVisible(true);
+            error.setManaged(true);
+            error.setOpacity(1.0);
+            error.setText("Invalid Bid Amount!");
+            error.setTextFill(Color.RED);
+        }
     }
 
     public void cleanUp(){
