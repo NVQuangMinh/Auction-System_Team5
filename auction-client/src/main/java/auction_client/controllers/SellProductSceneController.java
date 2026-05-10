@@ -31,6 +31,14 @@ public class SellProductSceneController implements Initializable, AuctionUpdateL
     @FXML
     FlowPane myListFlowPane;
 
+    private List<AuctionDTO> auctions = null;
+
+
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        ClientService.getInstance().addListener(this);
+        ClientService.getInstance().sendMessage(new NetworkMessage("GET_MY_LIST", UserSession.getInstance().getUsername()));
+    }
+
     @FXML
     public void handleUserAddItem(ActionEvent event) throws IOException{
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/auction_client/ProductInfoSubmission.fxml"));
@@ -75,16 +83,13 @@ public class SellProductSceneController implements Initializable, AuctionUpdateL
     public void onUpdateReceived(NetworkMessage msg) {
         String action = msg.getAction();
         if (action.equals("GET_MY_LIST")){
-            List<AuctionDTO> auctions = (List<AuctionDTO>) msg.getData();
+            this.auctions = (List<AuctionDTO>) msg.getData();
             Platform.runLater(() -> updateMyList(auctions));
         }
-
-    }
-
-
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        ClientService.getInstance().addListener(this);
-        ClientService.getInstance().sendMessage(new NetworkMessage("GET_MY_LIST", UserSession.getInstance().getUsername()));
+        else if (action.equals("UPDATE_BID")){
+            this.auctions = (List<AuctionDTO>) msg.getData();
+            Platform.runLater(() -> updateMyList(auctions));
+        }
     }
 
     public void openAuctionDetail(AuctionDTO auction) {

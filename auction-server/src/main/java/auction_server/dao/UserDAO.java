@@ -7,7 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class UserDAO {
-    public boolean insertUser(User user) {
+    public static boolean insertUser(User user) {
 
         // Dùng ? để chống SQL Injection.
         String sql = "INSERT INTO users (id, username, password) VALUES (?, ?, ?)";
@@ -27,7 +27,7 @@ public class UserDAO {
         }
     }
 
-    public User getUserByUsername(String username) {
+    public static User getUserByUsername(String username) {
         String sql = "SELECT * FROM users WHERE username = ?";
 
         // Cấu trúc try - with - resource tự động gọi close() đóng tài nguyên mỗi khi kết thúc

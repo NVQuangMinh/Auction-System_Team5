@@ -28,4 +28,8 @@ public abstract class Item extends Entity implements Serializable {
     public User getOwner() {
         return this.owner;
     }
+
+    public void setOwner(User newOwner){
+        this.owner = newOwner;
+    }
 }

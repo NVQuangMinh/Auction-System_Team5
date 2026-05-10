@@ -1,6 +1,7 @@
 package auction_server.Network;
 
 import auction_server.core.AuctionManager;
+import auction_server.dao.UserDAO;
 import auction_server.entities.Auction;
 import auction_server.entities.BidTransaction;
 import auction_server.entities.Item;
@@ -9,9 +10,9 @@ import auction_server.entities.items.Arts;
 import auction_server.mapper.Mappers;
 import auction_server.service.UserService;
 import auction_shared.Network.NetworkMessage;
+import auction_shared.dto.AuctionDTO;
 import auction_shared.dto.BidTransactionDTO;
 import auction_shared.dto.SignUpDTO;
-import auction_shared.dto.UserDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +34,7 @@ public class ClientHandler implements Runnable{
     private ObjectInputStream in;
     private final UserService userService = new UserService();
 
+
     public ClientHandler(Socket socket) { this.socket = socket; }
 
     public void run() {
@@ -42,7 +44,11 @@ public class ClientHandler implements Runnable{
 
             while (true) {
                 NetworkMessage msg = (NetworkMessage) in.readObject();
-                handleRequest(msg);
+                try {
+                    handleRequest(msg);
+                } catch (Exception e) {
+                    log.error("Error handling request: {}", e.getMessage(), e);
+                }
             }
         } catch (Exception e) { /* Xử lý khi Client thoát */ }
     }
@@ -58,52 +64,74 @@ public class ClientHandler implements Runnable{
         String action = msg.getAction();
         if ("PLACE_BID".equals(action)) {
             BidTransactionDTO transactionDTO = (BidTransactionDTO) msg.getData();
-            // create a user by searching in database using transactionDTO.getBidder().getId()
-            // and then when creating transaction, replace null = user.
+            User bidder = UserDAO.getUserByUsername(transactionDTO.getBidder().getUsername());
             BidTransaction transaction = new BidTransaction(
                 AuctionManager.getInstance().getRoom(transactionDTO.getAuction().getItem().getId()),
-                null,
+                bidder,
                 transactionDTO.getBidAmount()
             );
             Auction auction = AuctionManager.getInstance().getRoom(transactionDTO.getAuction().getItem().getId());
             if (auction != null) {
                 if (auction.placeBid(transaction)) {
-                    sendMessage(new NetworkMessage("BID_SUCCESS", null));
-                    AuctionManager.getInstance().broadCast(new NetworkMessage("UPDATE_BID", null));
+                    sendMessage(new NetworkMessage("BID_SUCCESS", Mappers.toDTO(auction)));
+                    AuctionManager.getInstance().broadCast(new NetworkMessage(
+                            "UPDATE_BID",
+                            (Serializable) Mappers.toAuctionDTOList(AuctionManager.getInstance().getAllRooms())
+                    ));
                 }
                 else{
+                    log.info("An owner try to bid his own product");
                     sendMessage(new NetworkMessage("BID_FAILED", null));
                 }
             }
         }
-        else if ("SELL".equals(action)){}
+        else if ("SELL".equals(action)){
+            AuctionDTO auction = (AuctionDTO) msg.getData();
+            //maybe we will send this to admins for verification
+
+            Auction room = new Auction(
+                    null, //auction.getItem(),
+                    auction.getStartingPrice(),
+                    auction.getBuyOutPrice(),
+                    auction.getTickSize(),
+                    auction.getStartTime(),
+                    auction.getEndTime()
+            );
+            AuctionManager.getInstance().addRoom(room);
+
+        }
         else if ("LOGIN".equals(action)){
             SignUpDTO dto = (SignUpDTO) msg.getData();
             User user = userService.login(dto.getUsername(), dto.getPassword());
             boolean isSuccess = user != null;
             sendMessage(new NetworkMessage("LOGIN", isSuccess));
-            log.info(dto.getUsername() + (isSuccess ? " successfully login" : " failed to login"));
+            log.info("{}{}", dto.getUsername(), isSuccess ? " successfully login" : " failed to login");
         }
         else if ("GET_PRODUCTS".equals(action)){
-            User user1 = new User("id","vuminh","123456");
+            User user1 = new User("id","vuminh","123");
             Item item1 = new Arts("01","MONA_LISA","A beautiful girl",user1);
             Auction auction1 = new Auction(item1, 100, 1000,10, LocalDateTime.now(),LocalDateTime.now().plusMinutes(5));
             AuctionManager.getInstance().addRoom(auction1);
+
             sendMessage(new NetworkMessage("GET_PRODUCTS", (Serializable) Mappers.toAuctionDTOList(AuctionManager.getInstance().getAllRooms())));
         }
         else if ("BUY_OUT".equals(action)){
             BidTransactionDTO transactionDTO = (BidTransactionDTO) msg.getData();
-            // create a user by searching in database using transactionDTO.getBidder().getId()
-            // and then when creating transaction, replace null = user.
+
+            User bidder = UserDAO.getUserByUsername(transactionDTO.getBidder().getUsername());
             BidTransaction transaction = new BidTransaction(
                 AuctionManager.getInstance().getRoom(transactionDTO.getAuction().getItem().getId()),
-                null,
+                bidder,
                 transactionDTO.getBidAmount()
             );
             Auction auction = AuctionManager.getInstance().getRoom(transactionDTO.getAuction().getItem().getId());
             if (auction.buyOut(transaction)){
+                AuctionManager.getInstance().removeRoom(auction);
                 sendMessage(new NetworkMessage("BUYOUT_SUCCESS", null));
-                AuctionManager.getInstance().broadCast(new NetworkMessage("UPDATE_BID",null));
+                AuctionManager.getInstance().broadCast(new NetworkMessage(
+                        "UPDATE_BID",
+                        (Serializable) Mappers.toAuctionDTOList(AuctionManager.getInstance().getAllRooms())
+                ));
             }
         }
         else if ("GET_MY_LIST".equals(action)){
