@@ -19,6 +19,8 @@ public class ProductCardController {
     @FXML
     protected Label currentPrice;
     @FXML
+    protected Label buyOutPrice;
+    @FXML
     protected Label description;
 
     private AuctionDTO auction = null;
@@ -30,24 +32,17 @@ public class ProductCardController {
         itemName.setText(auction.getItem().getName());
         itemState.setText("ON-GOING");
         currentPrice.setText(String.valueOf(auction.getCurrentHighestBid()));
+        buyOutPrice.setText(String.valueOf(auction.getBuyOutPrice()));
         description.setText(auction.getItem().getDescription());
     }
 
-//    @FXML
-//    private void handleCardClick(MouseEvent event) {
-//        if (event.getClickCount() == 2){
-//            if (cardClickedListener != null) {
-//                cardClickedListener.openAuctionDetail(auction);
-//            }
-//        }
-//    }
     public void handleCardClick(){
         this.cardClickedListener.openAuctionDetail(this.auction);
     }
 
     @FXML
     public void buyOut(){
-        BidTransactionDTO transaction = new BidTransactionDTO(auction, UserSession.getInstance().getUser(), 0);
+        BidTransactionDTO transaction = new BidTransactionDTO(auction, UserSession.getInstance().getUser(), auction.getBuyOutPrice());
         ClientService.getInstance().sendMessage(new NetworkMessage("BUY_OUT", transaction));
 
     }

@@ -96,6 +96,7 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
 
     @FXML
     public void placeBidRequest(){
+        /// missing the logic for auto-bidding.
         double amount = Double.parseDouble(bidAmount.getText());
         if (amount >= auction.getBuyOutPrice()){
             BidTransactionDTO transaction = new BidTransactionDTO(auction, UserSession.getInstance().getUser(), auction.getBuyOutPrice());
