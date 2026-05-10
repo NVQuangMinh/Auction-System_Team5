@@ -49,7 +49,6 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         ClientService.getInstance().addListener(this);
-        ClientService.getInstance().sendMessage(new NetworkMessage("GET_PRODUCTS", null));
         bidContainer.managedProperty().bind(bidContainer.visibleProperty());
         autoBidContainer.managedProperty().bind(autoBidContainer.visibleProperty());
         autoBidContainer.visibleProperty().bind(autoBidCheck.selectedProperty());
