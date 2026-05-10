@@ -1,5 +1,7 @@
 package auction_client.controllers;
 
+import auction_client.Network.ClientService;
+import auction_shared.Network.NetworkMessage;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -30,9 +32,19 @@ public class ProductInfoSubmissionController implements Initializable {
     @FXML
     public Button submitButton;
 
+    ///  item below
+    private String name;
+    private String description;
+    private String startPrice;
+    private String buyPrice;
+    private String tick;
+    private boolean antiSnipping;
+
+
+
     @FXML
     private ChoiceBox<String> types;
-    private String[] options = {"Art","Electric","Vehicle"};
+    private final String[] options = {"Art","Electric","Vehicle"};
     public void initialize(URL url, ResourceBundle resourceBundle) {
         types.getItems().addAll(options);
     }
@@ -44,23 +56,23 @@ public class ProductInfoSubmissionController implements Initializable {
 
     @FXML
     private void handleSubmit() {
-        String name = productName.getText();
-        String description = productDescription.getText();
-        String startPrice = startingPrice.getText();
-        String buyPrice = buyoutPrice.getText();
-        String tick = tickSize.getText();
-        boolean antiSnipping = antiSnippingCheckbox.isSelected();
-
-        System.out.println("Product Submitted: " + name);
+        name = productName.getText();
+        description = productDescription.getText();
+        startPrice = startingPrice.getText();
+        buyPrice = buyoutPrice.getText();
+        tick = tickSize.getText();
+        antiSnipping = antiSnippingCheckbox.isSelected();
+        // missing start and end time
     }
 
     @FXML
     public void addItem(ActionEvent event){
+        handleSubmit();
+
         // owner = UserSession.getUser();
-        // create an Item object
-        // create an auction object
-        // new NetworkMessage("SELL",auction);
-        //close the window after finish adding item
+        // create an Item object (need an owner)
+        // create an auctionDTO object (need an item)
+        ClientService.getInstance().sendMessage(new NetworkMessage("SELL",null)); // null = auctionDTO
         switchToUserProductList(event);
     }
 

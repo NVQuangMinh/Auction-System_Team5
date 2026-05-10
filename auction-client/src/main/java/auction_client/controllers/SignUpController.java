@@ -1,6 +1,6 @@
 package auction_client.controllers;
 
-import auction_client.AuctionUpdateListener;
+import auction_client.interfaces.AuctionUpdateListener;
 import auction_client.Network.ClientService;
 import auction_client.UserSession;
 import auction_shared.Network.NetworkMessage;

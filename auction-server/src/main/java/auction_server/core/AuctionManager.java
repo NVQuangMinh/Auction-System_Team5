@@ -57,4 +57,8 @@ public class AuctionManager {
             client.sendMessage(msg);
         }
     }
+
+    public void removeRoom(Auction room){
+        activeRooms.remove(room.getItem().getId());
+    }
 }

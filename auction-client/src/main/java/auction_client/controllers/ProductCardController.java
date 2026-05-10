@@ -2,12 +2,13 @@ package auction_client.controllers;
 
 import auction_client.Network.ClientService;
 import auction_client.UserSession;
+import auction_client.interfaces.HandleCardClicked;
 import auction_shared.Network.NetworkMessage;
 import auction_shared.dto.AuctionDTO;
 import auction_shared.dto.BidTransactionDTO;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-
+import javafx.scene.input.MouseEvent;
 
 
 public class ProductCardController {
@@ -20,19 +21,32 @@ public class ProductCardController {
     @FXML
     protected Label description;
 
-    AuctionDTO auction = null;
+    private AuctionDTO auction = null;
+    private HandleCardClicked cardClickedListener = null;
 
-    public void setData(AuctionDTO auction) {
+    public void setData(AuctionDTO auction, HandleCardClicked openAuctionDetail) {
         this.auction = auction;
+        this.cardClickedListener = openAuctionDetail;
         itemName.setText(auction.getItem().getName());
         itemState.setText("ON-GOING");
         currentPrice.setText(String.valueOf(auction.getCurrentHighestBid()));
         description.setText(auction.getItem().getDescription());
     }
 
+//    @FXML
+//    private void handleCardClick(MouseEvent event) {
+//        if (event.getClickCount() == 2){
+//            if (cardClickedListener != null) {
+//                cardClickedListener.openAuctionDetail(auction);
+//            }
+//        }
+//    }
+    public void handleCardClick(){
+        this.cardClickedListener.openAuctionDetail(this.auction);
+    }
+
     @FXML
     public void buyOut(){
-        //null == BidTransaction nhe anh em!
         BidTransactionDTO transaction = new BidTransactionDTO(auction, UserSession.getInstance().getUser(), 0);
         ClientService.getInstance().sendMessage(new NetworkMessage("BUY_OUT", transaction));
 

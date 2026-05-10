@@ -1,31 +1,23 @@
 package auction_server.service;
 
-import auction_server.dao.interfaces.UserDAO;
+import auction_server.dao.UserDAO;
 import auction_server.entities.User;
 
 public class UserService {
-    private final UserDAO userDAO;
 
-    public UserService(UserDAO userDAO) {
-        this.userDAO = userDAO;
-    }
-
-    public void register(String username, String password) throws Exception {
-        if (userDAO.findByUsername(username) != null) {
-            throw new Exception("Username already exists.");
+    public boolean register(User user) {
+        // Kiểm tra username đã tồn tại chưa
+        if (UserDAO.getUserByUsername(user.getUsername()) != null) {
+            return false;
         }
-        // TODO: Implement password hashing here
-        String hashedPassword = password; // Placeholder
-        User newUser = new User(null, username, hashedPassword);
-        userDAO.save(newUser);
+        return UserDAO.insertUser(user);
     }
 
-    public User login(String username, String password) throws Exception {
-        User user = userDAO.findByUsername(username);
-        // TODO: Implement password hashing comparison here
-        if (user != null && user.getPasswordHash().equals(password)) {
+    public User login(String username, String password) {
+        User user = UserDAO.getUserByUsername(username);
+        if (user != null && user.getPassword().equals(password)) {
             return user;
         }
-        throw new Exception("Invalid username or password.");
+        return null;
     }
 }

@@ -1,6 +1,6 @@
 package auction_client.Network;
 
-import auction_client.AuctionUpdateListener;
+import auction_client.interfaces.AuctionUpdateListener;
 import auction_shared.Network.NetworkMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +31,6 @@ public class ClientService {
         instance = new ClientService();
         return instance;
     }
-
     public void connect(String host, int port) throws IOException {
         if (socket == null || socket.isClosed()) {
             this.socket = new Socket(host, port);
