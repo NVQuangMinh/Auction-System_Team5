@@ -11,6 +11,7 @@ import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
 import java.net.URL;
+import java.time.LocalDateTime;
 import java.util.ResourceBundle;
 
 
@@ -39,6 +40,8 @@ public class ProductInfoSubmissionController implements Initializable {
     private String buyPrice;
     private String tick;
     private boolean antiSnipping;
+    private LocalDateTime startBidDate;
+    private LocalDateTime endBidDate;
 
 
 
@@ -62,6 +65,7 @@ public class ProductInfoSubmissionController implements Initializable {
         buyPrice = buyoutPrice.getText();
         tick = tickSize.getText();
         antiSnipping = antiSnippingCheckbox.isSelected();
+        startBidDate = LocalDateTime.now();
         // missing start and end time
     }
 
