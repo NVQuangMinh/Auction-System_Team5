@@ -8,47 +8,50 @@ import auction_shared.dto.AuctionDTO;
 import auction_shared.dto.BidTransactionDTO;
 import auction_shared.dto.ItemDTO;
 import auction_shared.dto.UserDTO;
+import auction_shared.dto.ItemType;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Mappers {
-    
+
     public static UserDTO toDTO(User user) {
-        if (user == null) return null;
+        if (user == null)
+            return null;
         return new UserDTO(user.getId(), user.getUsername());
     }
 
     public static ItemDTO toDTO(Item item) {
-        if (item == null) return null;
+        if (item == null)
+            return null;
         return new ItemDTO(
-            item.getId(),
-            item.getName(),
-            item.getDescription(),
-            toDTO(item.getOwner())
-        );
+                item.getId(),
+                item.getName(),
+                item.getDescription(),
+                toDTO(item.getOwner()),
+                item.getType());
     }
 
     public static AuctionDTO toDTO(Auction auction) {
-        if (auction == null) return null;
+        if (auction == null)
+            return null;
         return new AuctionDTO(
-            toDTO(auction.getItem()),
-            auction.getStartingPrice(),
-            auction.getBuyOutPrice(),
-            auction.getTickSize(),
-            auction.getStartTime(),
-            auction.getEndTime(),
-            auction.getCurrentHighestBid()
-        );
+                toDTO(auction.getItem()),
+                auction.getStartingPrice(),
+                auction.getBuyOutPrice(),
+                auction.getTickSize(),
+                auction.getStartTime(),
+                auction.getEndTime(),
+                auction.getCurrentHighestBid());
     }
 
     public static BidTransactionDTO toDTO(BidTransaction transaction) {
-        if (transaction == null) return null;
+        if (transaction == null)
+            return null;
         return new BidTransactionDTO(
-            toDTO(transaction.getAuction()),
-            toDTO(transaction.getBidder()),
-            transaction.getBidAmount()
-        );
+                toDTO(transaction.getAuction()),
+                toDTO(transaction.getBidder()),
+                transaction.getBidAmount());
     }
 
     public static List<AuctionDTO> toAuctionDTOList(List<Auction> auctions) {

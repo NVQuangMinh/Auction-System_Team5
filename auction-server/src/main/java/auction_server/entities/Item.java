@@ -1,11 +1,12 @@
 package auction_server.entities;
 
 import auction_server.base.Entity;
+import auction_shared.dto.ItemType;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 public abstract class Item extends Entity implements Serializable {
+
     protected String itemName;
     protected String description;
     protected User owner;
@@ -16,6 +17,8 @@ public abstract class Item extends Entity implements Serializable {
         this.description = description;
         this.owner = owner;
     }
+
+    public abstract ItemType getType();
 
     public String getName() {
         return this.itemName;
@@ -29,7 +32,7 @@ public abstract class Item extends Entity implements Serializable {
         return this.owner;
     }
 
-    public void setOwner(User newOwner){
+    public void setOwner(User newOwner) {
         this.owner = newOwner;
     }
 }

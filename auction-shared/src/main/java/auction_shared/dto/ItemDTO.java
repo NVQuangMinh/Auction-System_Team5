@@ -3,16 +3,20 @@ package auction_shared.dto;
 import java.io.Serializable;
 
 public class ItemDTO implements Serializable {
+
     private String id;
     private String itemName;
     private String description;
     private UserDTO owner;
+    private ItemType type;
 
-    public ItemDTO(String id, String itemName, String description, UserDTO owner) {
+    public ItemDTO(String id, String itemName, String description,
+            UserDTO owner, ItemType type) {
         this.id = id;
         this.itemName = itemName;
         this.description = description;
         this.owner = owner;
+        this.type = type;
     }
 
     public String getId() {
@@ -29,5 +33,9 @@ public class ItemDTO implements Serializable {
 
     public UserDTO getOwner() {
         return owner;
+    }
+
+    public ItemType getType() {
+        return type;
     }
 }
