@@ -88,7 +88,7 @@ public class ClientHandler implements Runnable {
             AuctionDTO auctionDTO = (AuctionDTO) msg.getData();
             ItemDTO itemDTO = auctionDTO.getItem();
             User owner = UserDAO.getUserByUsername(itemDTO.getOwner().getUsername());
-            Item item = ItemFactory.create(itemDTO.getType(),itemDTO.getId(),itemDTO.getName(),itemDTO.getDescription(),owner);
+            Item item = ItemFactory.of(itemDTO.getType()).create(itemDTO.getId(),itemDTO.getName(),itemDTO.getDescription(),owner);
             Auction room = new Auction(
                     item,
                     auctionDTO.getStartingPrice(),
