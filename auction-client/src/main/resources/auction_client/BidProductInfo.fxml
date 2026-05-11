@@ -121,9 +121,9 @@
                         </HBox>
                         <HBox fx:id="autoBidContainer" managed="false" prefHeight="80.0" prefWidth="500.0" visible="false">
                             <children>
-                                <TextField prefHeight="80.0" prefWidth="305.0" promptText="ENTER YOUR MAX PRICE" style="-fx-font-size: 24; -fx-background-radius: 10; -fx-border-radius: 10; -fx-border-width: 2; -fx-border-color: #dcdcdc;" />
+                                <TextField fx:id="maxPrice" prefHeight="80.0" prefWidth="305.0" promptText="ENTER YOUR MAX PRICE" style="-fx-font-size: 24; -fx-background-radius: 10; -fx-border-radius: 10; -fx-border-width: 2; -fx-border-color: #dcdcdc;" />
                                 <Region prefHeight="131.0" prefWidth="46.0" HBox.hgrow="ALWAYS" />
-                                <Button mnemonicParsing="false" prefHeight="129.0" prefWidth="150.0" style="-fx-background-color: #fe5721; -fx-font-size: 17; -fx-font-weight: bold; -fx-background-radius: 10;" text="PLACE&#10;BID&#10;&#10;" textAlignment="CENTER" textFill="WHITE" />
+                                <Button fx:id="autoPlaceBid" mnemonicParsing="false" prefHeight="129.0" prefWidth="150.0" style="-fx-background-color: #fe5721; -fx-font-size: 17; -fx-font-weight: bold; -fx-background-radius: 10;" text="PLACE&#10;BID&#10;&#10;" textAlignment="CENTER" textFill="WHITE" />
                             </children>
                             <VBox.margin>
                                 <Insets top="14.0" />

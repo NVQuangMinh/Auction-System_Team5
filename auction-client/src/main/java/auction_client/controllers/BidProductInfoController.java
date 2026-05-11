@@ -9,6 +9,7 @@ import auction_shared.dto.BidTransactionDTO;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -17,6 +18,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
+import java.io.BufferedReader;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -39,6 +41,10 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
     Label buyOut;
     @FXML
     Label tickRate;
+    @FXML
+    Label maxPrice; //autoBid price
+    @FXML
+    Button autoPlaceBid; // button for autoBid
     @FXML
     Label timeLeft; // I still don't know what to do with this shit;
 
