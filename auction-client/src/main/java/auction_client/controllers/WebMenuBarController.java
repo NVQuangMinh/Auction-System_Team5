@@ -47,9 +47,10 @@ public class WebMenuBarController implements Initializable {
             }
         });
     }
+
     public void setWelcomeUsername(String username) {
         if (username != null && !username.isBlank()) {
-            welcome.setText("Welcome, " + "\n" + username.trim());
+            welcome.setText(username.trim());
         }
     }
 
@@ -72,6 +73,11 @@ public class WebMenuBarController implements Initializable {
     @FXML
     public void switchToActivitiesScene(ActionEvent event) throws IOException {
         switchScene(event, "/auction_client/ActivitiesScene.fxml");
+    }
+
+    @FXML
+    public void switchToAdminControlPanel(ActionEvent event) throws IOException {
+        switchScene(event, "/auction_client/AdminControlPanel.fxml");
     }
 
     @FXML

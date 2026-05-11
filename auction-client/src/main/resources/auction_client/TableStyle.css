@@ -1,0 +1,101 @@
+/* --- 1. Tổng thể & Bo góc --- */
+.table-view {
+    -fx-background-color: transparent;
+    -fx-background-radius: 15;
+    -fx-border-radius: 15;
+    -fx-border-color: #dcdde1;
+    -fx-border-width: 1;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #f8f9fa;
+    -fx-background-radius: 15 15 0 0;
+    -fx-padding: 8 0 8 0;
+}
+
+.table-view .filler,
+.table-view .column-header-background .filler {
+    -fx-background-color: transparent !important;
+    -fx-border-color: transparent !important;
+}
+
+.table-view:focused .table-row-cell:filled:selected .table-cell {
+    -fx-text-fill: #374151;
+}
+
+.table-view:focused {
+    -fx-background-insets: -1.4, 0, 1;
+    -fx-background-color: transparent;
+}
+
+.table-view {
+    -fx-cursor: default;
+}
+
+#colUsername, #colItemName {
+    -fx-cursor: hand;
+}
+
+.action-column .button {
+    -fx-cursor: hand;
+}
+
+.table-row-cell:hover {
+    -fx-background-color: #f3f4f6;
+}
+
+.table-row-cell:filled:selected {
+    -fx-background-color: #edf2ff;
+    -fx-background-insets: 0;
+}
+
+/* --- 2. Xử lý Căn lề (Sử dụng ID) --- */
+
+/* Nhóm tất cả các cột cần căn trái vào đây */
+#colUserId, #colUsername, #colUserRole, #colUserDob,
+#colItemName, #colItemPrice, #colItemStatus {
+    -fx-alignment: CENTER-LEFT;
+}
+
+/* ÉP PADDING CHO TIÊU ĐỀ: Thêm các ID cột giữa vào đây */
+#colUserId .label, #colItemName .label,
+#colUsername .label, #colUserRole .label, #colUserDob .label,
+#colItemPrice .label, #colItemStatus .label {
+    -fx-alignment: CENTER-LEFT;
+    -fx-padding: 0 0 0 15 !important;
+}
+
+/* ÉP PADDING CHO NỘI DUNG Ô: Thêm các ID cột giữa vào đây */
+#colUserId.table-cell, #colItemName.table-cell,
+#colUsername.table-cell, #colUserRole.table-cell, #colUserDob.table-cell,
+#colItemPrice.table-cell, #colItemStatus.table-cell {
+    -fx-padding: 0 0 0 15 !important;
+}
+
+/* Cột cuối cùng (Actions) giữ nguyên như cũ */
+#colUserAction, #colItemAction {
+    -fx-alignment: CENTER-RIGHT;
+}
+#colUserAction .label, #colItemAction .label,
+#colUserAction.table-cell, #colItemAction.table-cell {
+    -fx-alignment: CENTER-RIGHT;
+    -fx-padding: 0 15 0 0 !important;
+}
+
+/* --- 3. Dòng dữ liệu & Các cột giữa --- */
+.table-row-cell {
+    -fx-background-color: white;
+    -fx-border-color: transparent transparent #f3f4f6 transparent;
+    -fx-cell-size: 55px;
+}
+
+.table-cell {
+    -fx-alignment: CENTER-LEFT;
+    -fx-padding: 0 10 0 10;
+}
+
+/* Xóa bỏ đường kẻ dọc giữa các tiêu đề cột */
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
