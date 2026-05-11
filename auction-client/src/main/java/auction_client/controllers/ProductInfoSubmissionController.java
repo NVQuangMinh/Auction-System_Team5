@@ -13,6 +13,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.net.URL;
@@ -38,6 +39,8 @@ public class ProductInfoSubmissionController implements Initializable {
     private ImageView addImageButton;
     @FXML
     public Button submitButton;
+    @FXML
+    Label error;
 
     ///  item below
     private String name;
@@ -56,6 +59,9 @@ public class ProductInfoSubmissionController implements Initializable {
     private ChoiceBox<String> types;
     private final String[] options = {"Art","Electronic","Vehicle"};
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        error.setVisible(false);
+        error.setManaged(false);
+        error.setOpacity(0.0);
         types.getItems().addAll(options);
     }
 
@@ -65,7 +71,7 @@ public class ProductInfoSubmissionController implements Initializable {
     }
 
     @FXML
-    private void handleSubmit() {
+    private boolean handleSubmit() {
         name = productName.getText();
         description = productDescription.getText();
         startPrice = startingPrice.getText();
@@ -82,27 +88,47 @@ public class ProductInfoSubmissionController implements Initializable {
             type = ItemType.VEHICLES;
         }
         startBidDate = LocalDateTime.now();
+        // end time == null
+        return !name.isBlank() &&
+                !description.isBlank() &&
+                !startPrice.isBlank() &&
+                !buyOutPrice.isBlank() &&
+                !tick.isBlank() &&
+                type != null;
         // missing end time
     }
 
     @FXML
     public void addItem(ActionEvent event){
-        handleSubmit();
-        UserDTO owner = UserSession.getInstance().getUser();
-        String newId = UUID.randomUUID().toString();
-        ItemDTO item = new ItemDTO(newId,name,description,owner,type);
-        AuctionDTO auction = new AuctionDTO(
-                item,
-                Double.parseDouble(startPrice),
-                Double.parseDouble(buyOutPrice),
-                Double.parseDouble(tick),
-                startBidDate,
-                null,
-                Double.parseDouble(startPrice)
-        );
+        if (handleSubmit()){
+            error.setVisible(false);
+            error.setManaged(false);
+            error.setOpacity(0.0);
 
-        ClientService.getInstance().sendMessage(new NetworkMessage("SELL",auction));
-        switchToUserProductList(event);
+            UserDTO owner = UserSession.getInstance().getUser();
+            String newId = UUID.randomUUID().toString();
+            ItemDTO item = new ItemDTO(newId,name,description,owner,type);
+            AuctionDTO auction = new AuctionDTO(
+                    item,
+                    Double.parseDouble(startPrice),
+                    Double.parseDouble(buyOutPrice),
+                    Double.parseDouble(tick),
+                    startBidDate,
+                    null,
+                    Double.parseDouble(startPrice)
+            );
+
+            ClientService.getInstance().sendMessage(new NetworkMessage("SELL",auction));
+            switchToUserProductList(event);
+        }
+        else {
+            error.setVisible(true);
+            error.setOpacity(1.0);
+            error.setManaged(true);
+            error.setText("Require to fill every plank!");
+            error.setTextFill(Color.RED);
+        }
+
     }
 
     @FXML

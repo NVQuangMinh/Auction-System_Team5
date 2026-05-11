@@ -29,6 +29,11 @@
             </ImageView>
          </children>
       </HBox>
+      <Label fx:id="error" text="Label" textFill="RED">
+         <font>
+            <Font name="System Bold Italic" size="12.0" />
+         </font>
+      </Label>
       <TextField fx:id="productName" prefHeight="50.0" prefWidth="440.0" promptText="Product Name" style="-fx-background-radius: 10;">
          <font>
             <Font size="15.0" />
