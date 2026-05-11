@@ -7,12 +7,11 @@ import auction_server.entities.BidTransaction;
 import auction_server.entities.Item;
 import auction_server.entities.User;
 import auction_server.entities.items.Arts;
+import auction_server.factory.ItemFactory;
 import auction_server.mapper.Mappers;
 import auction_server.service.UserService;
 import auction_shared.Network.NetworkMessage;
-import auction_shared.dto.AuctionDTO;
-import auction_shared.dto.BidTransactionDTO;
-import auction_shared.dto.SignUpDTO;
+import auction_shared.dto.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,19 +85,23 @@ public class ClientHandler implements Runnable {
                 }
             }
         } else if ("SELL".equals(action)) {
-            AuctionDTO auction = (AuctionDTO) msg.getData();
-            // maybe we will send this to admins for verification
-
+            AuctionDTO auctionDTO = (AuctionDTO) msg.getData();
+            ItemDTO itemDTO = auctionDTO.getItem();
+            User owner = UserDAO.getUserByUsername(itemDTO.getOwner().getUsername());
+            Item item = ItemFactory.create(itemDTO.getType(),itemDTO.getId(),itemDTO.getName(),itemDTO.getDescription(),owner);
             Auction room = new Auction(
-                    null,
-                    auction.getItem(),
-                    auction.getStartingPrice(),
-                    auction.getBuyOutPrice(),
-                    auction.getTickSize(),
-                    auction.getStartTime(),
-                    auction.getEndTime());
+                    item,
+                    auctionDTO.getStartingPrice(),
+                    auctionDTO.getBuyOutPrice(),
+                    auctionDTO.getTickSize(),
+                    auctionDTO.getStartTime(),
+                    auctionDTO.getEndTime());
             AuctionManager.getInstance().addRoom(room);
-
+            AuctionManager.getInstance().broadCast(new NetworkMessage(
+                    "UPDATE_BID",
+                    (Serializable) Mappers.toAuctionDTOList(AuctionManager.getInstance().getAllRooms()))
+            );
+            /// Nam, please write codes that save this item to the database.
         } else if ("LOGIN".equals(action)) {
             SignUpDTO dto = (SignUpDTO) msg.getData();
             User user = userService.login(dto.getUsername(), dto.getPassword());
@@ -128,7 +131,8 @@ public class ClientHandler implements Runnable {
                 sendMessage(new NetworkMessage("BUYOUT_SUCCESS", null));
                 AuctionManager.getInstance().broadCast(new NetworkMessage(
                         "UPDATE_BID",
-                        (Serializable) Mappers.toAuctionDTOList(AuctionManager.getInstance().getAllRooms())));
+                        (Serializable) Mappers.toAuctionDTOList(AuctionManager.getInstance().getAllRooms()))
+                );
             }
         } else if ("GET_MY_LIST".equals(action)) {
             List<Auction> myList = new ArrayList<>();

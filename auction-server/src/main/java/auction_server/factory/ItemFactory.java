@@ -9,8 +9,7 @@ import auction_shared.dto.ItemType;
 
 public class ItemFactory {
 
-    private ItemFactory() {
-    }
+    private ItemFactory() {}
 
     public static Item create(ItemType type, String id, String name,
             String description, User owner) {

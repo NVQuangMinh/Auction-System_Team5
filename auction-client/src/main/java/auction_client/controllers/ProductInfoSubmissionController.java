@@ -1,7 +1,12 @@
 package auction_client.controllers;
 
 import auction_client.Network.ClientService;
+import auction_client.UserSession;
 import auction_shared.Network.NetworkMessage;
+import auction_shared.dto.ItemDTO;
+import auction_shared.dto.ItemType;
+import auction_shared.dto.UserDTO;
+import auction_shared.dto.AuctionDTO;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -11,7 +16,9 @@ import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
 import java.net.URL;
+import java.time.LocalDateTime;
 import java.util.ResourceBundle;
+import java.util.UUID;
 
 
 public class ProductInfoSubmissionController implements Initializable {
@@ -36,15 +43,18 @@ public class ProductInfoSubmissionController implements Initializable {
     private String name;
     private String description;
     private String startPrice;
-    private String buyPrice;
+    private String buyOutPrice;
     private String tick;
     private boolean antiSnipping;
+    private ItemType type;
+    private LocalDateTime startBidDate;
+
 
 
 
     @FXML
     private ChoiceBox<String> types;
-    private final String[] options = {"Art","Electric","Vehicle"};
+    private final String[] options = {"Art","Electronic","Vehicle"};
     public void initialize(URL url, ResourceBundle resourceBundle) {
         types.getItems().addAll(options);
     }
@@ -59,20 +69,39 @@ public class ProductInfoSubmissionController implements Initializable {
         name = productName.getText();
         description = productDescription.getText();
         startPrice = startingPrice.getText();
-        buyPrice = buyoutPrice.getText();
+        buyOutPrice = buyoutPrice.getText();
         tick = tickSize.getText();
         antiSnipping = antiSnippingCheckbox.isSelected();
-        // missing start and end time
+        if (types.getValue().equals("Art")){
+            type = ItemType.ARTS;
+        }
+        else if (types.getValue().equals("Electronic")){
+            type = ItemType.ELECTRONICS;
+        }
+        else {
+            type = ItemType.VEHICLES;
+        }
+        startBidDate = LocalDateTime.now();
+        // missing end time
     }
 
     @FXML
     public void addItem(ActionEvent event){
         handleSubmit();
+        UserDTO owner = UserSession.getInstance().getUser();
+        String newId = UUID.randomUUID().toString();
+        ItemDTO item = new ItemDTO(newId,name,description,owner,type);
+        AuctionDTO auction = new AuctionDTO(
+                item,
+                Double.parseDouble(startPrice),
+                Double.parseDouble(buyOutPrice),
+                Double.parseDouble(tick),
+                startBidDate,
+                null,
+                Double.parseDouble(startPrice)
+        );
 
-        // owner = UserSession.getUser();
-        // create an Item object (need an owner)
-        // create an auctionDTO object (need an item)
-        ClientService.getInstance().sendMessage(new NetworkMessage("SELL",null)); // null = auctionDTO
+        ClientService.getInstance().sendMessage(new NetworkMessage("SELL",auction));
         switchToUserProductList(event);
     }
 
