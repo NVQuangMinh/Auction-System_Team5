@@ -1,6 +1,6 @@
 module auction.server {
 
-    requires auction.shared;
+    requires transitive auction.shared;
     requires java.sql;
     requires org.slf4j;
     requires ch.qos.logback.classic;
@@ -12,5 +12,6 @@ module auction.server {
     exports auction_server.behaviors;
     exports auction_server.interfaces;
     exports auction_server.mapper;
+    exports auction_server.factory;
     opens auction_server.Network to auction.shared;
 }
