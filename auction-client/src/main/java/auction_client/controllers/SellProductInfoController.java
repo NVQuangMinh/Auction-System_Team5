@@ -49,19 +49,21 @@ public class SellProductInfoController implements AuctionUpdateListener {
         String action = msg.getAction();
         if (action.equals("UPDATE_BID")){
             List<AuctionDTO> allRooms = (List<AuctionDTO>) msg.getData();
-            boolean exist = false;
-            for (AuctionDTO room : allRooms){
-                if (room.getItem().getId().equals(auction.getItem().getId())){
-                    this.auction = room;
-                    exist = true;
-                    updateData();
-                    break;
+            Platform.runLater(() ->{
+                boolean exist = false;
+                for (AuctionDTO room : allRooms){
+                    if (room.getItem().getId().equals(auction.getItem().getId())){
+                        this.auction = room;
+                        exist = true;
+                        updateData();
+                        break;
+                    }
                 }
-            }
-            if (!exist){
-                cleanUp();
-                switchToUserProductList();
-            }
+                if (!exist){
+                    cleanUp();
+                    switchToUserProductList();
+                }
+            });
         }
     }
 

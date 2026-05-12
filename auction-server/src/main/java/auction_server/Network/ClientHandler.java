@@ -53,7 +53,8 @@ public class ClientHandler implements Runnable {
                 }
             }
         } catch (Exception e) {
-            /* Xử lý khi Client thoát */ }
+            log.info("Client has disconnected");
+        }
     }
 
     public void sendMessage(NetworkMessage msg) {
