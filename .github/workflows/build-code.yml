@@ -1,0 +1,39 @@
+name: Java Multi-OS CI for All Branches
+
+on:
+  push:
+    branches:
+      - 'main'
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  build-and-test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        java-version: [21]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ matrix.java-version }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ matrix.java-version }}
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Build Shared Module
+        run: mvn install -pl share -am
+
+      - name: Run Server Tests
+        run: mvn test -pl server
+
+      - name: Run Client Tests
+        run: mvn test -pl client
