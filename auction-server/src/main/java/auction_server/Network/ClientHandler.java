@@ -1,6 +1,8 @@
 package auction_server.Network;
 
 import auction_server.core.AuctionManager;
+import auction_server.dao.AuctionDAO;
+import auction_server.dao.ItemDAO;
 import auction_server.dao.UserDAO;
 import auction_server.entities.Auction;
 import auction_server.entities.BidTransaction;
@@ -96,12 +98,23 @@ public class ClientHandler implements Runnable {
                     auctionDTO.getTickSize(),
                     auctionDTO.getStartTime(),
                     auctionDTO.getEndTime());
-            AuctionManager.getInstance().addRoom(room);
-            AuctionManager.getInstance().broadCast(new NetworkMessage(
-                    "UPDATE_BID",
-                    (Serializable) Mappers.toAuctionDTOList(AuctionManager.getInstance().getAllRooms()))
-            );
-            /// Nam, please write codes that save this item to the database.
+            
+            // Lưu item và auction vào database
+            ItemDAO itemDAO = new ItemDAO();
+            AuctionDAO auctionDAO = new AuctionDAO();
+            int itemInserted = itemDAO.insert(item);
+            int auctionInserted = auctionDAO.insert(room);
+            
+            if (itemInserted > 0 && auctionInserted > 0) {
+                AuctionManager.getInstance().addRoom(room);
+                AuctionManager.getInstance().broadCast(new NetworkMessage(
+                        "UPDATE_BID",
+                        (Serializable) Mappers.toAuctionDTOList(AuctionManager.getInstance().getAllRooms()))
+                );
+                sendMessage(new NetworkMessage("SELL_SUCCESS", true));
+            } else {
+                sendMessage(new NetworkMessage("SELL_FAILED", false));
+            }
         } else if ("LOGIN".equals(action)) {
             SignUpDTO dto = (SignUpDTO) msg.getData();
             User user = userService.login(dto.getUsername(), dto.getPassword());
