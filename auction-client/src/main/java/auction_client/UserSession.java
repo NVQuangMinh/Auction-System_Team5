@@ -24,7 +24,7 @@ public class UserSession {
     public void setUser(UserDTO user){this.user = user;}
     public UserDTO getUser(){return user;}
     public void closeApp(){
-        this.self = null;
+        self = null;
         this.username = null;
     }
 
