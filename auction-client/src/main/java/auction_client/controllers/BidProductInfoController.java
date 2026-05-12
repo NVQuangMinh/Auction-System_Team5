@@ -42,7 +42,7 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
     @FXML
     Label tickRate;
     @FXML
-    Label maxPrice; //autoBid price
+    TextField maxPrice; //autoBid price
     @FXML
     Button autoPlaceBid; // button for autoBid
     @FXML
