@@ -31,7 +31,7 @@ public class SellProductSceneController implements Initializable, AuctionUpdateL
     @FXML
     FlowPane myListFlowPane;
 
-    private List<AuctionDTO> auctions = null;
+    private List<AuctionDTO> myAuctions = null;
 
 
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -83,12 +83,24 @@ public class SellProductSceneController implements Initializable, AuctionUpdateL
     public void onUpdateReceived(NetworkMessage msg) {
         String action = msg.getAction();
         if (action.equals("GET_MY_LIST")){
-            this.auctions = (List<AuctionDTO>) msg.getData();
-            Platform.runLater(() -> updateMyList(auctions));
+            this.myAuctions = (List<AuctionDTO>) msg.getData();
+            Platform.runLater(() -> updateMyList(myAuctions));
         }
         else if (action.equals("UPDATE_BID")){
-            this.auctions = (List<AuctionDTO>) msg.getData();
-            Platform.runLater(() -> updateMyList(auctions));
+
+            List<AuctionDTO> allRooms = (List<AuctionDTO>) msg.getData();
+            Platform.runLater(() -> {
+                this.myAuctions.clear();
+                for (AuctionDTO room : allRooms){
+                    if (room.getItem().getOwner().getUsername().equals(UserSession.getInstance().getUsername())) {
+                        myAuctions.add(room);
+                    }
+                }
+                updateMyList(myAuctions);
+            });
+
+            //ClientService.getInstance().sendMessage(new NetworkMessage("GET_MY_LIST", UserSession.getInstance().getUsername()));
+            // cách 2 nha anh em
         }
     }
 

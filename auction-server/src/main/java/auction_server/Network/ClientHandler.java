@@ -51,7 +51,8 @@ public class ClientHandler implements Runnable {
                 }
             }
         } catch (Exception e) {
-            /* Xử lý khi Client thoát */ }
+            log.info("Client has disconnected");
+        }
     }
 
     public void sendMessage(NetworkMessage msg) {
@@ -95,8 +96,11 @@ public class ClientHandler implements Runnable {
                     auctionDTO.getBuyOutPrice(),
                     auctionDTO.getTickSize(),
                     auctionDTO.getStartTime(),
-                    auctionDTO.getEndTime());
+                    auctionDTO.getEndTime()
+            );
+
             AuctionManager.getInstance().addRoom(room);
+
             AuctionManager.getInstance().broadCast(new NetworkMessage(
                     "UPDATE_BID",
                     (Serializable) Mappers.toAuctionDTOList(AuctionManager.getInstance().getAllRooms()))
