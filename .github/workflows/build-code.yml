@@ -30,10 +30,10 @@ jobs:
           cache: 'maven'
 
       - name: Build Shared Module
-        run: mvn install -pl share -am
+        run: mvn install -pl auction-shared -am
 
       - name: Run Server Tests
-        run: mvn test -pl server
+        run: mvn test -pl auction-server
 
       - name: Run Client Tests
-        run: mvn test -pl client
+        run: mvn test -pl auction-client
