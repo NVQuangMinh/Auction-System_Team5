@@ -7,6 +7,8 @@ import auction_shared.dto.SignUpDTO;
 import auction_shared.dto.UserDTO;
 import auction_shared.Network.NetworkMessage;
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -27,7 +29,7 @@ public class SignInController implements Initializable, AuctionUpdateListener {
     public TextField username;
     @FXML
     public PasswordField password;
-
+    public static final BooleanProperty isAdmin =  new SimpleBooleanProperty(false);
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -54,10 +56,11 @@ public class SignInController implements Initializable, AuctionUpdateListener {
     public void onUpdateReceived(NetworkMessage msg) {
         if ("LOGIN".equals(msg.getAction())) {
             Boolean isSuccess = (Boolean) msg.getData();
-
             Platform.runLater(() -> {
                 if (isSuccess) {
                     UserSession.getInstance().setUsername(username.getText().trim());
+                    boolean roleIsAdmin = "ADMIN".equalsIgnoreCase(UserSession.getInstance().getUser().getRole());
+                    SignInController.isAdmin.set(roleIsAdmin);
                     switchToMainScene();
                 } else {
                     UserSession.getInstance().setUser(null);

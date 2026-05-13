@@ -16,19 +16,12 @@ import java.util.ArrayList;
 
 public class ItemDAO implements InterfaceDAO<Item> {
 
-    // Dùng để phân rã các item thành các instance của các loại item cụ thể để load
-    // vào DB
-    private String resolveItemType(Item item) {
-        return item.getType().name();
-    }
-
-    // Ngược lại với phân rã, dùng để dịch ngược
-    // một dòng trong ResultSet thành một instance của một loại item cụ thể...
+    // Dịch ngược một dòng trong ResultSet thành một instance của một loại item cụ thể
     private Item mapRow(ResultSet rs, User owner) throws SQLException {
         String id = rs.getString("id");
         String name = rs.getString("item_name");
         String description = rs.getString("description");
-        ItemType type = ItemType.valueOf(rs.getString("item_type")); // tự throw nếu DB sai
+        ItemType type = ItemType.fromDbValue(rs.getString("item_type"));
         return switch (type) {
             case ARTS -> new Arts(id, name, description, owner);
             case ELECTRONICS -> new Electronics(id, name, description, owner);
@@ -42,7 +35,7 @@ public class ItemDAO implements InterfaceDAO<Item> {
         try (Connection conn = DatabaseConnection.getConnection();
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, item.getId());
-            pstmt.setString(2, resolveItemType(item));
+            pstmt.setString(2, item.getType().toDbValue());
             pstmt.setString(3, item.getName());
             pstmt.setString(4, item.getDescription());
             pstmt.setString(5, item.getOwner().getId());

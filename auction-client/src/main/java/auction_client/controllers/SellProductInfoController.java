@@ -4,9 +4,11 @@ import auction_client.interfaces.AuctionUpdateListener;
 import auction_client.Network.ClientService;
 import auction_shared.Network.NetworkMessage;
 import auction_shared.dto.AuctionDTO;
+import auction_shared.dto.BidTransactionDTO;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.util.List;
@@ -25,6 +27,9 @@ public class SellProductInfoController implements AuctionUpdateListener {
     Label tickRate;
     @FXML
     Label timeLeft; // I still don't know what to do with this shit;
+
+    @FXML
+    TextField bidAmount;
 
     AuctionDTO auction = null;
 
@@ -49,19 +54,21 @@ public class SellProductInfoController implements AuctionUpdateListener {
         String action = msg.getAction();
         if (action.equals("UPDATE_BID")){
             List<AuctionDTO> allRooms = (List<AuctionDTO>) msg.getData();
-            boolean exist = false;
-            for (AuctionDTO room : allRooms){
-                if (room.getItem().getId().equals(auction.getItem().getId())){
-                    this.auction = room;
-                    exist = true;
-                    updateData();
-                    break;
+            Platform.runLater(() ->{
+                boolean exist = false;
+                for (AuctionDTO room : allRooms){
+                    if (room.getItem().getId().equals(auction.getItem().getId())){
+                        this.auction = room;
+                        exist = true;
+                        updateData();
+                        break;
+                    }
                 }
-            }
-            if (!exist){
-                cleanUp();
-                switchToUserProductList();
-            }
+                if (!exist){
+                    cleanUp();
+                    switchToUserProductList();
+                }
+            });
         }
     }
 
@@ -71,6 +78,9 @@ public class SellProductInfoController implements AuctionUpdateListener {
         cleanUp();
         stage.close();
     }
+
+
+
 
     public void cleanUp(){
         ClientService.getInstance().removeListener(this);

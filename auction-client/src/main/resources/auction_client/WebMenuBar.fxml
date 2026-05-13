@@ -10,25 +10,33 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
 <?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" minWidth="0.0" prefHeight="50.0" prefWidth="1200.0" style="-fx-background-color: #138eff;" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction_client.controllers.WebMenuBarController">
+<HBox alignment="CENTER" prefWidth="1200.0" style="-fx-background-color: #138eff;" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction_client.controllers.WebMenuBarController">
     <children>
-        <Label fx:id="welcome" alignment="CENTER" prefHeight="55.0" prefWidth="241.0" style="-fx-font-size: 15; -fx-font-weight: bold;" text="Welcome,  0000000000" textFill="WHITE">
-            <font>
-                <Font name="System Bold" size="12.0" />
-            </font>
-        </Label>
-      <MenuButton fx:id="productsMenuButton" alignment="CENTER" mnemonicParsing="false" prefHeight="55.0" prefWidth="200.0" style="-fx-background-color: transparent; -fx-font-weight: bold; -fx-font-size: 15;" stylesheets="@UnderlineButton.css" text="PRODUCTS" textFill="WHITE" HBox.hgrow="ALWAYS">
-        <items>
-            <MenuItem mnemonicParsing="false" onAction="#switchToProductScene" text="All Products" />
-          <MenuItem mnemonicParsing="false" onAction="#switchToArtScene" text="Art" />
-          <MenuItem mnemonicParsing="false" onAction="#switchToElectronicScene" text="Electronics" />
-            <MenuItem mnemonicParsing="false" onAction="#switchToVehicleScene" text="Vehicles" />
-        </items>
-      </MenuButton>
-        <Region minWidth="0.0" prefHeight="55.0" prefWidth="149.0" HBox.hgrow="ALWAYS" />
+      <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" minWidth="1.0" spacing="5.0" HBox.hgrow="ALWAYS">
+         <children>
+            <Label alignment="CENTER_RIGHT" style="-fx-font-size: 15; -fx-font-weight: BOLD;" text="WELCOME, " textFill="WHITE" />
+              <Label fx:id="welcome" style="-fx-font-size: 15; -fx-font-weight: bold;" text="USER" textFill="WHITE">
+                  <font>
+                      <Font name="System Bold" size="12.0" />
+                  </font>
+              </Label>
+            <MenuButton fx:id="productsMenuButton" alignment="CENTER" mnemonicParsing="false" style="-fx-background-color: transparent; -fx-font-weight: bold; -fx-font-size: 15;" stylesheets="@UnderlineButton.css" text="PRODUCTS" textFill="WHITE">
+              <items>
+                  <MenuItem mnemonicParsing="false" onAction="#switchToProductScene" text="All Products" />
+                <MenuItem mnemonicParsing="false" onAction="#switchToArtScene" text="Art" />
+                <MenuItem mnemonicParsing="false" onAction="#switchToElectronicScene" text="Electronics" />
+                  <MenuItem mnemonicParsing="false" onAction="#switchToVehicleScene" text="Vehicles" />
+              </items>
+            </MenuButton>
+            <Button fx:id="adminControlPanelButton" alignment="CENTER" mnemonicParsing="false" onAction="#switchToAdminControlPanel" style="-fx-font-size: 15; -fx-font-weight: bold; -fx-background-color: transparent;" stylesheets="@UnderlineButton.css" text="ADMIN CONTROL PANEL" textFill="WHITE" />
+         </children>
+         <HBox.margin>
+            <Insets left="10.0" />
+         </HBox.margin>
+      </HBox>
         <ImageView fitHeight="64.0" fitWidth="110.0" onMouseClicked="#switchToMainScene" pickOnBounds="true" preserveRatio="true">
             <image>
                 <Image url="@images/Auction-System.png" />
@@ -37,27 +45,37 @@
             <Cursor fx:constant="HAND" />
          </cursor>
         </ImageView>
-        <Region minWidth="0.0" prefHeight="55.0" prefWidth="168.0" HBox.hgrow="ALWAYS" />
-        <Button alignment="CENTER" mnemonicParsing="false" onAction="#switchToUserProductListScene" prefHeight="55.0" prefWidth="200.0" style="-fx-background-color: transparent; -fx-font-size: 15; -fx-font-weight: bold;" stylesheets="@UnderlineButton.css" text="YOUR LISTINGS" textFill="WHITE">
-            <font>
-                <Font name="System Bold" size="12.0" />
-            </font>
-        </Button>
-        <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#switchToActivitiesScene" prefHeight="55.0" prefWidth="200.0" style="-fx-background-color: transparent; -fx-font-size: 15; -fx-font-weight: bold;" stylesheets="@UnderlineButton.css" text="ACTIVITIES" textAlignment="CENTER" textFill="WHITE">
-            <font>
-                <Font name="System Bold" size="12.0" />
-            </font>
-        </Button>
-        <ImageView fx:id="logoutImage" fitHeight="35.0" fitWidth="40.0" onMouseClicked="#logOut" pickOnBounds="true" preserveRatio="true">
-            <image>
-                <Image url="@images/log.png" />
-            </image>
-            <cursor>
-                <Cursor fx:constant="HAND" />
-            </cursor>
-        </ImageView>
+      <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" minWidth="1.0" spacing="5.0" HBox.hgrow="ALWAYS">
+         <children>
+              <Button fx:id="userProductListButton" alignment="CENTER" mnemonicParsing="false" onAction="#switchToUserProductListScene" style="-fx-background-color: transparent; -fx-font-size: 15; -fx-font-weight: bold;" stylesheets="@UnderlineButton.css" text="YOUR LISTINGS" textFill="WHITE">
+                  <font>
+                      <Font name="System Bold" size="12.0" />
+                  </font>
+              </Button>
+              <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#switchToActivitiesScene" style="-fx-background-color: transparent; -fx-font-size: 15; -fx-font-weight: bold;" stylesheets="@UnderlineButton.css" text="ACTIVITIES" textAlignment="CENTER" textFill="WHITE">
+                  <font>
+                      <Font name="System Bold" size="12.0" />
+                  </font>
+              </Button>
+            <HBox alignment="CENTER" onMouseClicked="#logOut" style="-fx-background-color: #fe5721; -fx-background-radius: 40;" HBox.hgrow="NEVER">
+               <children>
+                  <FontIcon iconColor="WHITE" iconLiteral="fas-sign-out-alt" iconSize="25" wrappingWidth="28.5" />
+                  <Label alignment="CENTER" style="-fx-font-size: 15; -fx-font-weight: bold;" text="LOGOUT" textFill="WHITE" />
+               </children>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+               <padding>
+                  <Insets left="15.0" right="15.0" />
+               </padding>
+               <HBox.margin>
+                  <Insets bottom="10.0" top="10.0" />
+               </HBox.margin>
+            </HBox>
+         </children>
+         <HBox.margin>
+            <Insets right="10.0" />
+         </HBox.margin>
+      </HBox>
     </children>
-    <padding>
-        <Insets left="10.0" right="10.0" />
-    </padding>
 </HBox>

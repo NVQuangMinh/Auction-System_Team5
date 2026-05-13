@@ -5,6 +5,9 @@ module auction.client {
     requires auction.shared;
     requires org.slf4j;
     requires ch.qos.logback.classic;
+    requires org.kordamp.ikonli.core;
+    requires org.kordamp.ikonli.javafx;
+    requires org.kordamp.ikonli.fontawesome5;
 
 
     exports auction_client.launcher;

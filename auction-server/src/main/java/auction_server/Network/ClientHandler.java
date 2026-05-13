@@ -1,6 +1,8 @@
 package auction_server.Network;
 
 import auction_server.core.AuctionManager;
+import auction_server.dao.AuctionDAO;
+import auction_server.dao.ItemDAO;
 import auction_server.dao.UserDAO;
 import auction_server.entities.Auction;
 import auction_server.entities.BidTransaction;
@@ -51,7 +53,8 @@ public class ClientHandler implements Runnable {
                 }
             }
         } catch (Exception e) {
-            /* Xử lý khi Client thoát */ }
+            log.info("Client has disconnected");
+        }
     }
 
     public void sendMessage(NetworkMessage msg) {
@@ -96,12 +99,24 @@ public class ClientHandler implements Runnable {
                     auctionDTO.getTickSize(),
                     auctionDTO.getStartTime(),
                     auctionDTO.getEndTime());
-            AuctionManager.getInstance().addRoom(room);
-            AuctionManager.getInstance().broadCast(new NetworkMessage(
-                    "UPDATE_BID",
-                    (Serializable) Mappers.toAuctionDTOList(AuctionManager.getInstance().getAllRooms()))
-            );
-            /// Nam, please write codes that save this item to the database.
+            
+            // Lưu item và auction vào database
+            ItemDAO itemDAO = new ItemDAO();
+            AuctionDAO auctionDAO = new AuctionDAO();
+            int itemInserted = itemDAO.insert(item);
+            int auctionInserted = auctionDAO.insert(room);
+            
+            if (itemInserted > 0 && auctionInserted > 0) {
+                AuctionManager.getInstance().addRoom(room);
+                AuctionManager.getInstance().broadCast(new NetworkMessage(
+                        "UPDATE_BID",
+                        (Serializable) Mappers.toAuctionDTOList(AuctionManager.getInstance().getAllRooms()))
+                );
+                sendMessage(new NetworkMessage("SELL_SUCCESS", true));
+            } else {
+                sendMessage(new NetworkMessage("SELL_FAILED", false));
+                log.info("SELL FAIL");
+            }
         } else if ("LOGIN".equals(action)) {
             SignUpDTO dto = (SignUpDTO) msg.getData();
             User user = userService.login(dto.getUsername(), dto.getPassword());
@@ -109,12 +124,6 @@ public class ClientHandler implements Runnable {
             sendMessage(new NetworkMessage("LOGIN", isSuccess));
             log.info("{}{}", dto.getUsername(), isSuccess ? " successfully login" : " failed to login");
         } else if ("GET_PRODUCTS".equals(action)) {
-            User user1 = new User("id", "vuminh", "123");
-            Item item1 = new Arts("01", "MONA_LISA", "A beautiful girl", user1);
-            Auction auction1 = new Auction(item1, 100, 1000, 10, LocalDateTime.now(),
-                    LocalDateTime.now().plusMinutes(5));
-            AuctionManager.getInstance().addRoom(auction1);
-
             sendMessage(new NetworkMessage("GET_PRODUCTS",
                     (Serializable) Mappers.toAuctionDTOList(AuctionManager.getInstance().getAllRooms())));
         } else if ("BUY_OUT".equals(action)) {

@@ -9,8 +9,7 @@ import java.sql.SQLException;
 public class UserDAO {
     public static boolean insertUser(User user) {
 
-        // Dùng ? để chống SQL Injection.
-        String sql = "INSERT INTO users (id, username, password) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO users (id, username, password, role) VALUES (?, ?, ?, ?)";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -18,6 +17,7 @@ public class UserDAO {
             pstmt.setString(1, user.getId());
             pstmt.setString(2, user.getUsername());
             pstmt.setString(3, user.getPassword());
+            pstmt.setString(4, user.getRole());
             
             int affectedRows = pstmt.executeUpdate();
             return affectedRows > 0;
@@ -30,8 +30,6 @@ public class UserDAO {
     public static User getUserByUsername(String username) {
         String sql = "SELECT * FROM users WHERE username = ?";
 
-        // Cấu trúc try - with - resource tự động gọi close() đóng tài nguyên mỗi khi kết thúc
-        // cho nên không cần lệnh close connection
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
@@ -41,7 +39,8 @@ public class UserDAO {
                     return new User(
                         rs.getString("id"),
                         rs.getString("username"),
-                        rs.getString("password")
+                        rs.getString("password"),
+                        rs.getString("role")
                     );
                 }
             }
