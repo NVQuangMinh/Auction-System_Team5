@@ -78,14 +78,20 @@ public class ProductInfoSubmissionController implements Initializable {
         buyOutPrice = buyoutPrice.getText();
         tick = tickSize.getText();
         antiSnipping = antiSnippingCheckbox.isSelected();
-        if (types.getValue().equals("Art")){
+        if (types.getValue() == null){
+            type = null;
+        }
+        else if (types.getValue().equals("Art")){
             type = ItemType.ARTS;
         }
         else if (types.getValue().equals("Electronic")){
             type = ItemType.ELECTRONICS;
         }
-        else {
+        else if (types.getValue().equals("Vehicle")){
             type = ItemType.VEHICLES;
+        }
+        else {
+            type = null;
         }
         startBidDate = LocalDateTime.now();
         // end time == null
@@ -122,9 +128,9 @@ public class ProductInfoSubmissionController implements Initializable {
             switchToUserProductList(event);
         }
         else {
+            error.setManaged(true);
             error.setVisible(true);
             error.setOpacity(1.0);
-            error.setManaged(true);
             error.setText("Require to fill every plank!");
             error.setTextFill(Color.RED);
         }
