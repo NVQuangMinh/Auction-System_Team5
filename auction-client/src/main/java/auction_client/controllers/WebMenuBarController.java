@@ -3,16 +3,14 @@ package auction_client.controllers;
 import auction_client.Network.ClientService;
 import auction_client.UserSession;
 import auction_shared.Network.NetworkMessage;
+import javafx.beans.property.BooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuButton;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
@@ -27,10 +25,20 @@ public class WebMenuBarController implements Initializable {
     public ImageView logoutImage;
     @FXML
     public MenuButton productsMenuButton; // Đã sửa từ Button sang MenuButton
-
+    @FXML
+    public Button userProductListButton;
+    @FXML
+    public Button adminControlPanelButton;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle){
+        adminControlPanelButton.managedProperty().bind(adminControlPanelButton.visibleProperty());
+        productsMenuButton.managedProperty().bind(productsMenuButton.visibleProperty());
+        userProductListButton.managedProperty().bind(userProductListButton.visibleProperty());
+        adminControlPanelButton.visibleProperty().bind(SignInController.isAdmin);
+        productsMenuButton.visibleProperty().bind(SignInController.isAdmin.not());
+        userProductListButton.visibleProperty().bind(SignInController.isAdmin.not());
+
         setWelcomeUsername(UserSession.getInstance().getUsername());
         // Lắng nghe sự kiện khi MenuButton hiển thị menu thả xuống
         productsMenuButton.showingProperty().addListener((obs, wasShowing, isShowing) -> {
@@ -47,9 +55,10 @@ public class WebMenuBarController implements Initializable {
             }
         });
     }
+
     public void setWelcomeUsername(String username) {
         if (username != null && !username.isBlank()) {
-            welcome.setText("Welcome, " + "\n" + username.trim());
+            welcome.setText(username.trim());
         }
     }
 
@@ -72,6 +81,11 @@ public class WebMenuBarController implements Initializable {
     @FXML
     public void switchToActivitiesScene(ActionEvent event) throws IOException {
         switchScene(event, "/auction_client/ActivitiesScene.fxml");
+    }
+
+    @FXML
+    public void switchToAdminControlPanel(ActionEvent event) throws IOException {
+        switchScene(event, "/auction_client/AdminControlPanel.fxml");
     }
 
     @FXML
