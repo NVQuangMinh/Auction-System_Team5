@@ -120,7 +120,7 @@ public class ProductInfoSubmissionController implements Initializable {
                     Double.parseDouble(buyOutPrice),
                     Double.parseDouble(tick),
                     startBidDate,
-                    null,
+                    startBidDate,
                     Double.parseDouble(startPrice)
             );
 

@@ -115,6 +115,7 @@ public class ClientHandler implements Runnable {
                 sendMessage(new NetworkMessage("SELL_SUCCESS", true));
             } else {
                 sendMessage(new NetworkMessage("SELL_FAILED", false));
+                log.info("SELL FAIL");
             }
         } else if ("LOGIN".equals(action)) {
             SignUpDTO dto = (SignUpDTO) msg.getData();
