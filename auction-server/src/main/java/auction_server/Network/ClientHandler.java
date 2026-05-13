@@ -124,12 +124,6 @@ public class ClientHandler implements Runnable {
             sendMessage(new NetworkMessage("LOGIN", isSuccess));
             log.info("{}{}", dto.getUsername(), isSuccess ? " successfully login" : " failed to login");
         } else if ("GET_PRODUCTS".equals(action)) {
-            User user1 = new User("id", "vuminh", "123");
-            Item item1 = new Arts("01", "MONA_LISA", "A beautiful girl", user1);
-            Auction auction1 = new Auction(item1, 100, 1000, 10, LocalDateTime.now(),
-                    LocalDateTime.now().plusMinutes(5));
-            AuctionManager.getInstance().addRoom(auction1);
-
             sendMessage(new NetworkMessage("GET_PRODUCTS",
                     (Serializable) Mappers.toAuctionDTOList(AuctionManager.getInstance().getAllRooms())));
         } else if ("BUY_OUT".equals(action)) {

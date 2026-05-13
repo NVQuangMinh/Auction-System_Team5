@@ -10,6 +10,7 @@ import java.io.Serializable;
 public class User extends Entity implements Serializable {
     protected String username;
     protected String password;
+    protected String role;
     protected BidderAction bidder = null;
     protected SellerAction seller = null;
     protected AdminProfile adminProfile = null;
@@ -18,6 +19,14 @@ public class User extends Entity implements Serializable {
         super(id);
         this.username = username;
         this.password = password;
+        this.role = "USER";
+    }
+
+    public User(String id, String username, String password, String role) {
+        super(id);
+        this.username = username;
+        this.password = password;
+        this.role = role;
     }
 
     public void setBidder(BidderAction bidder) {
@@ -42,5 +51,13 @@ public class User extends Entity implements Serializable {
 
     public String getPassword() {
         return password;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }
