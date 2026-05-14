@@ -1,5 +1,6 @@
 package auction_client.controllers;
 
+import auction_client.Network.ClientService;
 import auction_client.interfaces.AuctionUpdateListener;
 import auction_shared.Network.NetworkMessage;
 import auction_shared.Network.Notification;
@@ -16,12 +17,15 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class UserActivitiesController  implements AuctionUpdateListener {
+public class UserActivitiesController  implements AuctionUpdateListener,Initializable {
     @FXML
     private VBox notificationContainer;
 
-    public void loadNotifications(Notification notification) {
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        ClientService.getInstance().addListener(this);
+    }
 
+    public void loadNotifications(Notification notification) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/auction_client/ActivitiesItem.fxml"));
             Parent item = loader.load();
