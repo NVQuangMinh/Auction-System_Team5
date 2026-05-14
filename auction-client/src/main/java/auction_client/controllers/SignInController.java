@@ -47,7 +47,6 @@ public class SignInController implements Initializable, AuctionUpdateListener {
         }
 
         SignUpDTO loginData = new SignUpDTO(null, inputUsername, inputPassword);
-        UserSession.getInstance().setUser(new UserDTO(null, inputUsername));
         ClientService.getInstance().sendMessage(new NetworkMessage("LOGIN", loginData));
 
     }
@@ -55,10 +54,11 @@ public class SignInController implements Initializable, AuctionUpdateListener {
     @Override
     public void onUpdateReceived(NetworkMessage msg) {
         if ("LOGIN".equals(msg.getAction())) {
-            Boolean isSuccess = (Boolean) msg.getData();
+            UserDTO user = (UserDTO) msg.getData();
             Platform.runLater(() -> {
-                if (isSuccess) {
+                if (user != null) {
                     UserSession.getInstance().setUsername(username.getText().trim());
+                    UserSession.getInstance().setUser(user);
                     boolean roleIsAdmin = "ADMIN".equalsIgnoreCase(UserSession.getInstance().getUser().getRole());
                     SignInController.isAdmin.set(roleIsAdmin);
                     switchToMainScene();

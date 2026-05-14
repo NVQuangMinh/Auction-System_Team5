@@ -7,9 +7,10 @@ public class UserDTO implements Serializable {
     private String username;
     private String role;
 
-    public UserDTO(String id, String username) {
+    public UserDTO(String id, String username, String role) {
         this.id = id;
         this.username = username;
+        this.role = role;
     }
 
     public String getId() {
@@ -21,6 +22,6 @@ public class UserDTO implements Serializable {
     }
 
     public String getRole(){
-        return "User";
+        return this.role;
     }
 }

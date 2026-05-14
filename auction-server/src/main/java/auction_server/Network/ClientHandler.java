@@ -8,7 +8,6 @@ import auction_server.entities.Auction;
 import auction_server.entities.BidTransaction;
 import auction_server.entities.Item;
 import auction_server.entities.User;
-import auction_server.entities.items.Arts;
 import auction_server.factory.ItemFactory;
 import auction_server.mapper.Mappers;
 import auction_server.service.UserService;
@@ -22,7 +21,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.Socket;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -121,7 +119,7 @@ public class ClientHandler implements Runnable {
             SignUpDTO dto = (SignUpDTO) msg.getData();
             User user = userService.login(dto.getUsername(), dto.getPassword());
             boolean isSuccess = user != null;
-            sendMessage(new NetworkMessage("LOGIN", isSuccess));
+            sendMessage(new NetworkMessage("LOGIN", Mappers.toDTO(user)));
             log.info("{}{}", dto.getUsername(), isSuccess ? " successfully login" : " failed to login");
         } else if ("GET_PRODUCTS".equals(action)) {
             sendMessage(new NetworkMessage("GET_PRODUCTS",

@@ -18,7 +18,7 @@ public class Mappers {
     public static UserDTO toDTO(User user) {
         if (user == null)
             return null;
-        return new UserDTO(user.getId(), user.getUsername());
+        return new UserDTO(user.getId(), user.getUsername(),user.getRole());
     }
 
     public static ItemDTO toDTO(Item item) {
