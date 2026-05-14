@@ -23,7 +23,7 @@
                <content>
                   <VBox alignment="TOP_CENTER">
                      <children>
-                        <HBox alignment="CENTER" prefHeight="124.0" prefWidth="1198.0">
+                        <HBox alignment="CENTER" prefHeight="48.0" prefWidth="1018.0">
                            <children>
                               <Button mnemonicParsing="false" style="-fx-background-color: white; -fx-label-padding: 1 31.5 1 31.5; -fx-font-size: 16; -fx-font-weight: bold; -fx-background-radius: 25; -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.4), 15, 0, 0, 5);" text="YOUR LISTING" />
                               <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
@@ -36,9 +36,6 @@
                            <VBox.margin>
                               <Insets />
                            </VBox.margin>
-                           <padding>
-                              <Insets bottom="20.0" left="90.0" right="90.0" top="20.0" />
-                           </padding>
                         </HBox>
                         <FlowPane fx:id="myListFlowPane" alignment="CENTER" hgap="80.0" vgap="50.0">
                            <padding>
@@ -46,6 +43,9 @@
                            </padding>
                         </FlowPane>
                      </children>
+                     <padding>
+                        <Insets left="90.0" right="90.0" top="30.0" />
+                     </padding>
                   </VBox>
                </content>
             </ScrollPane>
