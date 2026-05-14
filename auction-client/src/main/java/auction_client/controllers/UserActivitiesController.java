@@ -17,37 +17,39 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class UserActivitiesController  implements AuctionUpdateListener,Initializable {
+public class UserActivitiesController implements AuctionUpdateListener, Initializable {
     @FXML
-    private VBox notificationContainer;
+    VBox notificationContainer;
 
-    public void initialize(URL url, ResourceBundle resourceBundle) {
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
         ClientService.getInstance().addListener(this);
+        ClientService.getInstance().sendMessage(new NetworkMessage("GET_ACTIVITIES", null));
     }
 
-    public void loadNotifications(Notification notification) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/auction_client/ActivitiesItem.fxml"));
-            Parent item = loader.load();
+    public void loadNotifications(List<Notification> notifications) {
+        notificationContainer.getChildren().clear();
+        for (Notification notification : notifications) {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/auction_client/ActivitiesItem.fxml"));
+                Parent item = loader.load();
 
-            ActivitiesItemController controller = loader.getController();
-            controller.setData(notification.getNotificationMSG(), String.valueOf(notification.getNotificationTime()));
-            notificationContainer.getChildren().add(item);
-        } catch (IOException e) {
-            e.printStackTrace();
+                ActivitiesItemController controller = loader.getController();
+                controller.setData(notification.getNotificationMSG(), String.valueOf(notification.getNotificationTime()));
+                notificationContainer.getChildren().add(item);
+            } catch (IOException e) {
+                System.out.println("Error loading notification item: " + e.getMessage());
+                e.printStackTrace();
+            }
         }
     }
-
 
     @Override
     public void onUpdateReceived(NetworkMessage msg) {
         String action = msg.getAction();
-        if ("ACTIVITY".equalsIgnoreCase(action)) {
-            System.out.println("Da nhan noti");
-            Notification notification = (Notification) msg.getData();
-            Platform.runLater(()-> {
-                loadNotifications(notification);
-            });
+        if ("GET_ACTIVITIES".equalsIgnoreCase(action)) {
+            List<Notification> notifications = (List<Notification>) msg.getData();
+            Platform.runLater(() -> loadNotifications(notifications));
         }
     }
 }

@@ -13,7 +13,7 @@
     <center>
       <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" prefHeight="1997.0" prefWidth="1200.0" BorderPane.alignment="TOP_CENTER">
          <content>
-            <VBox fx:id="activitiesContainer" spacing="10.0">
+            <VBox fx:id="notificationContainer" spacing="10.0">
                <padding>
                   <Insets left="90.0" right="90.0" top="30.0" />
                </padding>
