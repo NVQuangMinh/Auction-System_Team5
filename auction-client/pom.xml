@@ -34,27 +34,15 @@
             <version>23.0.1</version>
         </dependency>
 
-        <!-- ikonli -->
-        <dependency>
-            <groupId>org.kordamp.ikonli</groupId>
-            <artifactId>ikonli-core</artifactId>
-            <version>12.4.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/../libs/ikonli/ikonli-core-12.4.0.jar</systemPath>
-        </dependency>
         <dependency>
             <groupId>org.kordamp.ikonli</groupId>
             <artifactId>ikonli-javafx</artifactId>
-            <version>12.4.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/../libs/ikonli/ikonli-javafx-12.4.0.jar</systemPath>
-        </dependency>
+            <version>12.4.0</version> </dependency>
+
         <dependency>
             <groupId>org.kordamp.ikonli</groupId>
             <artifactId>ikonli-fontawesome5-pack</artifactId>
             <version>12.4.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/../libs/ikonli/ikonli-fontawesome6-pack-12.4.0.jar</systemPath>
         </dependency>
     </dependencies>
 
