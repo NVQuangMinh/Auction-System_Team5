@@ -38,7 +38,8 @@ public class UserActivitiesController  implements AuctionUpdateListener {
     @Override
     public void onUpdateReceived(NetworkMessage msg) {
         String action = msg.getAction();
-        if ("ACTIVITY".equals(action)) {
+        if ("ACTIVITY".equalsIgnoreCase(action)) {
+            System.out.println("Da nhan noti");
             Notification notification = (Notification) msg.getData();
             Platform.runLater(()-> {
                 loadNotifications(notification);
