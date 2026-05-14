@@ -11,7 +11,7 @@ public class ActivitiesItemController {
 
     @FXML
     public void setData(String notification, String notificationTime) {
-        this.notification = notification;
-        this.notificationTime = notificationTime;
+        this.notification.setText(notification);
+        this.notificationTime.setText(notificationTime);
     }
 }
