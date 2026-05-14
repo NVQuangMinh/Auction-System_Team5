@@ -29,7 +29,7 @@ import java.util.List;
 public class ClientHandler implements Runnable {
 
     private static final Logger log = LoggerFactory.getLogger(ClientHandler.class);
-    private static List<Notification> activities = new ArrayList<>();
+    private List<Notification> activities = new ArrayList<>();
 
     private Socket socket;
     private ObjectOutputStream out;
