@@ -1,13 +1,21 @@
 package auction_shared.Network;
 
-public class Notification {
+import java.io.Serializable;
+import java.time.LocalTime;
+
+public class Notification implements Serializable {
     private String notificationMSG;
-    private String notificationTime;
+    private LocalTime notificationTime;
     public String getNotificationMSG(){
         return this.notificationMSG;
     }
 
-    public String getNotificationTime() {
+    public Notification(String notificationMSG, LocalTime notificationTime) {
+        this.notificationMSG = notificationMSG;
+        this.notificationTime = notificationTime;
+    }
+
+    public LocalTime getNotificationTime() {
         return this.notificationTime;
     }
 }
