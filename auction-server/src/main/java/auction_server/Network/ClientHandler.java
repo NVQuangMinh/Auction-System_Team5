@@ -208,7 +208,7 @@ public class ClientHandler implements Runnable {
             log.info("{}{}", dto.getUsername(), isSuccess ? " successfully created account" : " failed to create account");
         } else if (action.equals("GET_ACTIVITIES")) {
             log.info("GET_ACTIVITIES request received, sending {} notifications", activities.size());
-            sendMessage(new NetworkMessage("GET_ACTIVITIES", new ArrayList<>(activities)));
+            sendMessage(new NetworkMessage("GET_ACTIVITIES",(Serializable) activities));
         }
     }
 
