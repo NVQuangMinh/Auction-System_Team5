@@ -83,15 +83,13 @@ public class ClientHandler implements Runnable {
         if ("PLACE_BID".equals(action)) {
             BidTransactionDTO transactionDTO = (BidTransactionDTO) msg.getData();
             User bidder = UserDAO.getUserByUsername(transactionDTO.getBidder().getUsername());
-            /*
+
             BidTransaction transaction = new BidTransaction(
                     AuctionManager.getInstance().getRoom(transactionDTO.getAuction().getItem().getId()),
                     bidder,
-                    transactionDTO.getBidAmount()); */
+                    transactionDTO.getBidAmount());
             Auction auction = AuctionManager.getInstance().getRoom(transactionDTO.getAuction().getItem().getId());
             if (auction != null) {
-                BidTransaction transaction = new BidTransaction(auction, bidder, transactionDTO.getBidAmount());
-
                 BidService bidService = new BidService();
                 boolean isSuccess = bidService.processAndSaveBid(auction, transaction);
 
@@ -161,19 +159,17 @@ public class ClientHandler implements Runnable {
             BidTransactionDTO transactionDTO = (BidTransactionDTO) msg.getData();
 
             User bidder = UserDAO.getUserByUsername(transactionDTO.getBidder().getUsername());
-            /*
+
             BidTransaction transaction = new BidTransaction(
                     AuctionManager.getInstance().getRoom(transactionDTO.getAuction().getItem().getId()),
                     bidder,
-                    transactionDTO.getBidAmount()); */
+                    transactionDTO.getBidAmount());
             Auction auction = AuctionManager.getInstance().getRoom(transactionDTO.getAuction().getItem().getId());
 
             if (auction == null) {
                 sendMessage(new NetworkMessage("BUYOUT_FAILED", null));
                 return;
             }
-
-            BidTransaction transaction = new BidTransaction(auction, bidder, transactionDTO.getBidAmount());
 
             BidService bidService = new BidService();
             boolean isSuccess = bidService.processBuyOut(auction, transaction);
