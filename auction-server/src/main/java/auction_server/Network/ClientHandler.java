@@ -25,6 +25,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.Socket;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,10 +83,11 @@ public class ClientHandler implements Runnable {
         if ("PLACE_BID".equals(action)) {
             BidTransactionDTO transactionDTO = (BidTransactionDTO) msg.getData();
             User bidder = UserDAO.getUserByUsername(transactionDTO.getBidder().getUsername());
+            /*
             BidTransaction transaction = new BidTransaction(
                     AuctionManager.getInstance().getRoom(transactionDTO.getAuction().getItem().getId()),
                     bidder,
-                    transactionDTO.getBidAmount());
+                    transactionDTO.getBidAmount()); */
             Auction auction = AuctionManager.getInstance().getRoom(transactionDTO.getAuction().getItem().getId());
             if (auction != null) {
                 BidTransaction transaction = new BidTransaction(auction, bidder, transactionDTO.getBidAmount());
@@ -148,7 +150,6 @@ public class ClientHandler implements Runnable {
             boolean isSuccess = user != null;
             if (isSuccess)
                 this.loggedInUser = user;
-            sendMessage(new NetworkMessage("LOGIN", isSuccess));
             sendMessage(new NetworkMessage("LOGIN", Mappers.toDTO(user)));
             log.info("{}{}", dto.getUsername(), isSuccess ? " successfully login" : " failed to login");
             activities.add(new Notification(isSuccess ? "login successfully" : "login failed", LocalTime.now()));
@@ -160,10 +161,11 @@ public class ClientHandler implements Runnable {
             BidTransactionDTO transactionDTO = (BidTransactionDTO) msg.getData();
 
             User bidder = UserDAO.getUserByUsername(transactionDTO.getBidder().getUsername());
+            /*
             BidTransaction transaction = new BidTransaction(
                     AuctionManager.getInstance().getRoom(transactionDTO.getAuction().getItem().getId()),
                     bidder,
-                    transactionDTO.getBidAmount());
+                    transactionDTO.getBidAmount()); */
             Auction auction = AuctionManager.getInstance().getRoom(transactionDTO.getAuction().getItem().getId());
 
             if (auction == null) {
@@ -185,7 +187,6 @@ public class ClientHandler implements Runnable {
                 );
                 log.info("BUY OUT SUCCESS");
                 activities.add(new Notification("you have buy out item successfully", LocalTime.now()));
-                        (Serializable) Mappers.toAuctionDTOList(AuctionManager.getInstance().getAllRooms())));
             } else {
                 sendMessage(new NetworkMessage("BUYOUT_FAILED", null));
             }
@@ -207,7 +208,7 @@ public class ClientHandler implements Runnable {
             log.info("{}{}", dto.getUsername(), isSuccess ? " successfully created account" : " failed to create account");
         } else if (action.equals("GET_ACTIVITIES")) {
             log.info("GET_ACTIVITIES request received, sending {} notifications", activities.size());
-            sendMessage(new NetworkMessage("GET_ACTIVITIES", (Serializable) new ArrayList<>(activities)));
+            sendMessage(new NetworkMessage("GET_ACTIVITIES", new ArrayList<>(activities)));
         }
     }
 
