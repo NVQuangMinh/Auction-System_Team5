@@ -88,12 +88,10 @@ public class ClientHandler implements Runnable {
                     ));
                     log.info("A new bid has been placed");
                     activities.add(new Notification("you have placed bid successfully", LocalTime.now()));
-                    sendMessage(new NetworkMessage("GET_ACTIVITIES", (Serializable) activities));
                 } else {
                     log.info("Your bid has failed");
                     sendMessage(new NetworkMessage("BID_FAILED", null));
                     activities.add(new Notification("Your bid has failed", LocalTime.now()));
-                    sendMessage(new NetworkMessage("GET_ACTIVITIES", (Serializable) activities));
                 }
             }
         } else if ("SELL".equals(action)) {
@@ -125,13 +123,11 @@ public class ClientHandler implements Runnable {
                 log.info("SELL SUCCESS");
                 activities.add(new Notification("you have sold item successfully", LocalTime.now()));
                 log.info("Added SELL notification, total activities: {}", activities.size());
-                sendMessage(new NetworkMessage("GET_ACTIVITIES", (Serializable) activities));
             } else {
                 sendMessage(new NetworkMessage("SELL_FAILED", false));
                 log.info("SELL FAIL");
                 activities.add(new Notification("sell item failed", LocalTime.now()));
                 log.info("Added SELL FAILED notification, total activities: {}", activities.size());
-                sendMessage(new NetworkMessage("GET_ACTIVITIES", (Serializable) activities));
             }
         } else if ("LOGIN".equals(action)) {
             SignUpDTO dto = (SignUpDTO) msg.getData();
@@ -140,7 +136,6 @@ public class ClientHandler implements Runnable {
             sendMessage(new NetworkMessage("LOGIN", Mappers.toDTO(user)));
             log.info("{}{}", dto.getUsername(), isSuccess ? " successfully login" : " failed to login");
             activities.add(new Notification(isSuccess ? "login successfully" : "login failed", LocalTime.now()));
-            sendMessage(new NetworkMessage("GET_ACTIVITIES", (Serializable) activities));
         } else if ("GET_PRODUCTS".equals(action)) {
             sendMessage(new NetworkMessage("GET_PRODUCTS",
                     (Serializable) Mappers.toAuctionDTOList(AuctionManager.getInstance().getAllRooms())));
@@ -163,7 +158,6 @@ public class ClientHandler implements Runnable {
                 );
                 log.info("BUY OUT SUCCESS");
                 activities.add(new Notification("you have buy out item successfully", LocalTime.now()));
-                sendMessage(new NetworkMessage("GET_ACTIVITIES", (Serializable) activities));
             }
         } else if ("GET_MY_LIST".equals(action)) {
             List<Auction> myList = new ArrayList<>();
@@ -180,11 +174,10 @@ public class ClientHandler implements Runnable {
             boolean isSuccess = userService.register(newUser);
             sendMessage(new NetworkMessage("CREATE_ACCOUNT", isSuccess));
             activities.add(new Notification(isSuccess ? "account created successfully" : "account creation failed", LocalTime.now()));
-            sendMessage(new NetworkMessage("GET_ACTIVITIES", (Serializable) activities));
             log.info("{}{}", dto.getUsername(), isSuccess ? " successfully created account" : " failed to create account");
         } else if (action.equals("GET_ACTIVITIES")) {
             log.info("GET_ACTIVITIES request received, sending {} notifications", activities.size());
-            sendMessage(new NetworkMessage("GET_ACTIVITIES", (Serializable) activities));
+            sendMessage(new NetworkMessage("GET_ACTIVITIES", (Serializable) new ArrayList<>(activities)));
         }
     }
 

@@ -21,15 +21,17 @@ public class UserActivitiesController implements AuctionUpdateListener, Initiali
     @FXML
     VBox notificationContainer;
 
+    private List<Notification> activities;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         ClientService.getInstance().addListener(this);
         ClientService.getInstance().sendMessage(new NetworkMessage("GET_ACTIVITIES", null));
     }
 
-    public void loadNotifications(List<Notification> notifications) {
+    public void loadNotifications() {
         notificationContainer.getChildren().clear();
-        for (Notification notification : notifications) {
+        for (Notification notification : activities) {
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/auction_client/ActivitiesItem.fxml"));
                 Parent item = loader.load();
@@ -48,8 +50,9 @@ public class UserActivitiesController implements AuctionUpdateListener, Initiali
     public void onUpdateReceived(NetworkMessage msg) {
         String action = msg.getAction();
         if ("GET_ACTIVITIES".equalsIgnoreCase(action)) {
-            List<Notification> notifications = (List<Notification>) msg.getData();
-            Platform.runLater(() -> loadNotifications(notifications));
+            this.activities = (List<Notification>) msg.getData();
+            System.out.println(this.activities.size());
+            Platform.runLater(() -> loadNotifications());
         }
     }
 }
