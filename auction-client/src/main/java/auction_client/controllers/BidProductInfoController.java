@@ -1,11 +1,17 @@
 package auction_client.controllers;
 
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.util.Duration;
+
 import auction_client.Network.ClientService;
 import auction_client.UserSession;
 import auction_client.interfaces.AuctionUpdateListener;
 import auction_shared.Network.NetworkMessage;
 import auction_shared.dto.AuctionDTO;
 import auction_shared.dto.BidTransactionDTO;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -20,6 +26,7 @@ import javafx.stage.Stage;
 
 import java.io.BufferedReader;
 import java.net.URL;
+import java.time.LocalDateTime;
 import java.util.ResourceBundle;
 
 public class BidProductInfoController implements Initializable, AuctionUpdateListener {
@@ -42,7 +49,7 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
     @FXML
     Label tickRate;
     @FXML
-    TextField maxPrice; //autoBid price
+    TextField maxPrice; // autoBid price
     @FXML
     Button autoPlaceBid; // button for autoBid
     @FXML
@@ -52,6 +59,7 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
     TextField bidAmount;
 
     AuctionDTO auction = null;
+    private Timeline countdownTimeline;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -60,15 +68,15 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
         autoBidContainer.managedProperty().bind(autoBidContainer.visibleProperty());
         autoBidContainer.visibleProperty().bind(autoBidCheck.selectedProperty());
         bidContainer.visibleProperty().bind(autoBidCheck.selectedProperty().not());
-        ///  make the error disappear
+        /// make the error disappear
         error.setOpacity(0.0);
         error.setManaged(false);
         error.setVisible(false);
 
     }
 
-    public void updateData(){
-        Platform.runLater(() ->{
+    public void updateData() {
+        Platform.runLater(() -> {
             currentPrice.setText(String.valueOf(auction.getCurrentHighestBid()));
             itemName.setText(auction.getItem().getName());
             buyOut.setText(String.valueOf(auction.getBuyOutPrice()));
@@ -79,11 +87,10 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
 
     public void onUpdateReceived(NetworkMessage msg) {
         String action = msg.getAction();
-        if (action.equals("BID_SUCCESS")){
+        if (action.equals("BID_SUCCESS")) {
             this.auction = (AuctionDTO) msg.getData();
             updateData();
-        }
-        else if (action.equals("BUYOUT_SUCCESS")){
+        } else if (action.equals("BUYOUT_SUCCESS")) {
             cleanUp();
             switchToUserProductList();
         }
@@ -92,7 +99,25 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
     public void initData(AuctionDTO auction) {
         this.auction = auction;
         updateData();
+        startCountdown();
     }
+
+    private void startCountdown() {
+        countdownTimeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> updateCountdown()));
+        countdownTimeline.setCycleCount(Animation.INDEFINITE);
+        countdownTimeline.play();
+    }
+
+    private void updateCountdown() {
+        long remaining = java.time.Duration.between(LocalDateTime.now(), auction.getEndTime()).getSeconds();
+        if (remaining <= 0) {
+            timeLeft.setText("HẾT GIỜ");
+            countdownTimeline.stop();
+        } else {
+            timeLeft.setText(String.format("%02d:%02d", remaining / 60, remaining % 60));
+        }
+    }
+
     @FXML
     private void switchToUserProductList() {
         Stage stage = (Stage) tickRate.getScene().getWindow();
@@ -101,26 +126,25 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
     }
 
     @FXML
-    public void placeBidRequest(){
+    public void placeBidRequest() {
         /// missing the logic for auto-bidding.
         double amount = Double.parseDouble(bidAmount.getText());
-        if (amount >= auction.getBuyOutPrice()){
-            BidTransactionDTO transaction = new BidTransactionDTO(auction, UserSession.getInstance().getUser(), auction.getBuyOutPrice());
+        if (amount >= auction.getBuyOutPrice()) {
+            BidTransactionDTO transaction = new BidTransactionDTO(auction, UserSession.getInstance().getUser(),
+                    auction.getBuyOutPrice());
             ClientService.getInstance().sendMessage(new NetworkMessage("BUY_OUT", transaction));
             // change the label (notify) -> transparent
             error.setOpacity(0.0);
             error.setManaged(false);
             error.setVisible(false);
-        }
-        else if ((amount - auction.getCurrentHighestBid()) % auction.getTickSize() == 0){
-            BidTransactionDTO transaction = new BidTransactionDTO(auction, UserSession.getInstance().getUser(),amount);
+        } else if ((amount - auction.getCurrentHighestBid()) % auction.getTickSize() == 0) {
+            BidTransactionDTO transaction = new BidTransactionDTO(auction, UserSession.getInstance().getUser(), amount);
             ClientService.getInstance().sendMessage(new NetworkMessage("PLACE_BID", transaction));
             // change the label (notify) -> transparent
             error.setOpacity(0.0);
             error.setManaged(false);
             error.setVisible(false);
-        }
-        else{
+        } else {
             // notify invalid bidAmount
             error.setVisible(true);
             error.setManaged(true);
@@ -130,7 +154,7 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
         }
     }
 
-    public void cleanUp(){
+    public void cleanUp() {
         ClientService.getInstance().removeListener(this);
     }
 }

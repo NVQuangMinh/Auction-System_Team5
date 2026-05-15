@@ -37,6 +37,7 @@ public class Mappers {
             return null;
         return new AuctionDTO(
                 toDTO(auction.getItem()),
+                auction.getStatus(),
                 auction.getStartingPrice(),
                 auction.getBuyOutPrice(),
                 auction.getTickSize(),

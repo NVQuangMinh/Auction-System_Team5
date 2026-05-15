@@ -80,7 +80,7 @@
                               <Insets bottom="10.0" />
                            </padding>
                         </HBox>
-                        <Label fx:id="productBidTime" alignment="CENTER" prefHeight="84.0" prefWidth="295.0" style="-fx-font-size: 25; -fx-font-weight: bold;" text="CLOSED" textFill="RED" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                        <Label fx:id="timeLeft" alignment="CENTER" prefHeight="84.0" prefWidth="295.0" style="-fx-font-size: 25; -fx-font-weight: bold;" text=" " textFill="RED" GridPane.columnIndex="3" GridPane.rowIndex="1">
                            <padding>
                               <Insets bottom="10.0" left="5.0" />
                            </padding>

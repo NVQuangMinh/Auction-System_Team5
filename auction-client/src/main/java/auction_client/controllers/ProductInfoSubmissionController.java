@@ -7,6 +7,7 @@ import auction_shared.dto.ItemDTO;
 import auction_shared.dto.ItemType;
 import auction_shared.dto.UserDTO;
 import auction_shared.dto.AuctionDTO;
+import auction_shared.dto.AuctionStatus;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -20,7 +21,6 @@ import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ResourceBundle;
 import java.util.UUID;
-
 
 public class ProductInfoSubmissionController implements Initializable {
     @FXML
@@ -134,6 +134,7 @@ public class ProductInfoSubmissionController implements Initializable {
             ItemDTO item = new ItemDTO(newId, name, description, owner, type);
             AuctionDTO auction = new AuctionDTO(
                     item,
+                    AuctionStatus.ACTIVE,
                     startPriceVal,
                     buyOutPriceVal,
                     tickSizeVal,
@@ -150,7 +151,6 @@ public class ProductInfoSubmissionController implements Initializable {
             error.setText("Please fill in all fields correctly!");
             error.setTextFill(Color.RED);
         }
-
     }
 
     @FXML

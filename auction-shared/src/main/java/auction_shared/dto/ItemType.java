@@ -13,10 +13,7 @@ public enum ItemType {
         };
     }
 
-    /**
-     * Dịch enum về String để ghi vào DB.
-     * Thay thế resolveItemType() trong ItemDAO.
-     */
+    // Dịch enum về String để ghi vào DB.
     public String toDbValue() {
         return this.name(); // "ARTS", "ELECTRONICS", "VEHICLES"
     }

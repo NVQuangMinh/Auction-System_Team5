@@ -8,8 +8,10 @@ import auction_server.entities.Auction;
 import auction_server.entities.BidTransaction;
 import auction_server.entities.Item;
 import auction_server.entities.User;
+import auction_server.entities.items.Arts;
 import auction_server.factory.ItemFactory;
 import auction_server.mapper.Mappers;
+import auction_server.service.BidService;
 import auction_server.service.UserService;
 import auction_shared.Network.NetworkMessage;
 import auction_shared.Network.Notification;
@@ -22,7 +24,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.Socket;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +32,7 @@ public class ClientHandler implements Runnable {
 
     private static final Logger log = LoggerFactory.getLogger(ClientHandler.class);
     private List<Notification> activities = new ArrayList<>();
+    private User loggedInUser = null;
 
     private Socket socket;
     private ObjectOutputStream out;
@@ -39,6 +42,10 @@ public class ClientHandler implements Runnable {
 
     public ClientHandler(Socket socket) {
         this.socket = socket;
+    }
+
+    public User getLoggedInUser() {
+        return loggedInUser;
     }
 
     public void run() {
@@ -63,6 +70,7 @@ public class ClientHandler implements Runnable {
         try {
             out.writeObject(msg);
             out.flush();
+            out.reset(); // Ngăn cache object của Java Serialization
         } catch (IOException e) {
             log.info("fail to send message", e);
         }
@@ -80,7 +88,12 @@ public class ClientHandler implements Runnable {
                     transactionDTO.getBidAmount());
             Auction auction = AuctionManager.getInstance().getRoom(transactionDTO.getAuction().getItem().getId());
             if (auction != null) {
-                if (auction.placeBid(transaction)) {
+                BidTransaction transaction = new BidTransaction(auction, bidder, transactionDTO.getBidAmount());
+
+                BidService bidService = new BidService();
+                boolean isSuccess = bidService.processAndSaveBid(auction, transaction);
+
+                if (isSuccess) {
                     sendMessage(new NetworkMessage("BID_SUCCESS", Mappers.toDTO(auction)));
                     AuctionManager.getInstance().broadCast(new NetworkMessage(
                             "UPDATE_BID",
@@ -133,6 +146,9 @@ public class ClientHandler implements Runnable {
             SignUpDTO dto = (SignUpDTO) msg.getData();
             User user = userService.login(dto.getUsername(), dto.getPassword());
             boolean isSuccess = user != null;
+            if (isSuccess)
+                this.loggedInUser = user;
+            sendMessage(new NetworkMessage("LOGIN", isSuccess));
             sendMessage(new NetworkMessage("LOGIN", Mappers.toDTO(user)));
             log.info("{}{}", dto.getUsername(), isSuccess ? " successfully login" : " failed to login");
             activities.add(new Notification(isSuccess ? "login successfully" : "login failed", LocalTime.now()));
@@ -149,8 +165,19 @@ public class ClientHandler implements Runnable {
                     bidder,
                     transactionDTO.getBidAmount());
             Auction auction = AuctionManager.getInstance().getRoom(transactionDTO.getAuction().getItem().getId());
-            if (auction.buyOut(transaction)) {
-                AuctionManager.getInstance().removeRoom(auction); // remove auction
+
+            if (auction == null) {
+                sendMessage(new NetworkMessage("BUYOUT_FAILED", null));
+                return;
+            }
+
+            BidTransaction transaction = new BidTransaction(auction, bidder, transactionDTO.getBidAmount());
+
+            BidService bidService = new BidService();
+            boolean isSuccess = bidService.processBuyOut(auction, transaction);
+
+            if (isSuccess) {
+                AuctionManager.getInstance().removeRoom(auction);
                 sendMessage(new NetworkMessage("BUYOUT_SUCCESS", null));
                 AuctionManager.getInstance().broadCast(new NetworkMessage(
                         "UPDATE_BID",
@@ -158,6 +185,9 @@ public class ClientHandler implements Runnable {
                 );
                 log.info("BUY OUT SUCCESS");
                 activities.add(new Notification("you have buy out item successfully", LocalTime.now()));
+                        (Serializable) Mappers.toAuctionDTOList(AuctionManager.getInstance().getAllRooms())));
+            } else {
+                sendMessage(new NetworkMessage("BUYOUT_FAILED", null));
             }
         } else if ("GET_MY_LIST".equals(action)) {
             List<Auction> myList = new ArrayList<>();

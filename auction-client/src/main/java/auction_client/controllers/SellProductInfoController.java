@@ -11,8 +11,13 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
-import java.util.List;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.util.Duration;
 
+import java.util.List;
+import java.time.LocalDateTime;
 
 public class SellProductInfoController implements AuctionUpdateListener {
     @FXML
@@ -32,16 +37,33 @@ public class SellProductInfoController implements AuctionUpdateListener {
     TextField bidAmount;
 
     AuctionDTO auction = null;
+    private Timeline countdownTimeline;
 
-
-    public void initData(AuctionDTO auction){
+    public void initData(AuctionDTO auction) {
         this.auction = auction;
         updateData();
         ClientService.getInstance().addListener(this);
+        startCountdown();
     }
 
-    public void updateData(){
-        Platform.runLater(() ->{
+    private void startCountdown() {
+        countdownTimeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> updateCountdown()));
+        countdownTimeline.setCycleCount(Animation.INDEFINITE);
+        countdownTimeline.play();
+    }
+
+    private void updateCountdown() {
+        long remaining = java.time.Duration.between(LocalDateTime.now(), auction.getEndTime()).getSeconds();
+        if (remaining <= 0) {
+            timeLeft.setText("HẾT GIỜ");
+            countdownTimeline.stop();
+        } else {
+            timeLeft.setText(String.format("%02d:%02d", remaining / 60, remaining % 60));
+        }
+    }
+
+    public void updateData() {
+        Platform.runLater(() -> {
             currentPrice.setText(String.valueOf(auction.getCurrentHighestBid()));
             itemName.setText(auction.getItem().getName());
             buyOut.setText(String.valueOf(auction.getBuyOutPrice()));
@@ -52,19 +74,19 @@ public class SellProductInfoController implements AuctionUpdateListener {
 
     public void onUpdateReceived(NetworkMessage msg) {
         String action = msg.getAction();
-        if (action.equals("UPDATE_BID")){
+        if (action.equals("UPDATE_BID")) {
             List<AuctionDTO> allRooms = (List<AuctionDTO>) msg.getData();
-            Platform.runLater(() ->{
+            Platform.runLater(() -> {
                 boolean exist = false;
-                for (AuctionDTO room : allRooms){
-                    if (room.getItem().getId().equals(auction.getItem().getId())){
+                for (AuctionDTO room : allRooms) {
+                    if (room.getItem().getId().equals(auction.getItem().getId())) {
                         this.auction = room;
                         exist = true;
                         updateData();
                         break;
                     }
                 }
-                if (!exist){
+                if (!exist) {
                     cleanUp();
                     switchToUserProductList();
                 }
@@ -79,10 +101,7 @@ public class SellProductInfoController implements AuctionUpdateListener {
         stage.close();
     }
 
-
-
-
-    public void cleanUp(){
+    public void cleanUp() {
         ClientService.getInstance().removeListener(this);
     }
 }

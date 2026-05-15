@@ -5,7 +5,8 @@ import auction_server.entities.User;
 import auction_server.entities.items.Arts;
 import auction_server.entities.items.Electronics;
 import auction_server.entities.items.Vehicles;
-import auction_server.interfaces.InterfaceDAO;
+import auction_server.interfaces.ReadableDAO;
+import auction_server.interfaces.WritableDAO;
 import auction_shared.dto.ItemType;
 
 import java.sql.Connection;
@@ -14,7 +15,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class ItemDAO implements InterfaceDAO<Item> {
+public class ItemDAO implements WritableDAO<Item>, ReadableDAO<Item> {
 
     // Dịch ngược một dòng trong ResultSet thành một instance của một loại item cụ thể
     private Item mapRow(ResultSet rs, User owner) throws SQLException {
