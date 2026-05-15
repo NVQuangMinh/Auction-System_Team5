@@ -67,7 +67,7 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    public void sendMessage(NetworkMessage msg) {
+    public synchronized void sendMessage(NetworkMessage msg) {
         try {
             out.writeObject(msg);
             out.flush();
