@@ -14,44 +14,49 @@ public class AuctionManager {
     private static AuctionManager manager = null;
     private final Map<String, Auction> activeRooms = new ConcurrentHashMap<>();
     private static List<ClientHandler> activeClients = new CopyOnWriteArrayList<>();
-    private AuctionManager(){}
-    public static synchronized AuctionManager getInstance(){
-        if (manager != null){
+
+    private AuctionManager() {
+    }
+
+    public static synchronized AuctionManager getInstance() {
+        if (manager != null) {
             return manager;
         }
         manager = new AuctionManager();
         return manager;
     }
-    public void addRoom(Auction auction){
+
+    public void addRoom(Auction auction) {
         activeRooms.put(auction.getItem().getId(), auction);
     }
+
     public Auction getRoom(String itemId) {
         return activeRooms.get(itemId);
     }
 
     public ArrayList<Auction> getAllRooms() {
-        ArrayList<Auction> rooms = new ArrayList<>();
-        for (String i : activeRooms.keySet()){
-            rooms.add(activeRooms.get(i));
-        }
-        return rooms;
+        return new ArrayList<>(activeRooms.values());
     }
 
     public static void addClient(ClientHandler client) {
         activeClients.add(client);
     }
 
+    public static List<ClientHandler> getActiveClients() {
+        return activeClients;
+    }
+
     public static void removeClient(ClientHandler client) {
         activeClients.remove(client);
     }
 
-    public void broadCast(NetworkMessage msg){
-        for (ClientHandler client : activeClients){
+    public void broadCast(NetworkMessage msg) {
+        for (ClientHandler client : activeClients) {
             client.sendMessage(msg);
         }
     }
 
-    public void removeRoom(Auction room){
+    public void removeRoom(Auction room) {
         activeRooms.remove(room.getItem().getId());
     }
 }

@@ -6,7 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
+import auction_shared.dto.AuctionStatus;
+
 public class Auction implements Serializable {
+    private String auctionId;
+
     private Item item;
     private double startingPrice;
     private double buyOutPrice;
@@ -15,12 +19,19 @@ public class Auction implements Serializable {
     private LocalDateTime endTime;
     private double currentHighestBid;
 
+    private AuctionStatus status;
+    private String winnerId;
     // BID HISTORY LIST
     private final List<BidTransaction> bidHistory = new ArrayList<>();
-    
-    private final ReentrantLock lock = new ReentrantLock();
 
-    public Auction(Item item, double startingPrice, double buyOutPrice, double tickSize, LocalDateTime startTime, LocalDateTime endTime) {
+    private final ReentrantLock lock = new ReentrantLock();
+    // Transient: chỉ dùng tạm trong RAM để hỗ trợ revertBuyOut, không cần serialize
+    private transient User originalOwnerBeforeBuyOut;
+
+    public Auction(Item item, double startingPrice, double buyOutPrice, double tickSize, LocalDateTime startTime,
+            LocalDateTime endTime) {
+        this.status = AuctionStatus.ACTIVE;
+        this.auctionId = item.getId(); // set từ item
         this.item = item;
         this.startingPrice = startingPrice;
         this.buyOutPrice = buyOutPrice;
@@ -43,6 +54,133 @@ public class Auction implements Serializable {
 
     public void setCurrentHighestBid(double currentHighestBid) {
         this.currentHighestBid = currentHighestBid;
+    }
+
+    public void endAuction() {
+        lock.lock();
+        try {
+            if (status != AuctionStatus.ACTIVE)
+                return;
+            status = AuctionStatus.ENDED;
+            if (!bidHistory.isEmpty()) {
+                winnerId = bidHistory.get(bidHistory.size() - 1).getBidder().getId();
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public boolean placeBid(BidTransaction transaction) {
+        lock.lock();
+        try {
+            if (status != AuctionStatus.ACTIVE)
+                return false;
+            if (isExpired()) {
+                endAuction();
+                return false;
+            }
+
+            double bidAmount = transaction.getBidAmount();
+
+            // Server-side validation: không bao giờ tin tưởng Client
+            // 1. Chặn owner tự bid hàng của mình
+            if (getItem().getOwner().getUsername().equals(transaction.getBidder().getUsername())) {
+                return false;
+            }
+
+            // 2. Bid phải cao hơn giá hiện tại
+            if (bidAmount <= getCurrentHighestBid()) {
+                return false;
+            }
+
+            // 3. Bid >= buyOutPrice phải đi qua luồng BUY_OUT, không chấp nhận ở đây
+            if (bidAmount >= buyOutPrice) {
+                return false;
+            }
+
+            // 4. Validate tickSize: (bidAmount - currentHighestBid) phải là bội số của tickSize
+            double increment = bidAmount - getCurrentHighestBid();
+            // Dùng Math.round để tránh lỗi floating-point (VD: 0.1 + 0.2 != 0.3)
+            long ticks = Math.round(increment / tickSize);
+            if (ticks <= 0 || Math.abs(increment - ticks * tickSize) > 0.001) {
+                return false;
+            }
+
+            addTransaction(transaction);
+            setCurrentHighestBid(transaction.getBidAmount());
+            return true;
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public boolean buyOut(BidTransaction transaction) {
+        lock.lock();
+        try {
+            if (status != AuctionStatus.ACTIVE)
+                return false;
+            if (isExpired()) {
+                endAuction();
+                return false;
+            }
+
+            // Server-side validation: không bao giờ tin tưởng Client
+            // 1. Chặn owner tự mua hàng của mình
+            if (transaction.getBidder().getUsername().equals(getItem().getOwner().getUsername())) {
+                return false;
+            }
+
+            // 2. Validate giá buy out phải đúng bằng buyOutPrice
+            if (Math.abs(transaction.getBidAmount() - buyOutPrice) > 0.001) {
+                return false;
+            }
+
+            // Lưu lại owner cũ để có thể revert nếu DB lỗi
+            this.originalOwnerBeforeBuyOut = item.getOwner();
+
+            item.setOwner(transaction.getBidder());
+            status = AuctionStatus.SOLD;
+            winnerId = transaction.getBidder().getId();
+            return true;
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public void revertLastBid(BidTransaction transaction) {
+        lock.lock();
+        try {
+            if (!bidHistory.isEmpty() && bidHistory.get(bidHistory.size() - 1).equals(transaction)) {
+                bidHistory.remove(bidHistory.size() - 1); // Xóa giao dịch lỗi
+
+                // Cập nhật lại giá cao nhất về giao dịch liền kề trước đó, hoặc giá khởi điểm
+                if (bidHistory.isEmpty()) {
+                    this.currentHighestBid = this.startingPrice;
+                } else {
+                    this.currentHighestBid = bidHistory.get(bidHistory.size() - 1).getBidAmount();
+                }
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    /**
+     * Hoàn tác Buy Out khi DB Transaction bị lỗi.
+     * Trả owner về chủ cũ, đặt lại status = ACTIVE, xóa winnerId.
+     */
+    public void revertBuyOut(BidTransaction transaction) {
+        lock.lock();
+        try {
+            if (originalOwnerBeforeBuyOut != null) {
+                item.setOwner(originalOwnerBeforeBuyOut);
+                originalOwnerBeforeBuyOut = null;
+            }
+            status = AuctionStatus.ACTIVE;
+            winnerId = null;
+        } finally {
+            lock.unlock();
+        }
     }
 
     public Item getItem() {
@@ -69,38 +207,20 @@ public class Auction implements Serializable {
         return endTime;
     }
 
-    public boolean placeBid(BidTransaction transaction) {
-        lock.lock();
-        try {
-            if (transaction.getBidAmount() > getCurrentHighestBid() && !getItem().getOwner().getUsername().equals(transaction.getBidder().getUsername())) {
-                // we also have to deal with the price that exceed the buy out price
-
-                // I guess this shit is gonna be used to build the diagram.
-                // oh yeah and this shit is gonna be used to determine who is the winner too.
-                addTransaction(transaction);
-                setCurrentHighestBid(transaction.getBidAmount()); //this line is good, leave it!
-                return true;
-            } else {
-                return false;
-            }
-        } finally {
-            lock.unlock();
-        }
+    public boolean isExpired() {
+        return LocalDateTime.now().isAfter(endTime);
     }
 
-    public boolean buyOut(BidTransaction transaction) {
-        lock.lock();
-        try {
-            if (! transaction.getBidder().getUsername().equals(getItem().getOwner().getUsername())) {
-                item.setOwner(transaction.getBidder());
-                return true;
-            } else {
-                return false;
-            }
-        }
-        finally {
-            lock.unlock();
-        }
-
+    public String getAuctionId() {
+        return auctionId;
     }
+
+    public AuctionStatus getStatus() {
+        return status;
+    }
+
+    public String getWinnerId() {
+        return winnerId;
+    }
+
 }

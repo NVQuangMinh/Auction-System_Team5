@@ -7,6 +7,7 @@ import auction_shared.dto.ItemDTO;
 import auction_shared.dto.ItemType;
 import auction_shared.dto.UserDTO;
 import auction_shared.dto.AuctionDTO;
+import auction_shared.dto.AuctionStatus;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -133,6 +134,7 @@ public class ProductInfoSubmissionController implements Initializable {
             ItemDTO item = new ItemDTO(newId, name, description, owner, type);
             AuctionDTO auction = new AuctionDTO(
                     item,
+                    AuctionStatus.ACTIVE,
                     startPriceVal,
                     buyOutPriceVal,
                     tickSizeVal,

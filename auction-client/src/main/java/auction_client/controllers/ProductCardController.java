@@ -10,7 +10,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 
-
 public class ProductCardController {
     @FXML
     protected Label itemName;
@@ -30,19 +29,20 @@ public class ProductCardController {
         this.auction = auction;
         this.cardClickedListener = openAuctionDetail;
         itemName.setText(auction.getItem().getName());
-        itemState.setText("ON-GOING");
+        itemState.setText(String.valueOf(auction.getStatus()));
         currentPrice.setText(String.valueOf(auction.getCurrentHighestBid()));
         buyOutPrice.setText(String.valueOf(auction.getBuyOutPrice()));
         description.setText(auction.getItem().getDescription());
     }
 
-    public void handleCardClick(){
+    public void handleCardClick() {
         this.cardClickedListener.openAuctionDetail(this.auction);
     }
 
     @FXML
-    public void buyOut(){
-        BidTransactionDTO transaction = new BidTransactionDTO(auction, UserSession.getInstance().getUser(), auction.getBuyOutPrice());
+    public void buyOut() {
+        BidTransactionDTO transaction = new BidTransactionDTO(auction, UserSession.getInstance().getUser(),
+                auction.getBuyOutPrice());
         ClientService.getInstance().sendMessage(new NetworkMessage("BUY_OUT", transaction));
 
     }

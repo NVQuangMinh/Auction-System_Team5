@@ -1,14 +1,14 @@
 package auction_server.dao;
 
 import auction_server.entities.Auction;
-import auction_server.interfaces.InterfaceDAO;
+import auction_server.interfaces.WritableDAO;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
-public class AuctionDAO implements InterfaceDAO<Auction> {
+public class AuctionDAO implements WritableDAO<Auction> {
     @Override
     public int insert(Auction auction) {
         String sql = "INSERT INTO auctions (id, item_id, starting_price, buy_out_price, tick_size, current_highest_bid, start_time, end_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
@@ -30,6 +30,30 @@ public class AuctionDAO implements InterfaceDAO<Auction> {
         }
     }
 
+    public int updateHighestBid(Auction auction, Connection conn) throws SQLException {
+        String sql = "UPDATE auctions SET current_highest_bid = ? WHERE id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setDouble(1, auction.getCurrentHighestBid());
+            ps.setString(2, auction.getAuctionId());
+            return ps.executeUpdate();
+        }
+    }
+
+    /**
+     * Cập nhật trạng thái, winner và giá cao nhất trong cùng một DB Transaction.
+     * Được sử dụng bởi BidService.processBuyOut() để đảm bảo tính toàn vẹn dữ liệu.
+     */
+    public int updateStatusAndWinner(Auction auction, Connection conn) throws SQLException {
+        String sql = "UPDATE auctions SET status = ?, winner_id = ?, current_highest_bid = ? WHERE id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, auction.getStatus().name());
+            ps.setString(2, auction.getWinnerId());
+            ps.setDouble(3, auction.getCurrentHighestBid());
+            ps.setString(4, auction.getAuctionId());
+            return ps.executeUpdate();
+        }
+    }
+
     @Override
     public int delete(Auction auction) {
         return 0;
@@ -37,22 +61,21 @@ public class AuctionDAO implements InterfaceDAO<Auction> {
 
     @Override
     public int update(Auction auction) {
-        return 0;
-    }
+        // Cập nhật status và winner_id khi phiên đấu giá kết thúc (được gọi bởi
+        // Scheduler)
+        String sql = "UPDATE auctions SET status = ?, winner_id = ?, current_highest_bid = ? WHERE id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
 
-    @Override
-    public java.util.ArrayList<Auction> selectAll() {
-        return null;
-    }
+            ps.setString(1, auction.getStatus().name());
+            ps.setString(2, auction.getWinnerId());
+            ps.setDouble(3, auction.getCurrentHighestBid());
+            ps.setString(4, auction.getAuctionId());
 
-    @Override
-    public Auction selectById(Auction auction) {
-        return null;
+            return ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        }
     }
-
-    @Override
-    public java.util.ArrayList<Auction> selectByCondition(String condition) {
-        return null;
-    }
-
 }
