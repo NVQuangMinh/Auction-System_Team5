@@ -37,11 +37,11 @@
                                     <children>
                                         <TableView fx:id="userTable" nodeOrientation="LEFT_TO_RIGHT" prefHeight="200.0" stylesheets="@TableStyle.css">
                                             <columns>
-                                                <TableColumn fx:id="colUserId" editable="false" maxWidth="80.0" minWidth="80.0" reorderable="false" sortable="false" text="ID" />
+                                                <TableColumn fx:id="colUserId" editable="false" maxWidth="80.0" minWidth="200.0" prefWidth="200.0" reorderable="false" sortable="false" text="ID" />
 
-                                                <TableColumn fx:id="colUsername" editable="false" minWidth="-1.0" prefWidth="-1.0" reorderable="false" sortable="false" text="Username" />
+                                                <TableColumn fx:id="colUsername" editable="false" minWidth="300.0" prefWidth="300.0" reorderable="false" sortable="false" text="Username" />
 
-                                                <TableColumn fx:id="colUserRole" editable="false" minWidth="300.0" prefWidth="300.0" reorderable="false" sortable="false" text="Role" />
+                                                <TableColumn fx:id="colUserRole" editable="false" minWidth="200.0" prefWidth="200.0" reorderable="false" sortable="false" text="Role" />
 
                                                 <TableColumn fx:id="colUserAction" editable="false" maxWidth="80.0" minWidth="80.0" reorderable="false" sortable="false" text="Action" />
                                             </columns>

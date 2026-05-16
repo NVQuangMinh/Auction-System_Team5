@@ -221,6 +221,8 @@ public class ClientHandler implements Runnable {
             // use userDAO to scan through all users in db
             // List<User> users = UserDAO.getAllUsers();
             // sendMessage(new NetworkMessage("GET_USERS", (Serializable) Mappers.toUserDTOList(users)));
+            List<User> users = UserDAO.getAllUsers();
+            sendMessage(new NetworkMessage("GET_USERS", (Serializable) Mappers.toUerDTOList(users)));
         }
     }
 
