@@ -62,4 +62,12 @@ public class Mappers {
         }
         return dtos;
     }
+
+    public static List<UserDTO> toUerDTOList(List<User> users) {
+        List<UserDTO> dtos = new ArrayList<>();
+        for (User user : users) {
+            dtos.add(toDTO(user));
+        }
+        return dtos;
+    }
 }

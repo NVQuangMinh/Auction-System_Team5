@@ -8,7 +8,6 @@ import auction_server.entities.Auction;
 import auction_server.entities.BidTransaction;
 import auction_server.entities.Item;
 import auction_server.entities.User;
-import auction_server.entities.items.Arts;
 import auction_server.factory.ItemFactory;
 import auction_server.mapper.Mappers;
 import auction_server.service.BidService;
@@ -205,6 +204,23 @@ public class ClientHandler implements Runnable {
         } else if (action.equals("GET_ACTIVITIES")) {
             log.info("GET_ACTIVITIES request received, sending {} notifications", activities.size());
             sendMessage(new NetworkMessage("GET_ACTIVITIES",(Serializable) activities));
+        } else if (action.equals("BAN_USER")) {
+            UserDTO userDTO = (UserDTO) msg.getData();
+            // logic xoa user o day
+        } else if (action.equals("REMOVE_ITEM")) {
+            AuctionDTO auctionDTO = (AuctionDTO) msg.getData();
+            Auction auction = AuctionManager.getInstance().getRoom(auctionDTO.getItem().getId());
+            if (auction != null) {
+                AuctionManager.getInstance().removeRoom(auction);
+                AuctionManager.getInstance().broadCast(new NetworkMessage(
+                        "UPDATE_BID",
+                        (Serializable) Mappers.toAuctionDTOList(AuctionManager.getInstance().getAllRooms()))
+                );
+            }
+        } else if (action.equals("GET_USERS")) {
+            // use userDAO to scan through all users in db
+            // List<User> users = UserDAO.getAllUsers();
+            // sendMessage(new NetworkMessage("GET_USERS", (Serializable) Mappers.toUserDTOList(users)));
         }
     }
 
