@@ -54,7 +54,7 @@ public class UserDAO {
 
     public static List<User> getAllUsers() {
 
-        String sql = "SELECT * FROM users WHERE role = 'USER' ";
+        String sql = "SELECT * FROM users WHERE role = 'USER' AND user_status = 'AVAILABLE'";
 
         List<User> users = new ArrayList<>();
 
