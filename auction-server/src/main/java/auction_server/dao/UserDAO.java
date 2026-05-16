@@ -1,6 +1,8 @@
 package auction_server.dao;
 
 import auction_server.entities.User;
+import auction_shared.dto.UserDTO;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -80,7 +82,7 @@ public class UserDAO {
         return users;
     }
 
-    public static boolean userBan(User user) {
+    public static boolean userBan(UserDTO user) {
         String sql = "UPDATE users SET user_status = 'BANNED' WHERE id = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();

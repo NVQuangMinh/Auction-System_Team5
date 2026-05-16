@@ -208,6 +208,15 @@ public class ClientHandler implements Runnable {
         } else if (action.equals("BAN_USER")) {
             UserDTO userDTO = (UserDTO) msg.getData();
             // logic xoa user o day
+
+            if (UserDAO.userBan(userDTO)) {
+                List<User> users = UserDAO.getAllUsers();
+                sendMessage(new NetworkMessage("GET_USERS", (Serializable) Mappers.toUerDTOList(users)));
+            }
+            else {
+                sendMessage(new NetworkMessage("BAN_FAIL",null));
+            }
+
         } else if (action.equals("REMOVE_ITEM")) {
             AuctionDTO auctionDTO = (AuctionDTO) msg.getData();
             Auction auction = AuctionManager.getInstance().getRoom(auctionDTO.getItem().getId());
