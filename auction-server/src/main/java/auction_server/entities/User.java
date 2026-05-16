@@ -11,6 +11,7 @@ public class User extends Entity implements Serializable {
     protected String username;
     protected String password;
     protected String role;
+    protected String status;
     protected BidderAction bidder = null;
     protected SellerAction seller = null;
     protected AdminProfile adminProfile = null;
@@ -20,13 +21,15 @@ public class User extends Entity implements Serializable {
         this.username = username;
         this.password = password;
         this.role = "USER";
+        this.status = "AVAILABLE";
     }
 
-    public User(String id, String username, String password, String role) {
+    public User(String id, String username, String password, String role, String status) {
         super(id);
         this.username = username;
         this.password = password;
         this.role = role;
+        this.status = status;
     }
 
     public void setBidder(BidderAction bidder) {
@@ -55,6 +58,9 @@ public class User extends Entity implements Serializable {
 
     public String getRole() {
         return role;
+    }
+    public String getUserStatus(){
+        return status;
     }
 
     public void setRole(String role) {
