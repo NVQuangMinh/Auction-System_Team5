@@ -62,6 +62,7 @@ public class ClientHandler implements Runnable {
                 }
             }
         } catch (Exception e) {
+            AuctionManager.removeClient(this);
             log.info("Client has disconnected");
         }
     }
