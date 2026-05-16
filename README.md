@@ -36,7 +36,7 @@
 
 ## Giới thiệu Tổng quan
 
-Auction-System_Team5 là một hệ thống đấu giá trực tuyến thời gian thực, phát triển theo mô hình **client-server** với giao tiếp qua **TCP/IP Socket**. Hệ thống cho phép người dùng đăng nhập với vai trò **Người đấu giá (Bidder)**, **Người bán (Seller)** hoặc **Quản trị viên (Admin)**, tham gia đấu giá sản phẩm theo thời gian thực, đặt giá thầu (place bid) hoặc mua ngay (buy-out).
+Auction-System_Team5 là một hệ thống đấu giá trực tuyến thời gian thực, phát triển theo mô hình **client-server** với giao tiếp qua **TCP/IP Socket**. Hệ thống cho phép người dùng đăng nhập với vai trò **Người đấu giá (Bidder)** | **Người bán (Seller)** | **Quản trị viên (Admin)**, tham gia đấu giá sản phẩm theo thời gian thực, đặt giá thầu (place bid) hoặc mua ngay (buy-out).
 
 **Điểm nhấn kỹ thuật cốt lõi:**
 
