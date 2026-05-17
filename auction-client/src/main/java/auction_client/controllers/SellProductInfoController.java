@@ -7,8 +7,12 @@ import auction_shared.dto.AuctionDTO;
 import auction_shared.dto.BidTransactionDTO;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import javafx.animation.Animation;
@@ -16,10 +20,12 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.util.Duration;
 
+import java.net.URL;
 import java.util.List;
 import java.time.LocalDateTime;
+import java.util.ResourceBundle;
 
-public class SellProductInfoController implements AuctionUpdateListener {
+public class SellProductInfoController implements Initializable, AuctionUpdateListener {
     @FXML
     Label itemName;
     @FXML
@@ -32,12 +38,24 @@ public class SellProductInfoController implements AuctionUpdateListener {
     Label tickRate;
     @FXML
     Label timeLeft; // I still don't know what to do with this shit;
-
     @FXML
-    TextField bidAmount;
+    LineChart<String, Number> bidHistory;
+    @FXML
+    NumberAxis yAxis;
+    @FXML
+    CategoryAxis xAxis;
+
+    XYChart.Series<String, Number> priceSeries = new XYChart.Series<>();
 
     AuctionDTO auction = null;
     private Timeline countdownTimeline;
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        priceSeries.setName("Price");
+        bidHistory.getData().add(priceSeries);
+        ClientService.getInstance().sendMessage(new NetworkMessage("GET_BID_HISTORY", auction));
+    }
 
     public void initData(AuctionDTO auction) {
         this.auction = auction;
@@ -76,6 +94,7 @@ public class SellProductInfoController implements AuctionUpdateListener {
         String action = msg.getAction();
         if (action.equals("UPDATE_BID")) {
             List<AuctionDTO> allRooms = (List<AuctionDTO>) msg.getData();
+            ClientService.getInstance().sendMessage(new NetworkMessage("GET_BID_HISTORY", auction));
             Platform.runLater(() -> {
                 boolean exist = false;
                 for (AuctionDTO room : allRooms) {
@@ -89,6 +108,14 @@ public class SellProductInfoController implements AuctionUpdateListener {
                 if (!exist) {
                     cleanUp();
                     switchToUserProductList();
+                }
+            });
+        } else if (action.equals("GET_BID_HISTORY")) {
+            List<BidTransactionDTO> history = (List<BidTransactionDTO>) msg.getData();
+            Platform.runLater(() -> {
+                priceSeries.getData().clear();
+                for (BidTransactionDTO transaction : history) {
+                    priceSeries.getData().add(new XYChart.Data<>(transaction.getBidTime().toString(), transaction.getBidAmount()));
                 }
             });
         }
