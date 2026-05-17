@@ -22,7 +22,7 @@ public class BidTransactionDAO implements InterfaceDAO<BidTransaction> {
             ps.setString(2, bt.getAuction().getAuctionId());
             ps.setString(3, bt.getBidder().getId());
             ps.setDouble(4, bt.getBidAmount());
-            ps.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
+            ps.setTimestamp(5, Timestamp.valueOf(bt.getBidTime()));
             return ps.executeUpdate();
         }
     }
@@ -45,6 +45,10 @@ public class BidTransactionDAO implements InterfaceDAO<BidTransaction> {
                             bidder,
                             rs.getDouble("bid_amount"));
                     transaction.setId(rs.getString("id"));
+                    Timestamp timestamp = rs.getTimestamp("bid_time");
+                    if (timestamp != null) {
+                        transaction.setBidTime(timestamp.toLocalDateTime());
+                    }
 
                     return transaction;
                 }

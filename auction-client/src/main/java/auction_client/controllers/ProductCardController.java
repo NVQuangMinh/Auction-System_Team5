@@ -10,6 +10,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 
+import java.time.LocalDateTime;
+
 public class ProductCardController {
     @FXML
     protected Label itemName;
@@ -42,7 +44,7 @@ public class ProductCardController {
     @FXML
     public void buyOut() {
         BidTransactionDTO transaction = new BidTransactionDTO(auction, UserSession.getInstance().getUser(),
-                auction.getBuyOutPrice());
+                auction.getBuyOutPrice(), LocalDateTime.now());
         ClientService.getInstance().sendMessage(new NetworkMessage("BUY_OUT", transaction));
 
     }

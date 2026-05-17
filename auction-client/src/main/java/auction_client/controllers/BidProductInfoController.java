@@ -3,6 +3,10 @@ package auction_client.controllers;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.util.Duration;
 
 import auction_client.Network.ClientService;
@@ -27,6 +31,8 @@ import javafx.stage.Stage;
 import java.io.BufferedReader;
 import java.net.URL;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class BidProductInfoController implements Initializable, AuctionUpdateListener {
@@ -58,6 +64,17 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
     @FXML
     TextField bidAmount;
 
+    @FXML
+    LineChart<String, Number> bidHistory;
+    @FXML
+    NumberAxis yAxis;
+    @FXML
+    CategoryAxis xAxis;
+
+    // Tạo một Series dữ liệu (Đường bọc các điểm tọa độ)
+    private XYChart.Series<String, Number> priceSeries = new XYChart.Series<>();
+
+
     AuctionDTO auction = null;
     private Timeline countdownTimeline;
 
@@ -72,6 +89,11 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
         error.setOpacity(0.0);
         error.setManaged(false);
         error.setVisible(false);
+        /// graph
+        priceSeries.setName("Price");
+        bidHistory.getData().add(priceSeries);
+        ClientService.getInstance().sendMessage(new NetworkMessage("GET_BID_HISTORY", auction));
+
 
     }
 
@@ -89,11 +111,40 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
         String action = msg.getAction();
         if (action.equals("BID_SUCCESS")) {
             this.auction = (AuctionDTO) msg.getData();
-            updateData();
+            ClientService.getInstance().sendMessage(new NetworkMessage("GET_BID_HISTORY", auction));
+            Platform.runLater(this::updateData);
         } else if (action.equals("BUYOUT_SUCCESS")) {
             cleanUp();
             switchToUserProductList();
+        } else if (action.equals("UPDATE_BID")) {
+            List<AuctionDTO> auctions = (List<AuctionDTO>) msg.getData();
+            ClientService.getInstance().sendMessage(new NetworkMessage("GET_BID_HISTORY", auction));
+            Platform.runLater(() -> {
+                boolean exist = false;
+                for (AuctionDTO auction : auctions) {
+                    if (auction.getAuctionId().equals(this.auction.getAuctionId())) {
+                        this.auction = auction;
+                        exist = true;
+                        updateData();
+                    }
+                }
+                if (!exist) {
+                    cleanUp();
+                    switchToUserProductList();
+                }
+            });
+        } else if (action.equals("GET_BID_HISTORY")) {
+            List<BidTransactionDTO> allTransactions = (List<BidTransactionDTO>) msg.getData();
+            priceSeries.getData().clear();
+            DateTimeFormatter formater = DateTimeFormatter.ofPattern("HH:mm");
+            for (BidTransactionDTO transaction : allTransactions) {
+                priceSeries.getData().add(new XYChart.Data<>(
+                        transaction.getBidTime().format(formater),
+                        transaction.getBidAmount()
+                ));
+            }
         }
+
     }
 
     public void initData(AuctionDTO auction) {
@@ -130,15 +181,18 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
         /// missing the logic for auto-bidding.
         double amount = Double.parseDouble(bidAmount.getText());
         if (amount >= auction.getBuyOutPrice()) {
-            BidTransactionDTO transaction = new BidTransactionDTO(auction, UserSession.getInstance().getUser(),
-                    auction.getBuyOutPrice());
+            BidTransactionDTO transaction = new BidTransactionDTO(
+                    auction, UserSession.getInstance().getUser(),
+                    auction.getBuyOutPrice(), LocalDateTime.now());
             ClientService.getInstance().sendMessage(new NetworkMessage("BUY_OUT", transaction));
             // change the label (notify) -> transparent
             error.setOpacity(0.0);
             error.setManaged(false);
             error.setVisible(false);
         } else if ((amount - auction.getCurrentHighestBid()) % auction.getTickSize() == 0) {
-            BidTransactionDTO transaction = new BidTransactionDTO(auction, UserSession.getInstance().getUser(), amount);
+            BidTransactionDTO transaction = new BidTransactionDTO(
+                    auction, UserSession.getInstance().getUser(),
+                    amount, LocalDateTime.now());
             ClientService.getInstance().sendMessage(new NetworkMessage("PLACE_BID", transaction));
             // change the label (notify) -> transparent
             error.setOpacity(0.0);

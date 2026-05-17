@@ -43,7 +43,8 @@ public class Mappers {
                 auction.getTickSize(),
                 auction.getStartTime(),
                 auction.getEndTime(),
-                auction.getCurrentHighestBid());
+                auction.getCurrentHighestBid()
+        );
     }
 
     public static BidTransactionDTO toDTO(BidTransaction transaction) {
@@ -52,7 +53,8 @@ public class Mappers {
         return new BidTransactionDTO(
                 toDTO(transaction.getAuction()),
                 toDTO(transaction.getBidder()),
-                transaction.getBidAmount());
+                transaction.getBidAmount(),
+                transaction.getBidTime());
     }
 
     public static List<AuctionDTO> toAuctionDTOList(List<Auction> auctions) {
@@ -67,6 +69,13 @@ public class Mappers {
         List<UserDTO> dtos = new ArrayList<>();
         for (User user : users) {
             dtos.add(toDTO(user));
+        }
+        return dtos;
+    }
+    public static List<BidTransactionDTO> toBidTransactionDTOList(List<BidTransaction> bidHistory) {
+        List<BidTransactionDTO> dtos = new ArrayList<>();
+        for (BidTransaction transaction : bidHistory) {
+            dtos.add(toDTO(transaction));
         }
         return dtos;
     }

@@ -231,6 +231,10 @@ public class ClientHandler implements Runnable {
             // use userDAO to scan through all users in db
             List<User> users = UserDAO.getAllUsers();
             sendMessage(new NetworkMessage("GET_USERS", (Serializable) Mappers.toUerDTOList(users)));
+        } else if (action.equals("GET_BID_HISTORY")) {
+            AuctionDTO auctionDTO = (AuctionDTO) msg.getData();
+            Auction auction = AuctionManager.getInstance().getRoom(auctionDTO.getItem().getId());
+            sendMessage(new NetworkMessage("GET_BID_HISTORY", (Serializable) Mappers.toBidTransactionDTOList(auction.getBidHistory())));
         }
     }
 

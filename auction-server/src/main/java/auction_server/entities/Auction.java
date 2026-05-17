@@ -223,4 +223,8 @@ public class Auction implements Serializable {
         return winnerId;
     }
 
+    public List<BidTransaction> getBidHistory() {
+        return bidHistory;
+    }
+
 }

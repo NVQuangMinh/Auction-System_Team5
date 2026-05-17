@@ -1,6 +1,7 @@
 package auction_server.entities;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class BidTransaction implements Serializable {
@@ -8,12 +9,14 @@ public class BidTransaction implements Serializable {
     Auction auction;
     User bidder;
     private double bidAmount;
+    private LocalDateTime bidTime;
 
     public BidTransaction(Auction auction, User bidder, double bidAmount) {
         this.id = UUID.randomUUID().toString();
         this.auction = auction;
         this.bidder = bidder;
         this.bidAmount = bidAmount;
+        this.bidTime = LocalDateTime.now();
     }
 
     public double getBidAmount() {
@@ -34,5 +37,13 @@ public class BidTransaction implements Serializable {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public LocalDateTime getBidTime() {
+        return bidTime;
+    }
+
+    public void setBidTime(LocalDateTime bidTime) {
+        this.bidTime = bidTime;
     }
 }

@@ -42,7 +42,7 @@ public class BidProductSceneController implements Initializable, AuctionUpdateLi
                     Parent card = loader.load();
 
                     ProductCardController cardController = loader.getController();
-                    cardController.setData(auction, this::openAuctionDetail);
+                    cardController.setData(auction, this);
                     productFlowPane.getChildren().add(card);
 
                 } catch (IOException e) {

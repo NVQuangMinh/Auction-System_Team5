@@ -2,6 +2,7 @@ package auction_shared.dto;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class AuctionDTO implements Serializable {
     private String auctionId;
@@ -15,7 +16,7 @@ public class AuctionDTO implements Serializable {
     private double currentHighestBid;
 
     public AuctionDTO(ItemDTO item, AuctionStatus status, double startingPrice, double buyOutPrice,
-            double tickSize, LocalDateTime startTime, LocalDateTime endTime, double currentHighestBid) {
+                      double tickSize, LocalDateTime startTime, LocalDateTime endTime, double currentHighestBid) {
         this.auctionId = item.getId();
         this.status = status;
         this.item = item;
