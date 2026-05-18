@@ -1,6 +1,7 @@
 package auction_client.launcher;
 
 import auction_client.Network.ClientService;
+import auction_client.controllers.UserPushUpNotificationController;
 import javafx.application.Application;
 
 public class Launcher {
@@ -11,6 +12,9 @@ public class Launcher {
             int port = 8080;
             clientService.connect(host, port);
             System.out.println("Connected to server successfully!");
+
+            // Đăng ký bộ lắng nghe thông báo đẩy toàn cục ngay sau khi kết nối thành công
+            clientService.addListener(new UserPushUpNotificationController());
         } catch (Exception e) {
             System.err.println("Could not connect to server: " + e.getMessage());
             System.err.println("The application will continue without server connection.");
