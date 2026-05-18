@@ -9,27 +9,32 @@ import java.util.concurrent.locks.ReentrantLock;
 import auction_shared.dto.AuctionStatus;
 
 public class Auction implements Serializable {
-    private String auctionId;
+    // CONSTANTS (cho anti-snipe)
+    private static final long SNIPING_GRACE_SECONDS = 30;
+    private static final long EXTENSION_SECONDS = 30;
 
+    // AUCTION INFO
+    private String auctionId;
     private Item item;
     private double startingPrice;
     private double buyOutPrice;
     private double tickSize;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
+    private boolean antiSniping;
     private double currentHighestBid;
-
     private AuctionStatus status;
-    private String winnerId;
-    // BID HISTORY LIST
+
+    // BID HISTORY
+    private String winnerId;    
     private final List<BidTransaction> bidHistory = new ArrayList<>();
 
     private final ReentrantLock lock = new ReentrantLock();
-    // Transient: chỉ dùng tạm trong RAM để hỗ trợ revertBuyOut, không cần serialize
+    // Transient: chỉ dùng tạm trong RAM để hỗ trợ revertBuyOut, không cần serialize (hơi thừa trong happy test case, có thời gian sau refractor sẽ hoàn thiện)
     private transient User originalOwnerBeforeBuyOut;
 
     public Auction(Item item, double startingPrice, double buyOutPrice, double tickSize, LocalDateTime startTime,
-            LocalDateTime endTime) {
+            LocalDateTime endTime, boolean antiSniping) {
         this.status = AuctionStatus.ACTIVE;
         this.auctionId = item.getId(); // set từ item
         this.item = item;
@@ -38,6 +43,8 @@ public class Auction implements Serializable {
         this.tickSize = tickSize;
         this.startTime = startTime;
         this.endTime = endTime;
+        this.antiSniping = antiSniping;
+        this.winnerId = null;
     }
 
     public void addTransaction(BidTransaction transaction) {
@@ -70,6 +77,20 @@ public class Auction implements Serializable {
         }
     }
 
+    public void extendTime() {
+        lock.lock();
+        try {
+            if (status != AuctionStatus.ACTIVE) return;
+
+            long remaining = java.time.Duration.between(LocalDateTime.now(), endTime).getSeconds();
+            if (remaining <= SNIPING_GRACE_SECONDS && remaining > 0) {
+                endTime = endTime.plusSeconds(EXTENSION_SECONDS);
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+
     public boolean placeBid(BidTransaction transaction) {
         lock.lock();
         try {
@@ -82,23 +103,20 @@ public class Auction implements Serializable {
 
             double bidAmount = transaction.getBidAmount();
 
-            // Server-side validation: không bao giờ tin tưởng Client
-            // 1. Chặn owner tự bid hàng của mình
             if (getItem().getOwner().getUsername().equals(transaction.getBidder().getUsername())) {
                 return false;
             }
 
-            // 2. Bid phải cao hơn giá hiện tại
             if (bidAmount <= getCurrentHighestBid()) {
                 return false;
             }
 
-            // 3. Bid >= buyOutPrice phải đi qua luồng BUY_OUT, không chấp nhận ở đây
+            // bid >= buyOutPrice phải đi qua luồng BUY_OUT, không chấp nhận ở đây
             if (bidAmount >= buyOutPrice) {
                 return false;
             }
 
-            // 4. Validate tickSize: (bidAmount - currentHighestBid) phải là bội số của tickSize
+            // validate tickSize: (bidAmount - currentHighestBid) phải là bội số của tickSize
             double increment = bidAmount - getCurrentHighestBid();
             // Dùng Math.round để tránh lỗi floating-point (VD: 0.1 + 0.2 != 0.3)
             long ticks = Math.round(increment / tickSize);
@@ -124,13 +142,12 @@ public class Auction implements Serializable {
                 return false;
             }
 
-            // Server-side validation: không bao giờ tin tưởng Client
-            // 1. Chặn owner tự mua hàng của mình
+            // chặn owner tự mua hàng của mình
             if (transaction.getBidder().getUsername().equals(getItem().getOwner().getUsername())) {
                 return false;
             }
 
-            // 2. Validate giá buy out phải đúng bằng buyOutPrice
+            // validate giá buy out phải đúng bằng buyOutPrice
             if (Math.abs(transaction.getBidAmount() - buyOutPrice) > 0.001) {
                 return false;
             }
@@ -147,6 +164,11 @@ public class Auction implements Serializable {
         }
     }
 
+
+    /**
+     * Bid lỗi: hoàn tác giao dịch 
+     * TT TT 
+     */
     public void revertLastBid(BidTransaction transaction) {
         lock.lock();
         try {
@@ -217,6 +239,10 @@ public class Auction implements Serializable {
 
     public AuctionStatus getStatus() {
         return status;
+    }
+
+    public boolean isAntiSniping() {
+        return antiSniping;
     }
 
     public String getWinnerId() {

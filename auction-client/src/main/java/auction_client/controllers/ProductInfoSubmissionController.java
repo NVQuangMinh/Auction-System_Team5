@@ -1,26 +1,31 @@
 package auction_client.controllers;
 
-import auction_client.Network.ClientService;
-import auction_client.UserSession;
-import auction_shared.Network.NetworkMessage;
-import auction_shared.dto.ItemDTO;
-import auction_shared.dto.ItemType;
-import auction_shared.dto.UserDTO;
-import auction_shared.dto.AuctionDTO;
-import auction_shared.dto.AuctionStatus;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.control.*;
-import javafx.scene.image.ImageView;
-import javafx.scene.paint.Color;
-import javafx.stage.Stage;
-
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ResourceBundle;
 import java.util.UUID;
+
+import auction_client.Network.ClientService;
+import auction_client.UserSession;
+import auction_shared.Network.NetworkMessage;
+import auction_shared.dto.AuctionDTO;
+import auction_shared.dto.AuctionStatus;
+import auction_shared.dto.ItemDTO;
+import auction_shared.dto.ItemType;
+import auction_shared.dto.UserDTO;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 
 public class ProductInfoSubmissionController implements Initializable {
     @FXML
@@ -54,7 +59,7 @@ public class ProductInfoSubmissionController implements Initializable {
     private LocalDateTime startBidDate;
     private LocalDateTime endBidDate;
     private ItemType type;
-    private boolean antiSnipping; // TODO: Anti-Sniping
+    private boolean antiSnipping;
 
     @FXML
     private ChoiceBox<String> types;
@@ -107,6 +112,12 @@ public class ProductInfoSubmissionController implements Initializable {
             return false;
         }
 
+        if(buyOutPriceVal <= startPriceVal || tickSizeVal <= 0)
+            return false;
+
+        if((buyOutPriceVal - startPriceVal) % tickSizeVal != 0)
+            return false;
+
         try {
             bidDuration = Integer.parseInt(bidDurStr);
             if (bidDuration <= 0)
@@ -140,6 +151,8 @@ public class ProductInfoSubmissionController implements Initializable {
                     tickSizeVal,
                     startBidDate,
                     endBidDate,
+                    antiSnipping,
+                    null,
                     startPriceVal);
 
             ClientService.getInstance().sendMessage(new NetworkMessage("SELL", auction));
