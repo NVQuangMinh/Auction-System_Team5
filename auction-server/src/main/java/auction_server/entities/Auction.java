@@ -168,17 +168,17 @@ public class Auction implements Serializable {
     /**
      * Bid lỗi: DB transaction thất bại 
      * NHƯNG: in-memory state đã được cập nhật
-     * => bidHistory và currentHighestBid quay lại với DB cũ:
+     * => bidHistory và currentHighestBid trên RAM đồng bộ lại DB
      * /Cách hoạt động:
      * 1. auction.placeBid(transaction)     → thêm transaction vào bidHistory
                                             → set currentHighestBid = transaction.getBidAmount()
         2. bidDAO.insert(transaction, conn)  → insert vào DB
         3. auctionDAO.updateHighestBid(...)  → update current_highest_bid trong DB
-        4. conn.commit()                     → ❌ THẤT BẠI (VD: deadlock, constraint violation, timeout)
+        4. conn.commit()                     → ❌ THẤT BẠI (VD: deadlock, constraint violation, timeout, blah bleh)
         → conn.rollback()                 → DB rollback, nhưng RAM vẫn giữ bid mới!
         → auction.revertLastBid(transaction)  → hoàn tác RAM
      */
-    
+
     public void revertLastBid(BidTransaction transaction) {
         lock.lock();
         try {
