@@ -56,12 +56,15 @@ public class AuctionDAO implements WritableDAO<Auction> {
         }
     }
 
-    public int updateEndTime(Auction auction, Connection conn) throws SQLException {
+    public int updateEndTime(Auction auction, Connection conn) {
         String sql = "UPDATE auctions SET end_time = ? WHERE id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setTimestamp(1, Timestamp.valueOf(auction.getEndTime()));
             ps.setString(2, auction.getAuctionId());
             return ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace(); // Log lỗi nhưng KHÔNG rethrow
+            return 0;
         }
     }
 
