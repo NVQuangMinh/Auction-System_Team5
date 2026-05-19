@@ -1,15 +1,17 @@
 package auction_server.service;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.time.LocalDateTime;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import auction_server.dao.AuctionDAO;
 import auction_server.dao.BidTransactionDAO;
 import auction_server.dao.DatabaseConnection;
 import auction_server.entities.Auction;
 import auction_server.entities.BidTransaction;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.sql.Connection;
-import java.sql.SQLException;
 
 public class BidService {
     private static final Logger log = LoggerFactory.getLogger(BidService.class);
@@ -39,12 +41,23 @@ public class BidService {
                 auctionDAO.updateHighestBid(auction, conn);
 
                 conn.commit();
+                // Anti-sniping: gia hạn nếu còn <= 30s
+                if (auction.isAntiSniping()) {
+                    LocalDateTime oldEndTime = auction.getEndTime();
+                    auction.extendTime();
+                    if (!oldEndTime.equals(auction.getEndTime())) {
+                        auctionDAO.updateEndTime(auction, conn);
+                    }
+                }
+
+                log.info("Bid thành công: Auction={}, Bidder={}, BidAmount={}",
+                        auction.getAuctionId(), transaction.getBidder().getUsername(), transaction.getBidAmount());
                 return true;
             } catch (SQLException e) {
                 conn.rollback();
                 log.error("Lỗi Transaction DB khi lưu Bid, đang rollback cả DB và RAM...", e);
 
-                // Đã có giải pháp cho dòng "// dunno": Hoàn tác in-memory state
+                // Hoàn tác in-memory state (RAM đó các khầy)
                 auction.revertLastBid(transaction);
                 return false;
             }
@@ -65,18 +78,16 @@ public class BidService {
      * @return true nếu Buy Out thành công (cả RAM và DB đều nhất quán)
      */
     public boolean processBuyOut(Auction auction, BidTransaction transaction) {
-        // Bước 1: Validate và cập nhật in-memory state
+        // Validate và cập nhật in-memory state
         if (!auction.buyOut(transaction)) {
             return false;
         }
 
-        // Bước 2: Persist xuống DB trong một Transaction
+        // Persist xuống DB trong một Transaction
         try (Connection conn = DatabaseConnection.getConnection()) {
             conn.setAutoCommit(false);
             try {
-                // Insert giao dịch buy out vào bảng bid_transactions
                 bidDAO.insert(transaction, conn);
-                // Cập nhật status = SOLD, winner_id, current_highest_bid vào bảng auctions
                 auctionDAO.updateStatusAndWinner(auction, conn);
 
                 conn.commit();

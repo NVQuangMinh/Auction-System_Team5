@@ -1,13 +1,10 @@
 package auction_client.controllers;
 
-import javafx.animation.Animation;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.scene.chart.CategoryAxis;
-import javafx.scene.chart.LineChart;
-import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.XYChart;
-import javafx.util.Duration;
+import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.ResourceBundle;
 
 import auction_client.Network.ClientService;
 import auction_client.UserSession;
@@ -15,25 +12,24 @@ import auction_client.interfaces.AuctionUpdateListener;
 import auction_shared.Network.NetworkMessage;
 import auction_shared.dto.AuctionDTO;
 import auction_shared.dto.BidTransactionDTO;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-
-import java.io.BufferedReader;
-import java.net.URL;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.ResourceBundle;
+import javafx.util.Duration;
 
 public class BidProductInfoController implements Initializable, AuctionUpdateListener {
     @FXML
@@ -59,7 +55,7 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
     @FXML
     Button autoPlaceBid; // button for autoBid
     @FXML
-    Label timeLeft; // I still don't know what to do with this shit;
+    Label timeLeft; // I still don't know what to do with this shit; TT TT
 
     @FXML
     TextField bidAmount;

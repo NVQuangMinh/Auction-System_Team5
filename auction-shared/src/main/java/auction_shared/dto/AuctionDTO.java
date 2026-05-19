@@ -2,7 +2,6 @@ package auction_shared.dto;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.List;
 
 public class AuctionDTO implements Serializable {
     private String auctionId;
@@ -13,10 +12,12 @@ public class AuctionDTO implements Serializable {
     private double tickSize;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
+    private boolean antiSniping;
+    private String winnerId;
     private double currentHighestBid;
-
+    
     public AuctionDTO(ItemDTO item, AuctionStatus status, double startingPrice, double buyOutPrice,
-                      double tickSize, LocalDateTime startTime, LocalDateTime endTime, double currentHighestBid) {
+                      double tickSize, LocalDateTime startTime, LocalDateTime endTime, boolean antiSniping, String winnerId, double currentHighestBid) {
         this.auctionId = item.getId();
         this.status = status;
         this.item = item;
@@ -25,6 +26,8 @@ public class AuctionDTO implements Serializable {
         this.tickSize = tickSize;
         this.startTime = startTime;
         this.endTime = endTime;
+        this.antiSniping = antiSniping;  
+        this.winnerId = winnerId;
         this.currentHighestBid = currentHighestBid;
     }
 
@@ -58,6 +61,14 @@ public class AuctionDTO implements Serializable {
 
     public LocalDateTime getEndTime() {
         return endTime;
+    }
+
+    public boolean isAntiSniping() {
+        return antiSniping;
+    }
+
+    public String getWinnerId() {
+        return winnerId;
     }
 
     public double getCurrentHighestBid() {

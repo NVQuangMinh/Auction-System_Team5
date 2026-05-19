@@ -1,5 +1,8 @@
 package auction_server.mapper;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import auction_server.entities.Auction;
 import auction_server.entities.BidTransaction;
 import auction_server.entities.Item;
@@ -8,10 +11,6 @@ import auction_shared.dto.AuctionDTO;
 import auction_shared.dto.BidTransactionDTO;
 import auction_shared.dto.ItemDTO;
 import auction_shared.dto.UserDTO;
-import auction_shared.dto.ItemType;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class Mappers {
 
@@ -43,6 +42,8 @@ public class Mappers {
                 auction.getTickSize(),
                 auction.getStartTime(),
                 auction.getEndTime(),
+                auction.isAntiSniping(),
+                null,
                 auction.getCurrentHighestBid()
         );
     }

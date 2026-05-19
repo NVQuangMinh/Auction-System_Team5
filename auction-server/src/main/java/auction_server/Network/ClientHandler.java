@@ -1,5 +1,17 @@
 package auction_server.Network;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.net.Socket;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import auction_server.core.AuctionManager;
 import auction_server.dao.AuctionDAO;
 import auction_server.dao.ItemDAO;
@@ -14,19 +26,11 @@ import auction_server.service.BidService;
 import auction_server.service.UserService;
 import auction_shared.Network.NetworkMessage;
 import auction_shared.Network.Notification;
-import auction_shared.dto.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.net.Socket;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
+import auction_shared.dto.AuctionDTO;
+import auction_shared.dto.BidTransactionDTO;
+import auction_shared.dto.ItemDTO;
+import auction_shared.dto.SignUpDTO;
+import auction_shared.dto.UserDTO;
 
 public class ClientHandler implements Runnable {
 
@@ -118,7 +122,9 @@ public class ClientHandler implements Runnable {
                     auctionDTO.getBuyOutPrice(),
                     auctionDTO.getTickSize(),
                     auctionDTO.getStartTime(),
-                    auctionDTO.getEndTime());
+                    auctionDTO.getEndTime(),
+                    auctionDTO.isAntiSniping()
+            );
             
             // Lưu item và auction vào database
             ItemDAO itemDAO = new ItemDAO();
