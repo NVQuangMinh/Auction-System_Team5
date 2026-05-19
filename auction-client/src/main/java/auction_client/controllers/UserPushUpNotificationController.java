@@ -1,9 +1,12 @@
 package auction_client.controllers;
 
+import auction_client.UserSession;
 import auction_client.interfaces.AuctionUpdateListener;
 import auction_shared.Network.NetworkMessage;
+import auction_shared.dto.UserDTO;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
+import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -16,6 +19,7 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.Window;
 import javafx.util.Duration;
 import org.kordamp.ikonli.javafx.FontIcon;
 
@@ -132,5 +136,41 @@ public class UserPushUpNotificationController implements AuctionUpdateListener {
         } else if ("BUYOUT_FAILED".equals(action)) {
             UserPushUpNotificationController.showNotification("Buyout failed", "FAILED");
         }
+        if ("BAN_USER".equals(action)) {
+            UserDTO userDTO = (UserDTO) msg.getData();
+            if (userDTO.getUsername().equals(UserSession.getInstance().getUsername())) {
+                UserPushUpNotificationController.showNotification("You are banned", "FAILED");
+
+                PauseTransition pause = getPauseTransition();
+                pause.play();
+            
+            }
+        }
+    }
+
+    private PauseTransition getPauseTransition() {
+        PauseTransition pause = new PauseTransition(Duration.seconds(3));
+        pause.setOnFinished(e -> {
+            Platform.runLater(() -> {
+                try {
+                    // Đóng tất cả stage
+                    for (Window window : Stage.getWindows()) {
+                        if (window instanceof Stage) {
+                            ((Stage) window).close();
+                        }
+                    }
+
+                    UserSession.getInstance().closeApp();
+
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/auction_client/SignInScene.fxml"));
+                    Stage stage = new Stage();
+                    stage.setScene(new Scene(loader.load()));
+                    stage.show();
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
+            });
+        });
+        return pause;
     }
 }
