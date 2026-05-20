@@ -1,12 +1,12 @@
 package auction_client.controllers;
 
 import org.kordamp.ikonli.javafx.FontIcon;
-import javafx.scene.paint.Color;
 
 import auction_client.UserSession;
 import auction_client.interfaces.AuctionUpdateListener;
 import auction_shared.Network.NetworkMessage;
 import auction_shared.dto.UserDTO;
+import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -16,8 +16,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -30,9 +31,11 @@ public class UserPushUpNotificationController implements AuctionUpdateListener {
     @FXML
     private Label notificationLabel;
     @FXML
-    private ProgressBar progressBar;
-    @FXML
     private FontIcon notificationIcon;
+    @FXML
+    private Rectangle progressBackground;
+    @FXML
+    private Rectangle progressFill;
 
     private double totalTimeMs = 3000; // thoi gian an
     private double timeLeftMs = totalTimeMs;
@@ -60,10 +63,10 @@ public class UserPushUpNotificationController implements AuctionUpdateListener {
                 controller.setNotification(notification, type);
                 Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
 
-                // Căn chỉnh góc phải dưới chính xác với margin 20px (chiều rộng FXML là 437px,
-                // chiều cao là 100px)
+                // Căn chỉnh góc phải dưới chính xác với margin 20px
+                // chiều cao thực tế của FXML là 50px
                 newNotificationStage.setX(screenBounds.getMaxX() - 437 - 20);
-                newNotificationStage.setY(screenBounds.getMaxY() - 100 - 20);
+                newNotificationStage.setY(screenBounds.getMaxY() - 50 - 20);
 
                 newNotificationStage.show();
                 controller.playAnimation(); // Chạy animation sau khi Stage đã hiển thị
@@ -75,33 +78,31 @@ public class UserPushUpNotificationController implements AuctionUpdateListener {
 
     public void setNotification(String notification, String type) {
         this.notificationLabel.setText(notification);
-        this.progressBar.setMaxWidth(Double.MAX_VALUE); // Cho phép ProgressBar giãn hết chiều ngang của VBox
 
         if ("SUCCESS".equalsIgnoreCase(type)) {
             this.notificationIcon.setIconLiteral("fas-check-circle");
             this.notificationIcon.setIconColor(Color.web("#2ecc71"));
-            progressBar.setStyle("-fx-accent: #2ecc71;");
+            progressFill.setFill(Color.web("#2ecc71"));
         } else if ("FAILED".equalsIgnoreCase(type)) {
             this.notificationIcon.setIconLiteral("fas-times-circle");
             this.notificationIcon.setIconColor(Color.web("#e74c3c"));
-            progressBar.setStyle("-fx-accent: #e74c3c;");
+            progressFill.setFill(Color.web("#e74c3c"));
         } else {
-            // Loại thông báo chung / Cảnh báo
             this.notificationIcon.setIconLiteral("fas-bell");
             this.notificationIcon.setIconColor(Color.web("#f1c40f"));
-            progressBar.setStyle("-fx-accent: #f1c40f;");
+            progressFill.setFill(Color.web("#f1c40f"));
         }
 
-        progressBar.setProgress(1.0);
+        // Đặt thanh tiến trình đầy ban đầu
+        this.progressFill.setWidth(progressBackground.getWidth());
 
-        // 2. Tạo hiệu ứng: Sau đúng 3 giây, tự động kéo giá trị progressBar về RỖNG
-        // (0.0)
-        // Xác định rõ ràng điểm bắt đầu là 1.0 và kết thúc là 0.0
+        // Animation: thanh chạy từ đầy -> rỗng trong 3 giây
         this.timeline = new Timeline(
-                new KeyFrame(Duration.ZERO, new KeyValue(progressBar.progressProperty(), 1.0)),
-                new KeyFrame(Duration.seconds(3), new KeyValue(progressBar.progressProperty(), 0.0)));
+                new KeyFrame(Duration.ZERO,
+                        new KeyValue(progressFill.widthProperty(), progressBackground.getWidth())),
+                new KeyFrame(Duration.seconds(3),
+                        new KeyValue(progressFill.widthProperty(), 0.0)));
 
-        // 3. Khi hiệu ứng chạy xong 3 giây thì tự đóng cửa sổ
         timeline.setOnFinished(e -> {
             if (notificationStage != null) {
                 notificationStage.close();
@@ -110,7 +111,7 @@ public class UserPushUpNotificationController implements AuctionUpdateListener {
     }
 
     public void playAnimation() {
-        if (timeline != null) {
+        if (timeline != null && timeline.getStatus() != Animation.Status.RUNNING) {
             timeline.play();
         }
     }

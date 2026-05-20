@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <VBox prefHeight="50.0" prefWidth="437.0" style="-fx-background-radius: 8; -fx-background-color: #1a1e29;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction_client.controllers.UserPushUpNotificationController">
@@ -20,6 +20,11 @@
             <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
          </padding>
       </HBox>
-      <ProgressBar fx:id="progressBar" prefHeight="11.0" prefWidth="200.0" progress="0.0" />
+      <StackPane prefHeight="11.0">
+         <children>
+            <Rectangle fx:id="progressBackground" fill="#2a2e39" height="11.0" width="437.0" />
+            <Rectangle fx:id="progressFill" fill="#2ecc71" height="11.0" width="437.0" />
+         </children>
+      </StackPane>
    </children>
 </VBox>
