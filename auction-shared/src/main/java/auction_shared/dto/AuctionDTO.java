@@ -17,7 +17,8 @@ public class AuctionDTO implements Serializable {
     private double currentHighestBid;
     
     public AuctionDTO(ItemDTO item, AuctionStatus status, double startingPrice, double buyOutPrice,
-                      double tickSize, LocalDateTime startTime, LocalDateTime endTime, boolean antiSniping, String winnerId, double currentHighestBid) {
+                      double tickSize, LocalDateTime startTime, LocalDateTime endTime,
+                      boolean antiSniping, String winnerId, double currentHighestBid) {
         this.auctionId = item.getId();
         this.status = status;
         this.item = item;
