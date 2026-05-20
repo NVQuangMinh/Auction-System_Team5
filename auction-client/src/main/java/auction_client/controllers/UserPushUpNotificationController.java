@@ -22,6 +22,7 @@ import javafx.stage.StageStyle;
 import javafx.stage.Window;
 import javafx.util.Duration;
 import org.kordamp.ikonli.javafx.FontIcon;
+import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 
 public class UserPushUpNotificationController implements AuctionUpdateListener {
     @FXML
@@ -74,20 +75,19 @@ public class UserPushUpNotificationController implements AuctionUpdateListener {
         this.notificationLabel.setText(notification);
         this.progressBar.setMaxWidth(Double.MAX_VALUE); // Cho phép ProgressBar giãn hết chiều ngang của VBox
 
-        FontIcon icon = new FontIcon();
-        icon.setIconSize(18);
+        FontIcon icon;
 
         if ("SUCCESS".equalsIgnoreCase(type)) {
-            icon.setIconLiteral("fas-check-circle");
+            icon = FontIcon.of(FontAwesomeSolid.CHECK_CIRCLE, 18);
             icon.setStyle("-fx-icon-color: #2ecc71;");
             progressBar.setStyle("-fx-accent: #2ecc71;");
         } else if ("FAILED".equalsIgnoreCase(type)) {
-            icon.setIconLiteral("fas-times-circle");
+            icon = FontIcon.of(FontAwesomeSolid.TIMES_CIRCLE, 18);
             icon.setStyle("-fx-icon-color: #e74c3c;");
             progressBar.setStyle("-fx-accent: #e74c3c;");
         } else {
             // Loại thông báo chung / Cảnh báo
-            icon.setIconLiteral("fas-bell");
+            icon = FontIcon.of(FontAwesomeSolid.BELL, 18);
             icon.setStyle("-fx-icon-color: #f1c40f;");
             progressBar.setStyle("-fx-accent: #f1c40f;");
         }
