@@ -1,12 +1,14 @@
 package auction_client.controllers;
 
+import org.kordamp.ikonli.javafx.FontIcon;
+import javafx.scene.paint.Color;
+
 import auction_client.UserSession;
 import auction_client.interfaces.AuctionUpdateListener;
 import auction_shared.Network.NetworkMessage;
 import auction_shared.dto.UserDTO;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
-import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -21,8 +23,6 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.Window;
 import javafx.util.Duration;
-import org.kordamp.ikonli.javafx.FontIcon;
-import org.kordamp.ikonli.fontawesome5.FontAwesomeSolid;
 
 public class UserPushUpNotificationController implements AuctionUpdateListener {
     @FXML
@@ -31,6 +31,8 @@ public class UserPushUpNotificationController implements AuctionUpdateListener {
     private Label notificationLabel;
     @FXML
     private ProgressBar progressBar;
+    @FXML
+    private FontIcon notificationIcon;
 
     private double totalTimeMs = 3000; // thoi gian an
     private double timeLeftMs = totalTimeMs;
@@ -75,25 +77,20 @@ public class UserPushUpNotificationController implements AuctionUpdateListener {
         this.notificationLabel.setText(notification);
         this.progressBar.setMaxWidth(Double.MAX_VALUE); // Cho phép ProgressBar giãn hết chiều ngang của VBox
 
-        FontIcon icon;
-
         if ("SUCCESS".equalsIgnoreCase(type)) {
-            icon = FontIcon.of(FontAwesomeSolid.CHECK_CIRCLE, 18);
-            icon.setStyle("-fx-icon-color: #2ecc71;");
+            this.notificationIcon.setIconLiteral("fas-check-circle");
+            this.notificationIcon.setIconColor(Color.web("#2ecc71"));
             progressBar.setStyle("-fx-accent: #2ecc71;");
         } else if ("FAILED".equalsIgnoreCase(type)) {
-            icon = FontIcon.of(FontAwesomeSolid.TIMES_CIRCLE, 18);
-            icon.setStyle("-fx-icon-color: #e74c3c;");
+            this.notificationIcon.setIconLiteral("fas-times-circle");
+            this.notificationIcon.setIconColor(Color.web("#e74c3c"));
             progressBar.setStyle("-fx-accent: #e74c3c;");
         } else {
             // Loại thông báo chung / Cảnh báo
-            icon = FontIcon.of(FontAwesomeSolid.BELL, 18);
-            icon.setStyle("-fx-icon-color: #f1c40f;");
+            this.notificationIcon.setIconLiteral("fas-bell");
+            this.notificationIcon.setIconColor(Color.web("#f1c40f"));
             progressBar.setStyle("-fx-accent: #f1c40f;");
         }
-
-        this.iconContainer.getChildren().clear();
-        this.iconContainer.getChildren().add(icon);
 
         progressBar.setProgress(1.0);
 
