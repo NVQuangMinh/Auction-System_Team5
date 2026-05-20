@@ -139,38 +139,22 @@ public class UserPushUpNotificationController implements AuctionUpdateListener {
         if ("BAN_USER".equals(action)) {
             UserDTO userDTO = (UserDTO) msg.getData();
             if (userDTO.getUsername().equals(UserSession.getInstance().getUsername())) {
-                UserPushUpNotificationController.showNotification("You are banned", "FAILED");
-
-                PauseTransition pause = getPauseTransition();
-                pause.play();
-            
-            }
-        }
-    }
-
-    private PauseTransition getPauseTransition() {
-        PauseTransition pause = new PauseTransition(Duration.seconds(3));
-        pause.setOnFinished(e -> {
-            Platform.runLater(() -> {
+                //UserPushUpNotificationController.showNotification("You are banned", "FAILED");
                 try {
                     // Đóng tất cả stage
-                    for (Window window : Stage.getWindows()) {
-                        if (window instanceof Stage) {
-                            ((Stage) window).close();
+                    if (!Stage.getWindows().isEmpty()) {
+                        for (Window window : Stage.getWindows()) {
+                            if (window instanceof Stage) {
+                                ((Stage) window).close();
+                            }
                         }
+
+                        UserSession.getInstance().closeApp();
                     }
-
-                    UserSession.getInstance().closeApp();
-
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/auction_client/SignInScene.fxml"));
-                    Stage stage = new Stage();
-                    stage.setScene(new Scene(loader.load()));
-                    stage.show();
-                } catch (Exception exception) {
+                } catch(Exception exception){
                     exception.printStackTrace();
                 }
-            });
-        });
-        return pause;
+            }
+        }
     }
 }

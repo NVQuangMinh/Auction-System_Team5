@@ -20,7 +20,7 @@ public class UserService {
 
     public User login(String username, String password) {
         User user = userDAO.getUserByUsername(username);
-        if (user != null && user.getPassword().equals(password)) {
+        if (user != null && user.getPassword().equals(password) && !user.getUserStatus().equals("BANNED")) {
             return user;
         }
         return null;

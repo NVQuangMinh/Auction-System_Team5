@@ -240,6 +240,8 @@ public class ClientHandler implements Runnable {
             AuctionDTO auctionDTO = (AuctionDTO) msg.getData();
             Auction auction = AuctionManager.getInstance().getRoom(auctionDTO.getItem().getId());
             sendMessage(new NetworkMessage("GET_BID_HISTORY", (Serializable) Mappers.toBidTransactionDTOList(auction.getBidHistory())));
+        } else if (action.equals("LOGOUT")) {
+            activities.clear();
         }
     }
 

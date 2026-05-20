@@ -18,7 +18,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.paint.Color?>
 
-<StackPane style="-fx-background-color: transparent;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction_client.controllers.SellProductInfoController">
+<StackPane style="-fx-background-color: transparent;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction_client.controllers.SellProductInfoController">
    <padding>
       <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
    </padding>
@@ -117,7 +117,7 @@
                   </HBox>
                   <AnchorPane prefHeight="316.0" prefWidth="451.0" style="-fx-background-color: #f0f0f0; -fx-background-radius: 15; -fx-border-color: #dcdcdc; -fx-border-width: 2; -fx-border-radius: 15;">
                      <children>
-                        <LineChart horizontalGridLinesVisible="false" layoutX="4.0" layoutY="4.0" legendVisible="false" prefHeight="316.0" prefWidth="451.0" style="-fx-background-color: transparent;" verticalGridLinesVisible="false" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+                        <LineChart fx:id="bidHistory" horizontalGridLinesVisible="false" layoutX="4.0" layoutY="4.0" legendVisible="false" prefHeight="316.0" prefWidth="451.0" style="-fx-background-color: transparent;" verticalGridLinesVisible="false" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
                            <xAxis>
                               <CategoryAxis side="BOTTOM" tickMarkVisible="false" fx:id="xAxis" />
                            </xAxis>

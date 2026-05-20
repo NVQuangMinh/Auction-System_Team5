@@ -64,7 +64,7 @@ public class SignInController implements Initializable, AuctionUpdateListener {
                     switchToMainScene();
                 } else {
                     UserSession.getInstance().setUser(null);
-                    showAlert("Thất bại", "Tài khoản hoặc mật khẩu không chính xác!", Alert.AlertType.ERROR);
+                    showAlert("Thất bại", "Tài khoản hoặc mật khẩu không chính xác hoặc bạn đã bị ban !", Alert.AlertType.ERROR);
                 }
             });
         }
