@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
+import auction_server.dao.UserDAO;
 import auction_shared.dto.AuctionStatus;
 
 public class Auction implements Serializable {
@@ -70,7 +71,13 @@ public class Auction implements Serializable {
                 return;
             status = AuctionStatus.ENDED;
             if (!bidHistory.isEmpty()) {
-                winnerId = bidHistory.get(bidHistory.size() - 1).getBidder().getId();
+                for (int i = bidHistory.size() - 1; i > -1; i--) {
+                    User user = UserDAO.getUserByUsername(bidHistory.get(i).getBidder().getUsername());
+                    if (user != null && !user.getUserStatus().equals("BANNED")) {
+                        winnerId = bidHistory.get(i).getBidder().getId();
+                        break;
+                    }
+                }
             }
         } finally {
             lock.unlock();
