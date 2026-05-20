@@ -82,7 +82,7 @@ public class UserPushUpNotificationController implements AuctionUpdateListener {
             icon.setStyle("-fx-icon-color: #2ecc71;");
             progressBar.setStyle("-fx-accent: #2ecc71;");
         } else if ("FAILED".equalsIgnoreCase(type)) {
-            icon.setIconLiteral("fas-check-xmark");
+            icon.setIconLiteral("fas-times-circle");
             icon.setStyle("-fx-icon-color: #e74c3c;");
             progressBar.setStyle("-fx-accent: #e74c3c;");
         } else {

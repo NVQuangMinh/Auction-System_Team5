@@ -7,7 +7,8 @@ module auction.client {
   requires ch.qos.logback.classic;
   requires org.kordamp.ikonli.core;
   requires org.kordamp.ikonli.javafx;
-  requires org.kordamp.ikonli.fontawesome6;
+  requires org.kordamp.ikonli.fontawesome5;
+  uses org.kordamp.ikonli.IkonHandler;
 
   exports auction_client.launcher;
   exports auction_client.controllers;
