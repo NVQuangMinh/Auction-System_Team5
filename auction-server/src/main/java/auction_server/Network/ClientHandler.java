@@ -48,14 +48,8 @@ public class ClientHandler implements Runnable {
         this.messageHandler = new MessageHandlerService(
                 activities,
                 this::sendMessage,
-                this::onLogout,
                 daoProvider
         );
-    }
-
-    //xoá khỏi activeClients của AuctionManager để giải phóng bộ nhớ (khi tắt client này)
-    private void onLogout() {
-        AuctionManager.getInstance().removeClient(this);
     }
 
     public User getLoggedInUser() {
