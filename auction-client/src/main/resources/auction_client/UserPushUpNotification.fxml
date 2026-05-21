@@ -3,9 +3,10 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.*?>
+<?import javafx.scene.control.*?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<VBox prefHeight="50.0" prefWidth="437.0" style="-fx-background-radius: 8; -fx-background-color: #1a1e29;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction_client.controllers.UserPushUpNotificationController">
+<VBox prefHeight="54.0" prefWidth="437.0" style="-fx-background-radius: 8; -fx-background-color: #1a1e29;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction_client.controllers.UserPushUpNotificationController">
    <children>
       <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="470.0" spacing="15.0" VBox.vgrow="ALWAYS">
          <children>
@@ -20,10 +21,10 @@
             <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
          </padding>
       </HBox>
-      <StackPane prefHeight="11.0">
+      <StackPane prefHeight="4.0" prefWidth="437.0" alignment="CENTER_LEFT">
          <children>
-            <Rectangle fx:id="progressBackground" fill="#2a2e39" height="11.0" width="437.0" />
-            <Rectangle fx:id="progressFill" fill="#2ecc71" height="11.0" width="437.0" />
+            <Rectangle fx:id="progressBackground" fill="#2a2e39" height="4.0" width="437.0" arcWidth="8.0" arcHeight="8.0" />
+            <Rectangle fx:id="progressFill" fill="#2ecc71" height="4.0" width="437.0" arcWidth="8.0" arcHeight="8.0" />
          </children>
       </StackPane>
    </children>

@@ -13,3 +13,6 @@ Thumbs.db
 
 # Log files
 *.log
+
+# Ignore custom rule files
+/rule/

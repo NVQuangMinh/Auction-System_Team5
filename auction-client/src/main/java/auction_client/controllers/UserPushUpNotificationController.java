@@ -41,6 +41,7 @@ public class UserPushUpNotificationController implements AuctionUpdateListener {
     private double timeLeftMs = totalTimeMs;
     private Stage notificationStage;
     private Timeline timeline;
+    private double progress = 1.0;
 
     public static void showNotification(String notification, String type) {
         Platform.runLater(() -> {
@@ -64,9 +65,9 @@ public class UserPushUpNotificationController implements AuctionUpdateListener {
                 Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
 
                 // Căn chỉnh góc phải dưới chính xác với margin 20px
-                // chiều cao thực tế của FXML là 50px
+                // chiều cao thực tế của FXML là 54px
                 newNotificationStage.setX(screenBounds.getMaxX() - 437 - 20);
-                newNotificationStage.setY(screenBounds.getMaxY() - 50 - 20);
+                newNotificationStage.setY(screenBounds.getMaxY() - 54 - 20);
 
                 newNotificationStage.show();
                 controller.playAnimation(); // Chạy animation sau khi Stage đã hiển thị
@@ -93,21 +94,29 @@ public class UserPushUpNotificationController implements AuctionUpdateListener {
             progressFill.setFill(Color.web("#f1c40f"));
         }
 
-        // Đặt thanh tiến trình đầy ban đầu
-        this.progressFill.setWidth(progressBackground.getWidth());
+        // 3. Khởi tạo Timeline để chạy đếm ngược
+        progress = 1.0; // Reset lại tiến trình mỗi lần mở alert
+        progressFill.setWidth(progressBackground.getWidth());
+        
+        double updateInterval = 0.01;
+        double decrement = updateInterval / (totalTimeMs / 1000.0);
 
-        // Animation: thanh chạy từ đầy -> rỗng trong 3 giây
-        this.timeline = new Timeline(
-                new KeyFrame(Duration.ZERO,
-                        new KeyValue(progressFill.widthProperty(), progressBackground.getWidth())),
-                new KeyFrame(Duration.seconds(3),
-                        new KeyValue(progressFill.widthProperty(), 0.0)));
+        this.timeline = new Timeline();
+        KeyFrame keyFrame = new KeyFrame(Duration.seconds(updateInterval), event -> {
+            progress -= decrement;
 
-        timeline.setOnFinished(e -> {
-            if (notificationStage != null) {
-                notificationStage.close();
+            if (progress <= 0) {
+                progress = 0;
+                timeline.stop();
+                if (notificationStage != null) {
+                    notificationStage.close();
+                }
             }
+            progressFill.setWidth(progress * progressBackground.getWidth());
         });
+
+        timeline.getKeyFrames().add(keyFrame);
+        timeline.setCycleCount(Timeline.INDEFINITE);
     }
 
     public void playAnimation() {
@@ -137,7 +146,8 @@ public class UserPushUpNotificationController implements AuctionUpdateListener {
         if ("BAN_USER".equals(action)) {
             UserDTO userDTO = (UserDTO) msg.getData();
             if (userDTO.getUsername().equals(UserSession.getInstance().getUsername())) {
-                //UserPushUpNotificationController.showNotification("You are banned", "FAILED");
+                // UserPushUpNotificationController.showNotification("You are banned",
+                // "FAILED");
                 try {
                     // Đóng tất cả stage
                     if (!Stage.getWindows().isEmpty()) {
@@ -149,7 +159,7 @@ public class UserPushUpNotificationController implements AuctionUpdateListener {
 
                         UserSession.getInstance().closeApp();
                     }
-                } catch(Exception exception){
+                } catch (Exception exception) {
                     exception.printStackTrace();
                 }
             }
