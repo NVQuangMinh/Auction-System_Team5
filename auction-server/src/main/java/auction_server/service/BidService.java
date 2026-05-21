@@ -4,6 +4,10 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 
+import auction_server.exception.BidException;
+import auction_server.exception.InactiveBidException;
+import auction_server.exception.InvalidBidAmountException;
+import auction_server.exception.SelfBiddingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,10 +40,9 @@ public class BidService {
         return null;
     }
 
-    public boolean processAndSaveBid(Auction auction, BidTransaction transaction) {
-        if (!auction.placeBid(transaction)) {
-            return false;
-        }
+    public void processAndSaveBid(Auction auction, BidTransaction transaction) throws BidException {
+        auction.placeBid(transaction);
+
         try (Connection conn = DatabaseConnection.getConnection()) {
             conn.setAutoCommit(false);
             try {
@@ -58,20 +61,19 @@ public class BidService {
 
                 log.info("Bid thành công: Auction={}, Bidder={}, BidAmount={}",
                         auction.getAuctionId(), transaction.getBidder().getUsername(), transaction.getBidAmount());
-                return true;
             } catch (SQLException e) {
                 conn.rollback();
                 log.error("Lỗi Transaction DB khi lưu Bid, đang rollback cả DB và RAM...", e);
 
                 // Hoàn tác in-memory state (RAM đó các khầy)
                 auction.revertLastBid(transaction);
-                return false;
+                //return false;
             }
         } catch (SQLException e) {
             log.error("Không thể lấy Connection DB", e);
             // Lỗi kết nối DB, in-memory cũng phải hoàn tác
             auction.revertLastBid(transaction);
-            return false;
+            //return false;
         }
     }
 
@@ -83,12 +85,9 @@ public class BidService {
      *
      * @return true nếu Buy Out thành công (cả RAM và DB đều nhất quán)
      */
-    public boolean processBuyOut(Auction auction, BidTransaction transaction) {
+    public void processBuyOut(Auction auction, BidTransaction transaction) throws BidException {
         // Validate và cập nhật in-memory state
-        if (!auction.buyOut(transaction)) {
-            return false;
-        }
-
+        auction.buyOut(transaction);
         // Persist xuống DB trong một Transaction
         try (Connection conn = DatabaseConnection.getConnection()) {
             conn.setAutoCommit(false);
@@ -99,19 +98,18 @@ public class BidService {
                 conn.commit();
                 log.info("Buy Out thành công: Auction={}, Winner={}",
                         auction.getAuctionId(), auction.getWinnerId());
-                return true;
             } catch (SQLException e) {
                 conn.rollback();
                 log.error("Lỗi Transaction DB khi Buy Out, đang rollback cả DB và RAM...", e);
 
                 // Hoàn tác in-memory: đặt lại status về ACTIVE, trả owner về chủ cũ
                 auction.revertBuyOut(transaction);
-                return false;
+                //return false;
             }
         } catch (SQLException e) {
             log.error("Không thể lấy Connection DB cho Buy Out", e);
             auction.revertBuyOut(transaction);
-            return false;
+           //return false;
         }
     }
 }

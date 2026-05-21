@@ -5,6 +5,9 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import auction_server.exception.InactiveBidException;
+import auction_server.exception.InvalidBidAmountException;
+import auction_server.exception.SelfBiddingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -118,9 +121,8 @@ public class MessageHandlerService {
 
         BidTransaction transaction = new BidTransaction(auction, bidder, transactionDTO.getBidAmount());
         BidService bidService = new BidService(daoProvider);
-        boolean isSuccess = bidService.processAndSaveBid(auction, transaction);
-
-        if (isSuccess) {
+        try {
+            bidService.processAndSaveBid(auction, transaction);
             messageSender.sendMessage(new NetworkMessage("BID_SUCCESS", Mappers.toDTO(auction)));
             AuctionManager.getInstance().broadCast(new NetworkMessage(
                     "UPDATE_BID",
@@ -128,11 +130,14 @@ public class MessageHandlerService {
             ));
             log.info("A new bid has been placed");
             activities.add(new Notification("you have placed bid successfully", LocalTime.now()));
-        } else {
-            log.info("Your bid has failed");
-            messageSender.sendMessage(new NetworkMessage("BID_FAILED", null));
-            activities.add(new Notification("Your bid has failed", LocalTime.now()));
         }
+        catch (InvalidBidAmountException | SelfBiddingException | InactiveBidException e) {
+            messageSender.sendMessage(new NetworkMessage("BID_FAILED", e.getMessage()));
+            log.info(e.getMessage());
+            activities.add(new Notification(e.getMessage(), LocalTime.now()));
+        }
+
+
     }
     
     /**
@@ -220,12 +225,11 @@ public class MessageHandlerService {
         BidTransaction transaction = new BidTransaction(auction, bidder, transactionDTO.getBidAmount());
 
         BidService bidService = new BidService(daoProvider);
-        boolean isSuccess = bidService.processBuyOut(auction, transaction);
 
-        if (isSuccess) {
+        try {
+            bidService.processBuyOut(auction, transaction);
             AuctionManager.getInstance().removeRoom(auction);
             AuctionDTO auctionDTO = Mappers.toDTO(auction);
-
             String winnerId = auction.getWinnerId();
             if (winnerId != null) {
                 for (ClientHandler client : AuctionManager.getInstance().getActiveClients()) {
@@ -246,9 +250,13 @@ public class MessageHandlerService {
             messageSender.sendMessage(new NetworkMessage("BUYOUT_SUCCESS", null));
             log.info("BUY OUT SUCCESS");
             activities.add(new Notification("you have buy out item successfully", LocalTime.now()));
-        } else {
-            messageSender.sendMessage(new NetworkMessage("BUYOUT_FAILED", null));
         }
+        catch (InvalidBidAmountException | InactiveBidException | SelfBiddingException e) {
+            messageSender.sendMessage(new NetworkMessage("BID_FAILED", e.getMessage()));
+            log.info(e.getMessage());
+            activities.add(new Notification(e.getMessage(), LocalTime.now()));
+        }
+
     }
     
     /**
