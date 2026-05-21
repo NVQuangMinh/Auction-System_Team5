@@ -1,13 +1,14 @@
 package auction_server.service;
 
+import auction_server.dao.DAOProvider;
 import auction_server.dao.UserDAO;
 import auction_server.entities.User;
 
 public class UserService {
     private final UserDAO userDAO;
 
-    public UserService() {
-        this.userDAO = new UserDAO();
+    public UserService(DAOProvider daoProvider) {
+        this.userDAO = daoProvider.userDAO();
     }
 
     public boolean register(User user) {

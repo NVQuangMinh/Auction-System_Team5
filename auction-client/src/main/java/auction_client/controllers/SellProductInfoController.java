@@ -54,7 +54,6 @@ public class SellProductInfoController implements Initializable, AuctionUpdateLi
     public void initialize(URL url, ResourceBundle resourceBundle) {
         priceSeries.setName("Price");
         bidHistory.getData().add(priceSeries);
-        ClientService.getInstance().sendMessage(new NetworkMessage("GET_BID_HISTORY", auction));
     }
 
     public void initData(AuctionDTO auction) {
@@ -62,6 +61,7 @@ public class SellProductInfoController implements Initializable, AuctionUpdateLi
         updateData();
         ClientService.getInstance().addListener(this);
         startCountdown();
+        ClientService.getInstance().sendMessage(new NetworkMessage("GET_BID_HISTORY", auction));
     }
 
     private void startCountdown() {

@@ -111,7 +111,6 @@ public class SellProductSceneController implements Initializable, AuctionUpdateL
 
             SellProductInfoController controller = loader.getController();
             controller.initData(auction);
-            ClientService.getInstance().sendMessage(new NetworkMessage("GET_BID_HISTORY", auction));
 
             Stage sellProductInfoStage = new Stage();
             sellProductInfoStage.setTitle("Auction Detail");

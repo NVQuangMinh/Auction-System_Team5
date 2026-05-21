@@ -1,8 +1,6 @@
 package auction_server.core;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -10,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 import auction_server.Network.ClientHandler;
 import auction_server.dao.AuctionDAO;
+import auction_server.dao.DAOProvider;
 import auction_server.entities.Auction;
 import auction_server.entities.User;
 import auction_server.mapper.Mappers;
@@ -23,10 +22,10 @@ public class AuctionScheduler {
     private final AuctionDAO auctionDAO;
     private final WinnerService winnerService;
 
-    public AuctionScheduler(AuctionManager auctionManager) {
+    public AuctionScheduler(AuctionManager auctionManager, DAOProvider daoProvider) {
         this.auctionManager = auctionManager;
-        this.auctionDAO = new AuctionDAO();
-        this.winnerService = new WinnerService();
+        this.auctionDAO = daoProvider.auctionDAO();
+        this.winnerService = new WinnerService(daoProvider);
     }
 
     public void start() {

@@ -10,10 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import auction_server.Network.ClientHandler;
 import auction_server.core.AuctionManager;
-import auction_server.dao.AuctionDAO;
-import auction_server.dao.BidTransactionDAO;
-import auction_server.dao.ItemDAO;
-import auction_server.dao.UserDAO;
+import auction_server.dao.DAOProvider;
 import auction_server.entities.Auction;
 import auction_server.entities.BidTransaction;
 import auction_server.entities.Item;
@@ -42,10 +39,8 @@ public class MessageHandlerService {
     private static final Logger log = LoggerFactory.getLogger(MessageHandlerService.class);
 
     private final UserService userService;
-    private final AuctionDAO auctionDAO;
-    private final BidTransactionDAO bidTransactionDAO;
-    private final ItemDAO itemDAO;
     private final SellService sellService;
+    private final DAOProvider daoProvider;
     private final List<Notification> activities;
     private User loggedInUser;
     private final MessageSender messageSender;
@@ -72,12 +67,11 @@ public class MessageHandlerService {
      * @param messageSender Callback để gửi message về client
      * @param logoutHandler Callback khi user logout
      */
-    public MessageHandlerService(List<Notification> activities, MessageSender messageSender, LogoutHandler logoutHandler) {
-        this.userService = new UserService();
-        this.auctionDAO = new AuctionDAO();
-        this.bidTransactionDAO = new BidTransactionDAO();
-        this.itemDAO = new ItemDAO();
-        this.sellService = new SellService();
+    public MessageHandlerService(List<Notification> activities, MessageSender messageSender,
+                                LogoutHandler logoutHandler, DAOProvider daoProvider) {
+        this.daoProvider = daoProvider;
+        this.userService = new UserService(daoProvider);
+        this.sellService = new SellService(daoProvider);
         this.activities = activities;
         this.messageSender = messageSender;
         this.logoutHandler = logoutHandler;
@@ -116,7 +110,7 @@ public class MessageHandlerService {
             return;
         }
 
-        User bidder = UserDAO.getUserByUsername(transactionDTO.getBidder().getUsername());
+        User bidder = daoProvider.userDAO().getUserByUsername(transactionDTO.getBidder().getUsername());
         if (bidder == null) {
             messageSender.sendMessage(new NetworkMessage("BID_FAILED", null));
             activities.add(new Notification("bid failed: user not found", LocalTime.now()));
@@ -124,7 +118,7 @@ public class MessageHandlerService {
         }
 
         BidTransaction transaction = new BidTransaction(auction, bidder, transactionDTO.getBidAmount());
-        BidService bidService = new BidService();
+        BidService bidService = new BidService(daoProvider);
         boolean isSuccess = bidService.processAndSaveBid(auction, transaction);
 
         if (isSuccess) {
@@ -150,7 +144,7 @@ public class MessageHandlerService {
     public void handleSell(NetworkMessage msg) {
         AuctionDTO auctionDTO = (AuctionDTO) msg.getData();
         ItemDTO itemDTO = auctionDTO.getItem();
-        User owner = UserDAO.getUserByUsername(itemDTO.getOwner().getUsername());
+        User owner = daoProvider.userDAO().getUserByUsername(itemDTO.getOwner().getUsername());
         Item item = ItemFactory.of(itemDTO.getType()).create(itemDTO.getId(), itemDTO.getName(),
                 itemDTO.getDescription(), owner);
         Auction room = new Auction(
@@ -217,20 +211,16 @@ public class MessageHandlerService {
      */
     public void handleBuyOut(NetworkMessage msg) {
         BidTransactionDTO transactionDTO = (BidTransactionDTO) msg.getData();
-        User bidder = UserDAO.getUserByUsername(transactionDTO.getBidder().getUsername());
-
-        BidTransaction transaction = new BidTransaction(
-                AuctionManager.getInstance().getRoom(transactionDTO.getAuction().getItem().getId()),
-                bidder,
-                transactionDTO.getBidAmount());
         Auction auction = AuctionManager.getInstance().getRoom(transactionDTO.getAuction().getItem().getId());
-
         if (auction == null) {
             messageSender.sendMessage(new NetworkMessage("BUYOUT_FAILED", null));
             return;
         }
 
-        BidService bidService = new BidService();
+        User bidder = daoProvider.userDAO().getUserByUsername(transactionDTO.getBidder().getUsername());
+        BidTransaction transaction = new BidTransaction(auction, bidder, transactionDTO.getBidAmount());
+
+        BidService bidService = new BidService(daoProvider);
         boolean isSuccess = bidService.processBuyOut(auction, transaction);
 
         if (isSuccess) {
@@ -310,8 +300,8 @@ public class MessageHandlerService {
      */
     public void handleBanUser(NetworkMessage msg) {
         UserDTO userDTO = (UserDTO) msg.getData();
-        if (UserDAO.userBan(userDTO)) {
-            List<User> users = UserDAO.getAllUsers();
+        if (daoProvider.userDAO().userBan(userDTO)) {
+            List<User> users = daoProvider.userDAO().getAllUsers();
             messageSender.sendMessage(new NetworkMessage("GET_USERS", (Serializable) Mappers.toUserDTOList(users)));
             AuctionManager.getInstance().broadCast(new NetworkMessage("BAN_USER", userDTO));
         } else {
@@ -342,7 +332,7 @@ public class MessageHandlerService {
      * @param msg NetworkMessage
      */
     public void handleGetUsers(NetworkMessage msg) {
-        List<User> users = UserDAO.getAllUsers();
+        List<User> users = daoProvider.userDAO().getAllUsers();
         messageSender.sendMessage(new NetworkMessage("GET_USERS", (Serializable) Mappers.toUserDTOList(users)));
     }
     
@@ -367,7 +357,7 @@ public class MessageHandlerService {
             history = Mappers.toBidTransactionDTOList(auction.getBidHistory());
         } else {
             // ENDED/SOLD → Đọc từ DB (durability)
-            List<BidTransaction> dbHistory = bidTransactionDAO.selectByAuctionId(itemId);
+            List<BidTransaction> dbHistory = daoProvider.bidTransactionDAO().selectByAuctionId(itemId);
             history = Mappers.toBidTransactionDTOList(dbHistory);
         }
 

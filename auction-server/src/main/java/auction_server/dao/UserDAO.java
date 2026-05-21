@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserDAO {
-    public static boolean insertUser(User user) {
+    public boolean insertUser(User user) {
 
         String sql = "INSERT INTO users (id, username, password, role, user_status) VALUES (?, ?, ?, ?, ?)";
 
@@ -32,7 +32,7 @@ public class UserDAO {
         }
     }
 
-    public static User getUserByUsername(String username) {
+    public User getUserByUsername(String username) {
         String sql = "SELECT * FROM users WHERE username = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
@@ -56,7 +56,7 @@ public class UserDAO {
         return null;
     }
 
-    public static List<User> getAllUsers() {
+    public List<User> getAllUsers() {
 
         String sql = "SELECT * FROM users WHERE role = 'USER' AND user_status = 'AVAILABLE'";
 
@@ -82,14 +82,13 @@ public class UserDAO {
         return users;
     }
 
-    public static boolean userBan(UserDTO user) {
+    public boolean userBan(UserDTO user) {
         String sql = "UPDATE users SET user_status = 'BANNED' WHERE id = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, user.getId());
-            pstmt.executeUpdate();
 
             int affectedRows = pstmt.executeUpdate();
             return affectedRows > 0;

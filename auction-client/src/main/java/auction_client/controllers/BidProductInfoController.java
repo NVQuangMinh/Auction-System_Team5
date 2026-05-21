@@ -88,9 +88,6 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
         /// graph
         priceSeries.setName("Price");
         bidHistory.getData().add(priceSeries);
-        ClientService.getInstance().sendMessage(new NetworkMessage("GET_BID_HISTORY", auction));
-
-
     }
 
     public void updateData() {
@@ -147,6 +144,7 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
         this.auction = auction;
         updateData();
         startCountdown();
+        ClientService.getInstance().sendMessage(new NetworkMessage("GET_BID_HISTORY", auction));
     }
 
     private void startCountdown() {

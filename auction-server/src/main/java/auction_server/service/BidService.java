@@ -9,14 +9,20 @@ import org.slf4j.LoggerFactory;
 
 import auction_server.dao.AuctionDAO;
 import auction_server.dao.BidTransactionDAO;
+import auction_server.dao.DAOProvider;
 import auction_server.dao.DatabaseConnection;
 import auction_server.entities.Auction;
 import auction_server.entities.BidTransaction;
 
 public class BidService {
     private static final Logger log = LoggerFactory.getLogger(BidService.class);
-    private final AuctionDAO auctionDAO = new AuctionDAO();
-    private final BidTransactionDAO bidDAO = new BidTransactionDAO();
+    private final AuctionDAO auctionDAO;
+    private final BidTransactionDAO bidDAO;
+
+    public BidService(DAOProvider daoProvider) {
+        this.auctionDAO = daoProvider.auctionDAO();
+        this.bidDAO = daoProvider.bidTransactionDAO();
+    }
 
     /**
      * Truy vấn fallback: tìm winner_id từ DB khi server restart.

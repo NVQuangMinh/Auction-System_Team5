@@ -145,6 +145,7 @@ public class ProductInfoSubmissionController implements Initializable {
             ItemDTO item = new ItemDTO(newId, name, description, owner, type);
             AuctionDTO auction = new AuctionDTO(
                     item,
+                    type,
                     AuctionStatus.ACTIVE,
                     startPriceVal,
                     buyOutPriceVal,

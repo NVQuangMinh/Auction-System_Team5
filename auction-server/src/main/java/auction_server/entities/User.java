@@ -42,7 +42,7 @@ public class User extends Entity implements Serializable {
         if ("ADMIN".equals(role)) {
             this.adminProfile = new AdminBehaviors();
         } else if ("USER".equals(role)) {
-            this.bidder = new BidderBehaviors();
+            this.bidder = new BidderBehaviors(this);
             this.seller = new SellerBehaviors();
         }
     }

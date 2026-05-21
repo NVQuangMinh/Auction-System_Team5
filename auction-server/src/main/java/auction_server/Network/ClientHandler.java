@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import auction_server.core.AuctionManager;
+import auction_server.dao.DAOProvider;
 import auction_server.entities.User;
 import auction_server.service.MessageHandlerService;
 import auction_shared.Network.NetworkMessage;
@@ -42,12 +43,13 @@ public class ClientHandler implements Runnable {
      * 
      * @param socket Socket kết nối với client
      */
-    public ClientHandler(Socket socket) {
+    public ClientHandler(Socket socket, DAOProvider daoProvider) {
         this.socket = socket;
         this.messageHandler = new MessageHandlerService(
                 activities,
                 this::sendMessage,
-                this::onLogout
+                this::onLogout,
+                daoProvider
         );
     }
 
