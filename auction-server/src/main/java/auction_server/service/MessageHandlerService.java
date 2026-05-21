@@ -44,7 +44,6 @@ public class MessageHandlerService {
     private final List<Notification> activities;
     private User loggedInUser;
     private final MessageSender messageSender;
-    private final LogoutHandler logoutHandler;
     
     /**
      * Interface để gửi message về client.
@@ -65,21 +64,21 @@ public class MessageHandlerService {
      *
      * @param activities Danh sách hoạt động của user
      * @param messageSender Callback để gửi message về client
-     * @param logoutHandler Callback khi user logout
+     *
      */
     public MessageHandlerService(List<Notification> activities, MessageSender messageSender,
-                                LogoutHandler logoutHandler, DAOProvider daoProvider) {
+                                 DAOProvider daoProvider) {
         this.daoProvider = daoProvider;
         this.userService = new UserService(daoProvider);
         this.sellService = new SellService(daoProvider);
         this.activities = activities;
         this.messageSender = messageSender;
-        this.logoutHandler = logoutHandler;
+
     }
     
     /**
      * Thiết lập user đã đăng nhập.
-     * 
+     *
      * @param user User đã đăng nhập
      */
     public void setLoggedInUser(User user) {
@@ -372,8 +371,6 @@ public class MessageHandlerService {
     public void handleLogout(NetworkMessage msg) {
         this.loggedInUser = null;
         activities.clear();
-        if (logoutHandler != null) {
-            logoutHandler.onLogout();
-        }
+
     }
 }
