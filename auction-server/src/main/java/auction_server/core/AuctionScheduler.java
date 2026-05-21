@@ -1,7 +1,6 @@
 package auction_server.core;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -21,6 +20,8 @@ public class AuctionScheduler {
     private final AuctionManager auctionManager;
     private final AuctionDAO auctionDAO;
     private final WinnerService winnerService;
+
+    //giảm tải bằng cách tái sử dụng cache của AuctionDAO
 
     public AuctionScheduler(AuctionManager auctionManager, DAOProvider daoProvider) {
         this.auctionManager = auctionManager;
