@@ -44,7 +44,16 @@ public class ClientHandler implements Runnable {
      */
     public ClientHandler(Socket socket) {
         this.socket = socket;
-        this.messageHandler = new MessageHandlerService(activities, this::sendMessage);
+        this.messageHandler = new MessageHandlerService(
+                activities,
+                this::sendMessage,
+                this::onLogout
+        );
+    }
+
+    //thêm xoá socket để 
+    private void onLogout() {
+        AuctionManager.getInstance().removeClient(this);
     }
 
     /**
@@ -73,7 +82,7 @@ public class ClientHandler implements Runnable {
                 }
             }
         } catch (Exception e) {
-            AuctionManager.removeClient(this);
+            AuctionManager.getInstance().removeClient(this);
             log.info("Client has disconnected");
         }
     }

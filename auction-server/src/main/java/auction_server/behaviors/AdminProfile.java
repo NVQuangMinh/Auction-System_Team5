@@ -1,11 +1,7 @@
 package auction_server.behaviors;
 
-import auction_server.entities.Auction;
-import auction_server.entities.User;
-
-import java.io.Serializable;
-
-public class AdminProfile implements Serializable {
-    public void cancelAuction(Auction auction){}
-    public void banUser(User user){}
+public interface AdminProfile {
+    void manageUsers();
+    void viewReports();
+    void banUser(String userId);
 }

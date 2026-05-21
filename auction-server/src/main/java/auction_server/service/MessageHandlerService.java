@@ -9,7 +9,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import auction_server.core.AuctionManager;
+import auction_server.Network.ClientHandler;
 import auction_server.dao.AuctionDAO;
+import auction_server.dao.BidTransactionDAO;
 import auction_server.dao.ItemDAO;
 import auction_server.dao.UserDAO;
 import auction_server.entities.Auction;
@@ -38,11 +40,16 @@ import auction_shared.dto.UserDTO;
 public class MessageHandlerService {
     
     private static final Logger log = LoggerFactory.getLogger(MessageHandlerService.class);
-    
+
     private final UserService userService;
+    private final AuctionDAO auctionDAO;
+    private final BidTransactionDAO bidTransactionDAO;
+    private final ItemDAO itemDAO;
+    private final SellService sellService;
     private final List<Notification> activities;
     private User loggedInUser;
     private final MessageSender messageSender;
+    private final LogoutHandler logoutHandler;
     
     /**
      * Interface để gửi message về client.
@@ -50,17 +57,30 @@ public class MessageHandlerService {
     public interface MessageSender {
         void sendMessage(NetworkMessage msg);
     }
-    
+
+    /**
+     * Interface để xử lý logout — cần remove client khỏi AuctionManager.
+     */
+    public interface LogoutHandler {
+        void onLogout();
+    }
+
     /**
      * Khởi tạo MessageHandlerService.
-     * 
+     *
      * @param activities Danh sách hoạt động của user
      * @param messageSender Callback để gửi message về client
+     * @param logoutHandler Callback khi user logout
      */
-    public MessageHandlerService(List<Notification> activities, MessageSender messageSender) {
+    public MessageHandlerService(List<Notification> activities, MessageSender messageSender, LogoutHandler logoutHandler) {
         this.userService = new UserService();
+        this.auctionDAO = new AuctionDAO();
+        this.bidTransactionDAO = new BidTransactionDAO();
+        this.itemDAO = new ItemDAO();
+        this.sellService = new SellService();
         this.activities = activities;
         this.messageSender = messageSender;
+        this.logoutHandler = logoutHandler;
     }
     
     /**
@@ -88,31 +108,37 @@ public class MessageHandlerService {
      */
     public void handlePlaceBid(NetworkMessage msg) {
         BidTransactionDTO transactionDTO = (BidTransactionDTO) msg.getData();
-        User bidder = UserDAO.getUserByUsername(transactionDTO.getBidder().getUsername());
 
-        BidTransaction transaction = new BidTransaction(
-                AuctionManager.getInstance().getRoom(transactionDTO.getAuction().getItem().getId()),
-                bidder,
-                transactionDTO.getBidAmount());
         Auction auction = AuctionManager.getInstance().getRoom(transactionDTO.getAuction().getItem().getId());
-        
-        if (auction != null) {
-            BidService bidService = new BidService();
-            boolean isSuccess = bidService.processAndSaveBid(auction, transaction);
+        if (auction == null) {
+            messageSender.sendMessage(new NetworkMessage("BID_FAILED", null));
+            activities.add(new Notification("bid failed: auction not found", LocalTime.now()));
+            return;
+        }
 
-            if (isSuccess) {
-                messageSender.sendMessage(new NetworkMessage("BID_SUCCESS", Mappers.toDTO(auction)));
-                AuctionManager.getInstance().broadCast(new NetworkMessage(
-                        "UPDATE_BID",
-                        (Serializable) Mappers.toAuctionDTOList(AuctionManager.getInstance().getAllRooms())
-                ));
-                log.info("A new bid has been placed");
-                activities.add(new Notification("you have placed bid successfully", LocalTime.now()));
-            } else {
-                log.info("Your bid has failed");
-                messageSender.sendMessage(new NetworkMessage("BID_FAILED", null));
-                activities.add(new Notification("Your bid has failed", LocalTime.now()));
-            }
+        User bidder = UserDAO.getUserByUsername(transactionDTO.getBidder().getUsername());
+        if (bidder == null) {
+            messageSender.sendMessage(new NetworkMessage("BID_FAILED", null));
+            activities.add(new Notification("bid failed: user not found", LocalTime.now()));
+            return;
+        }
+
+        BidTransaction transaction = new BidTransaction(auction, bidder, transactionDTO.getBidAmount());
+        BidService bidService = new BidService();
+        boolean isSuccess = bidService.processAndSaveBid(auction, transaction);
+
+        if (isSuccess) {
+            messageSender.sendMessage(new NetworkMessage("BID_SUCCESS", Mappers.toDTO(auction)));
+            AuctionManager.getInstance().broadCast(new NetworkMessage(
+                    "UPDATE_BID",
+                    (Serializable) Mappers.toAuctionDTOList(AuctionManager.getInstance().getAllRooms())
+            ));
+            log.info("A new bid has been placed");
+            activities.add(new Notification("you have placed bid successfully", LocalTime.now()));
+        } else {
+            log.info("Your bid has failed");
+            messageSender.sendMessage(new NetworkMessage("BID_FAILED", null));
+            activities.add(new Notification("Your bid has failed", LocalTime.now()));
         }
     }
     
@@ -125,7 +151,7 @@ public class MessageHandlerService {
         AuctionDTO auctionDTO = (AuctionDTO) msg.getData();
         ItemDTO itemDTO = auctionDTO.getItem();
         User owner = UserDAO.getUserByUsername(itemDTO.getOwner().getUsername());
-        Item item = ItemFactory.of(itemDTO.getType()).create(itemDTO.getId(), itemDTO.getName(), 
+        Item item = ItemFactory.of(itemDTO.getType()).create(itemDTO.getId(), itemDTO.getName(),
                 itemDTO.getDescription(), owner);
         Auction room = new Auction(
                 item,
@@ -136,13 +162,10 @@ public class MessageHandlerService {
                 auctionDTO.getEndTime(),
                 auctionDTO.isAntiSniping()
         );
-        
-        ItemDAO itemDAO = new ItemDAO();
-        AuctionDAO auctionDAO = new AuctionDAO();
-        int itemInserted = itemDAO.insert(item);
-        int auctionInserted = auctionDAO.insert(room);
-        
-        if (itemInserted > 0 && auctionInserted > 0) {
+
+        boolean isSuccess = sellService.publishItemAndAuction(item, room);
+
+        if (isSuccess) {
             AuctionManager.getInstance().addRoom(room);
             AuctionManager.getInstance().broadCast(new NetworkMessage(
                     "UPDATE_BID",
@@ -151,12 +174,10 @@ public class MessageHandlerService {
             messageSender.sendMessage(new NetworkMessage("SELL_SUCCESS", true));
             log.info("SELL SUCCESS");
             activities.add(new Notification("you have sold item successfully", LocalTime.now()));
-            log.info("Added SELL notification, total activities: {}", activities.size());
         } else {
             messageSender.sendMessage(new NetworkMessage("SELL_FAILED", false));
             log.info("SELL FAIL");
             activities.add(new Notification("sell item failed", LocalTime.now()));
-            log.info("Added SELL FAILED notification, total activities: {}", activities.size());
         }
     }
     
@@ -189,7 +210,7 @@ public class MessageHandlerService {
     
     /**
      * Xử lý mua ngay.
-     * 
+     *
      * @param msg NetworkMessage chứa BidTransactionDTO
      */
     public void handleBuyOut(NetworkMessage msg) {
@@ -212,11 +233,28 @@ public class MessageHandlerService {
 
         if (isSuccess) {
             AuctionManager.getInstance().removeRoom(auction);
-            messageSender.sendMessage(new NetworkMessage("BUYOUT_SUCCESS", null));
+            AuctionDTO auctionDTO = Mappers.toDTO(auction);
+
+            // Gửi YOU_WON riêng cho winner (giống AuctionScheduler cho ENDED)
+            String winnerId = auction.getWinnerId();
+            if (winnerId != null) {
+                for (ClientHandler client : AuctionManager.getInstance().getActiveClients()) {
+                    User u = client.getLoggedInUser();
+                    if (u != null && winnerId.equals(u.getId())) {
+                        client.sendMessage(new NetworkMessage("YOU_WON", auctionDTO));
+                        break;
+                    }
+                }
+            }
+
+            // Broadcast AUCTION_ENDED cho tất cả client (giống AuctionScheduler)
+            AuctionManager.getInstance().broadCast(new NetworkMessage("AUCTION_ENDED", auctionDTO));
             AuctionManager.getInstance().broadCast(new NetworkMessage(
                     "UPDATE_BID",
                     (Serializable) Mappers.toAuctionDTOList(AuctionManager.getInstance().getAllRooms()))
             );
+
+            messageSender.sendMessage(new NetworkMessage("BUYOUT_SUCCESS", null));
             log.info("BUY OUT SUCCESS");
             activities.add(new Notification("you have buy out item successfully", LocalTime.now()));
         } else {
@@ -274,7 +312,7 @@ public class MessageHandlerService {
         UserDTO userDTO = (UserDTO) msg.getData();
         if (UserDAO.userBan(userDTO)) {
             List<User> users = UserDAO.getAllUsers();
-            messageSender.sendMessage(new NetworkMessage("GET_USERS", (Serializable) Mappers.toUerDTOList(users)));
+            messageSender.sendMessage(new NetworkMessage("GET_USERS", (Serializable) Mappers.toUserDTOList(users)));
             AuctionManager.getInstance().broadCast(new NetworkMessage("BAN_USER", userDTO));
         } else {
             messageSender.sendMessage(new NetworkMessage("BAN_FAIL", null));
@@ -305,19 +343,34 @@ public class MessageHandlerService {
      */
     public void handleGetUsers(NetworkMessage msg) {
         List<User> users = UserDAO.getAllUsers();
-        messageSender.sendMessage(new NetworkMessage("GET_USERS", (Serializable) Mappers.toUerDTOList(users)));
+        messageSender.sendMessage(new NetworkMessage("GET_USERS", (Serializable) Mappers.toUserDTOList(users)));
     }
     
     /**
      * Xử lý lấy lịch sử đặt giá.
-     * 
+     * Hybrid: ACTIVE auction → đọc từ RAM, ENDED/SOLD auction → đọc từ DB.
+     *
      * @param msg NetworkMessage chứa AuctionDTO
      */
     public void handleGetBidHistory(NetworkMessage msg) {
         AuctionDTO auctionDTO = (AuctionDTO) msg.getData();
-        Auction auction = AuctionManager.getInstance().getRoom(auctionDTO.getItem().getId());
-        messageSender.sendMessage(new NetworkMessage("GET_BID_HISTORY", 
-                (Serializable) Mappers.toBidTransactionDTOList(auction.getBidHistory())));
+        String itemId = auctionDTO.getItem().getId();
+
+        List<BidTransactionDTO> history;
+
+        // Thử đọc từ RAM trước (ACTIVE auction)
+        Auction auction = AuctionManager.getInstance().getRoom(itemId);
+
+        if (auction != null) {
+            // ACTIVE → Đọc từ RAM (performance)
+            history = Mappers.toBidTransactionDTOList(auction.getBidHistory());
+        } else {
+            // ENDED/SOLD → Đọc từ DB (durability)
+            List<BidTransaction> dbHistory = bidTransactionDAO.selectByAuctionId(itemId);
+            history = Mappers.toBidTransactionDTOList(dbHistory);
+        }
+
+        messageSender.sendMessage(new NetworkMessage("GET_BID_HISTORY", (Serializable) history));
     }
     
     /**
@@ -326,6 +379,10 @@ public class MessageHandlerService {
      * @param msg NetworkMessage
      */
     public void handleLogout(NetworkMessage msg) {
+        this.loggedInUser = null;
         activities.clear();
+        if (logoutHandler != null) {
+            logoutHandler.onLogout();
+        }
     }
 }

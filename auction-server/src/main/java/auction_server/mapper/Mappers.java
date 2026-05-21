@@ -66,7 +66,7 @@ public class Mappers {
         return dtos;
     }
 
-    public static List<UserDTO> toUerDTOList(List<User> users) {
+    public static List<UserDTO> toUserDTOList(List<User> users) {
         List<UserDTO> dtos = new ArrayList<>();
         for (User user : users) {
             dtos.add(toDTO(user));

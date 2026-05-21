@@ -1,5 +1,11 @@
 package auction_server.dao;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+
 import auction_server.entities.Item;
 import auction_server.entities.User;
 import auction_server.entities.items.Arts;
@@ -8,12 +14,6 @@ import auction_server.entities.items.Vehicles;
 import auction_server.interfaces.ReadableDAO;
 import auction_server.interfaces.WritableDAO;
 import auction_shared.dto.ItemType;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 
 public class ItemDAO implements WritableDAO<Item>, ReadableDAO<Item> {
 
@@ -44,6 +44,18 @@ public class ItemDAO implements WritableDAO<Item>, ReadableDAO<Item> {
         } catch (SQLException e) {
             e.printStackTrace();
             return 0;
+        }
+    }
+
+    public int insert(Item item, Connection conn) throws SQLException {
+        String sql = "INSERT INTO items (id, item_type, item_name, description, owner_id) VALUES (?, ?, ?, ?, ?)";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, item.getId());
+            pstmt.setString(2, item.getType().toDbValue());
+            pstmt.setString(3, item.getName());
+            pstmt.setString(4, item.getDescription());
+            pstmt.setString(5, item.getOwner().getId());
+            return pstmt.executeUpdate();
         }
     }
 

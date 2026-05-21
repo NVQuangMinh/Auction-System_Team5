@@ -1,10 +1,7 @@
 package auction_server.behaviors;
 
 import auction_server.entities.Item;
-import auction_server.interfaces.SellerAction;
 
-import java.io.Serializable;
-
-public class SellerProfile implements SellerAction, Serializable {
-    public void postItem(Item item) {}
+public interface SellerProfile {
+    void postItem(Item item);
 }

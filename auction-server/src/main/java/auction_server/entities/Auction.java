@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
-import auction_server.dao.UserDAO;
 import auction_shared.dto.AuctionStatus;
 
 public class Auction implements Serializable {
@@ -48,6 +47,31 @@ public class Auction implements Serializable {
         this.winnerId = null;
     }
 
+    /**
+     * Constructor dùng để rebuild Auction entity từ database khi server khởi động lại.
+     * currentHighestBid và status được truyền trực tiếp thay vì tính toán lại.
+     */
+    public Auction(Item item, double startingPrice, double buyOutPrice, double tickSize,
+                  LocalDateTime startTime, LocalDateTime endTime, boolean antiSniping,
+                  double currentHighestBid, AuctionStatus status) {
+        this.auctionId = item.getId();
+        this.item = item;
+        this.startingPrice = startingPrice;
+        this.buyOutPrice = buyOutPrice;
+        this.tickSize = tickSize;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.antiSniping = antiSniping;
+        this.currentHighestBid = currentHighestBid;
+        this.status = status;
+        this.winnerId = null;
+    }
+    
+    public void setBidHistory(List<BidTransaction> history) {
+        this.bidHistory.clear();
+        this.bidHistory.addAll(history);
+    }
+
     public void addTransaction(BidTransaction transaction) {
         bidHistory.add(transaction);
     }
@@ -56,7 +80,7 @@ public class Auction implements Serializable {
         if (bidHistory.isEmpty()) {
             return startingPrice;
         } else {
-            return currentHighestBid;
+            return bidHistory.get(bidHistory.size() - 1).getBidAmount();
         }
     }
 
@@ -72,8 +96,7 @@ public class Auction implements Serializable {
             status = AuctionStatus.ENDED;
             if (!bidHistory.isEmpty()) {
                 for (int i = bidHistory.size() - 1; i > -1; i--) {
-                    User user = UserDAO.getUserByUsername(bidHistory.get(i).getBidder().getUsername());
-                    if (user != null && !user.getUserStatus().equals("BANNED")) {
+                    if (bidHistory.get(i).getBidder() != null) {
                         winnerId = bidHistory.get(i).getBidder().getId();
                         break;
                     }

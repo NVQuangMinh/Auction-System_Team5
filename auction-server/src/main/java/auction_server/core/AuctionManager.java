@@ -11,9 +11,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class AuctionManager {
-    private static AuctionManager manager = null;
+    private static volatile AuctionManager manager = null;
     private final Map<String, Auction> activeRooms = new ConcurrentHashMap<>();
-    private static List<ClientHandler> activeClients = new CopyOnWriteArrayList<>();
+    private final List<ClientHandler> activeClients = new CopyOnWriteArrayList<>();
 
     private AuctionManager() {
     }
@@ -38,15 +38,15 @@ public class AuctionManager {
         return new ArrayList<>(activeRooms.values());
     }
 
-    public static void addClient(ClientHandler client) {
+    public void addClient(ClientHandler client) {
         activeClients.add(client);
     }
 
-    public static List<ClientHandler> getActiveClients() {
+    public List<ClientHandler> getActiveClients() {
         return activeClients;
     }
 
-    public static void removeClient(ClientHandler client) {
+    public void removeClient(ClientHandler client) {
         activeClients.remove(client);
     }
 

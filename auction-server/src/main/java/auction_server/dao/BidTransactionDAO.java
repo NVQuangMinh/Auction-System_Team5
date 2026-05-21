@@ -1,20 +1,18 @@
 package auction_server.dao;
 
-import auction_server.entities.BidTransaction;
-import auction_server.entities.User;
-import auction_server.interfaces.InterfaceDAO;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-public class BidTransactionDAO implements InterfaceDAO<BidTransaction> {
+import auction_server.entities.BidTransaction;
+import auction_server.entities.User;
+import auction_server.interfaces.TransactionalDAO;
 
-    @Override
+public class BidTransactionDAO implements TransactionalDAO<BidTransaction> {
+
     public int insert(BidTransaction bt, Connection conn) throws SQLException {
         String sql = "INSERT INTO bid_transactions (id, auction_id, bidder_id, bid_amount, bid_time) VALUES (?,?,?,?,?)";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -41,7 +39,7 @@ public class BidTransactionDAO implements InterfaceDAO<BidTransaction> {
                     User bidder = new User(bidderId, null, null);
 
                     BidTransaction transaction = new BidTransaction(
-                            null, // không object
+                            null,
                             bidder,
                             rs.getDouble("bid_amount"));
                     transaction.setId(rs.getString("id"));
@@ -54,38 +52,54 @@ public class BidTransactionDAO implements InterfaceDAO<BidTransaction> {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace(); // Trong thực tế nên dùng Logger
+            e.printStackTrace();
         }
         return null;
     }
 
-    @Override
-    public int insert(BidTransaction bidTransaction) {
-        return 0;
-    }
+    /**
+     * Đọc full bid history của một auction từ DB.
+     * JOIN với users để lấy username của bidder.
+     * Sắp xếp theo bid_time ASC để biểu đồ đi lên đúng thứ tự.
+     *
+     * Được sử dụng khi auction đã ENDED/SOLD (không còn trong RAM).
+     */
+    public ArrayList<BidTransaction> selectByAuctionId(String auctionId) {
+        String sql = "SELECT bt.*, u.username, u.user_status " +
+                "FROM bid_transactions bt " +
+                "JOIN users u ON bt.bidder_id = u.id " +
+                "WHERE bt.auction_id = ? " +
+                "ORDER BY bt.bid_time ASC";
 
-    @Override
-    public int delete(BidTransaction bidTransaction) {
-        return 0;
-    }
+        ArrayList<BidTransaction> result = new ArrayList<>();
 
-    @Override
-    public int update(BidTransaction bidTransaction) {
-        return 0;
-    }
+        try (Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
 
-    @Override
-    public ArrayList<BidTransaction> selectAll() {
-        return null;
-    }
+            ps.setString(1, auctionId);
 
-    @Override
-    public BidTransaction selectById(BidTransaction bidTransaction) {
-        return null;
-    }
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    User bidder = new User(
+                            rs.getString("bidder_id"),
+                            rs.getString("username"),
+                            null);
 
-    @Override
-    public ArrayList<BidTransaction> selectByCondition(String condition) {
-        return null;
+                    BidTransaction tx = new BidTransaction(
+                            null,
+                            bidder,
+                            rs.getDouble("bid_amount"));
+                    tx.setId(rs.getString("id"));
+                    Timestamp timestamp = rs.getTimestamp("bid_time");
+                    if (timestamp != null) {
+                        tx.setBidTime(timestamp.toLocalDateTime());
+                    }
+                    result.add(tx);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 }
