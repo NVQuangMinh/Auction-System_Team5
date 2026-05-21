@@ -13,13 +13,8 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="background" prefHeight="600.0" prefWidth="1066.0" style="-fx-background-color: #f6f8ef;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction_client.controllers.SignInController">
+<AnchorPane fx:id="background" prefHeight="600.0" prefWidth="1066.0" style="-fx-background-image: url('images/background.png'); -fx-background-size: cover; -fx-background-position: center center; -fx-background-repeat: no-repeat;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction_client.controllers.SignInController">
    <children>
-      <ImageView layoutX="-14.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-         <image>
-            <Image url="@images/1378262.png" />
-         </image>
-      </ImageView>
       <HBox alignment="CENTER_LEFT" fillHeight="false" layoutX="7.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <AnchorPane style="-fx-background-radius: 30; -fx-effect: dropshadow(three-pass-box, rgba(19, 142, 255, 0.6), 40, 0, 0, 10);">

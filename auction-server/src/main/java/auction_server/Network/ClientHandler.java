@@ -51,16 +51,11 @@ public class ClientHandler implements Runnable {
         );
     }
 
-    //thêm xoá socket để 
+    //xoá khỏi activeClients của AuctionManager để giải phóng bộ nhớ (khi tắt client này)
     private void onLogout() {
         AuctionManager.getInstance().removeClient(this);
     }
 
-    /**
-     * Lấy user đã đăng nhập.
-     * 
-     * @return User đã đăng nhập
-     */
     public User getLoggedInUser() {
         return messageHandler.getLoggedInUser();
     }
@@ -87,11 +82,6 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    /**
-     * Gửi message về client.
-     * 
-     * @param msg NetworkMessage cần gửi
-     */
     public synchronized void sendMessage(NetworkMessage msg) {
         try {
             out.writeObject(msg);

@@ -8,8 +8,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import auction_server.core.AuctionManager;
 import auction_server.Network.ClientHandler;
+import auction_server.core.AuctionManager;
 import auction_server.dao.AuctionDAO;
 import auction_server.dao.BidTransactionDAO;
 import auction_server.dao.ItemDAO;
@@ -102,7 +102,7 @@ public class MessageHandlerService {
     }
     
     /**
-     * Xử lý đặt giá thầu.
+     * Xử lý đặt giá bid.
      * 
      * @param msg NetworkMessage chứa BidTransactionDTO
      */
@@ -174,10 +174,12 @@ public class MessageHandlerService {
             messageSender.sendMessage(new NetworkMessage("SELL_SUCCESS", true));
             log.info("SELL SUCCESS");
             activities.add(new Notification("you have sold item successfully", LocalTime.now()));
+            log.info("Added SELL notification, total activities: {}", activities.size());
         } else {
             messageSender.sendMessage(new NetworkMessage("SELL_FAILED", false));
             log.info("SELL FAIL");
             activities.add(new Notification("sell item failed", LocalTime.now()));
+            log.info("Added SELL FAILED notification, total activities: {}", activities.size());
         }
     }
     
@@ -235,7 +237,6 @@ public class MessageHandlerService {
             AuctionManager.getInstance().removeRoom(auction);
             AuctionDTO auctionDTO = Mappers.toDTO(auction);
 
-            // Gửi YOU_WON riêng cho winner (giống AuctionScheduler cho ENDED)
             String winnerId = auction.getWinnerId();
             if (winnerId != null) {
                 for (ClientHandler client : AuctionManager.getInstance().getActiveClients()) {
@@ -247,7 +248,6 @@ public class MessageHandlerService {
                 }
             }
 
-            // Broadcast AUCTION_ENDED cho tất cả client (giống AuctionScheduler)
             AuctionManager.getInstance().broadCast(new NetworkMessage("AUCTION_ENDED", auctionDTO));
             AuctionManager.getInstance().broadCast(new NetworkMessage(
                     "UPDATE_BID",
@@ -348,7 +348,8 @@ public class MessageHandlerService {
     
     /**
      * Xử lý lấy lịch sử đặt giá.
-     * Hybrid: ACTIVE auction → đọc từ RAM, ENDED/SOLD auction → đọc từ DB.
+     * Hybrid: ACTIVE auction → đọc từ RAM
+     * ENDED/SOLD auction → đọc từ DB.
      *
      * @param msg NetworkMessage chứa AuctionDTO
      */
