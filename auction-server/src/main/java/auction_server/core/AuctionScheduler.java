@@ -39,7 +39,6 @@ public class AuctionScheduler {
                 auction.endAuction();
                 String winnerId = winnerService.determineWinner(auction.getBidHistory());
                 auctionDAO.update(auction);
-                auctionManager.removeRoom(auction);
                 AuctionDTO auctionDTO = Mappers.toDTO(auction);
 
                 if (winnerId != null) {

@@ -107,8 +107,12 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
             ClientService.getInstance().sendMessage(new NetworkMessage("GET_BID_HISTORY", auction));
             Platform.runLater(this::updateData);
         } else if (action.equals("BUYOUT_SUCCESS")) {
-            cleanUp();
-            switchToUserProductList();
+            this.auction = (AuctionDTO) msg.getData();
+            Platform.runLater(() -> {
+                bidAmount.setEditable(false);
+                countdownTimeline.stop();
+                timeLeft.setText(String.valueOf(auction.getStatus()));
+            });
         } else if (action.equals("UPDATE_BID")) {
             List<AuctionDTO> auctions = (List<AuctionDTO>) msg.getData();
             ClientService.getInstance().sendMessage(new NetworkMessage("GET_BID_HISTORY", auction));
@@ -165,6 +169,7 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
 
     @FXML
     private void switchToUserProductList() {
+        ClientService.getInstance().sendMessage(new NetworkMessage("GET_PRODUCTS", null));
         Stage stage = (Stage) tickRate.getScene().getWindow();
         cleanUp();
         stage.close();
