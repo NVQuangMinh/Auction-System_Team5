@@ -15,11 +15,16 @@ import auction_server.entities.User;
 import auction_server.entities.items.Arts;
 import auction_server.entities.items.Electronics;
 import auction_server.entities.items.Vehicles;
+import auction_server.exception.DatabaseException;
+import auction_server.exception.TransactionFailedException;
 import auction_server.interfaces.WritableDAO;
 import auction_shared.dto.AuctionStatus;
 import auction_shared.dto.ItemType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AuctionDAO implements WritableDAO<Auction> {
+    private static final Logger log = LoggerFactory.getLogger(AuctionDAO.class);
 
     public Connection getConnection() throws SQLException {
         return DatabaseConnection.getConnection();
@@ -42,8 +47,8 @@ public class AuctionDAO implements WritableDAO<Auction> {
             pstmt.setBoolean(10, auction.isAntiSniping());
             return pstmt.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
-            return 0;
+            log.error("Database error while inserting auction: {}", auction.getAuctionId(), e);
+            throw new DatabaseException("Failed to insert auction: " + auction.getAuctionId(), e);
         }
     }
 
@@ -96,8 +101,8 @@ public class AuctionDAO implements WritableDAO<Auction> {
             ps.setString(2, auction.getAuctionId());
             return ps.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
-            return 0;
+            log.error("Database error while updating end time for auction: {}", auction.getAuctionId(), e);
+            throw new TransactionFailedException("Failed to update end time for auction: " + auction.getAuctionId(), e);
         }
     }
 
@@ -144,7 +149,8 @@ public class AuctionDAO implements WritableDAO<Auction> {
                 auctions.add(auction);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Database error while selecting active auctions", e);
+            throw new DatabaseException("Failed to select active auctions", e);
         }
         return auctions;
     }
@@ -183,8 +189,8 @@ public class AuctionDAO implements WritableDAO<Auction> {
 
             return ps.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
-            return 0;
+            log.error("Database error while updating auction: {}", auction.getAuctionId(), e);
+            throw new DatabaseException("Failed to update auction: " + auction.getAuctionId(), e);
         }
     }
 }

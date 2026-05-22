@@ -11,11 +11,15 @@ import auction_server.entities.User;
 import auction_server.entities.items.Arts;
 import auction_server.entities.items.Electronics;
 import auction_server.entities.items.Vehicles;
+import auction_server.exception.DatabaseException;
 import auction_server.interfaces.ReadableDAO;
 import auction_server.interfaces.WritableDAO;
 import auction_shared.dto.ItemType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ItemDAO implements WritableDAO<Item>, ReadableDAO<Item> {
+    private static final Logger log = LoggerFactory.getLogger(ItemDAO.class);
 
     // Dịch ngược một dòng trong ResultSet thành một instance của một loại item cụ thể
     private Item mapRow(ResultSet rs, User owner) throws SQLException {
@@ -42,8 +46,8 @@ public class ItemDAO implements WritableDAO<Item>, ReadableDAO<Item> {
             pstmt.setString(5, item.getOwner().getId());
             return pstmt.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
-            return 0;
+            log.error("Database error while inserting item: {}", item.getId(), e);
+            throw new DatabaseException("Failed to insert item: " + item.getId(), e);
         }
     }
 
@@ -75,7 +79,8 @@ public class ItemDAO implements WritableDAO<Item>, ReadableDAO<Item> {
                 items.add(mapRow(rs, owner));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Database error while selecting all items", e);
+            throw new DatabaseException("Failed to select all items", e);
         }
         return items;
     }

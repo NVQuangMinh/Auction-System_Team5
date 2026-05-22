@@ -85,6 +85,8 @@ public class ClientHandler implements Runnable {
             out.reset();
         } catch (IOException e) {
             log.info("fail to send message", e);
+        } catch (Exception e) {
+            log.error("Unexpected exception occurred while sending message", e);
         }
     }
 

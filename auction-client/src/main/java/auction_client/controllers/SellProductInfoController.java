@@ -4,6 +4,7 @@ import auction_client.interfaces.AuctionUpdateListener;
 import auction_client.Network.ClientService;
 import auction_shared.Network.NetworkMessage;
 import auction_shared.dto.AuctionDTO;
+import auction_shared.dto.AuctionStatus;
 import auction_shared.dto.BidTransactionDTO;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -60,7 +61,12 @@ public class SellProductInfoController implements Initializable, AuctionUpdateLi
         this.auction = auction;
         updateData();
         ClientService.getInstance().addListener(this);
-        startCountdown();
+        if (auction.getStatus().equals(AuctionStatus.ACTIVE)) {
+            startCountdown();
+        }
+        else {
+            timeLeft.setText(String.valueOf(auction.getStatus()));
+        }
         ClientService.getInstance().sendMessage(new NetworkMessage("GET_BID_HISTORY", auction));
     }
 
@@ -94,7 +100,6 @@ public class SellProductInfoController implements Initializable, AuctionUpdateLi
         String action = msg.getAction();
         if (action.equals("UPDATE_BID")) {
             List<AuctionDTO> allRooms = (List<AuctionDTO>) msg.getData();
-            ClientService.getInstance().sendMessage(new NetworkMessage("GET_BID_HISTORY", auction));
             Platform.runLater(() -> {
                 boolean exist = false;
                 for (AuctionDTO room : allRooms) {
@@ -102,8 +107,15 @@ public class SellProductInfoController implements Initializable, AuctionUpdateLi
                         this.auction = room;
                         exist = true;
                         updateData();
+                        if (auction.getStatus().equals(AuctionStatus.ACTIVE)) {
+                            ClientService.getInstance().sendMessage(new NetworkMessage("GET_BID_HISTORY", auction));
+                        }
                         break;
                     }
+                }
+                if (auction.getStatus().equals(AuctionStatus.SOLD)) {
+                    countdownTimeline.stop();
+                    timeLeft.setText(String.valueOf(auction.getStatus()));
                 }
                 if (!exist) {
                     cleanUp();
@@ -123,6 +135,7 @@ public class SellProductInfoController implements Initializable, AuctionUpdateLi
 
     @FXML
     private void switchToUserProductList() {
+        ClientService.getInstance().sendMessage(new NetworkMessage("GET_PRODUCTS", null));
         Stage stage = (Stage) itemName.getScene().getWindow();
         cleanUp();
         stage.close();

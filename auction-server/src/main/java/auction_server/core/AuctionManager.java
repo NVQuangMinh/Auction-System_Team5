@@ -9,11 +9,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class AuctionManager {
     private static volatile AuctionManager manager = null;
     private final Map<String, Auction> activeRooms = new ConcurrentHashMap<>();
     private final List<ClientHandler> activeClients = new CopyOnWriteArrayList<>();
+    private final ReentrantLock lock = new ReentrantLock();
 
     private AuctionManager() {
     }
@@ -57,6 +59,12 @@ public class AuctionManager {
     }
 
     public void removeRoom(Auction room) {
-        activeRooms.remove(room.getItem().getId());
+        lock.lock();
+        try {
+            activeRooms.remove(room.getItem().getId());
+        } finally {
+            lock.unlock();
+        }
+
     }
 }

@@ -9,9 +9,14 @@ import java.util.ArrayList;
 
 import auction_server.entities.BidTransaction;
 import auction_server.entities.User;
+import auction_server.exception.DatabaseException;
+import auction_server.exception.TransactionFailedException;
 import auction_server.interfaces.TransactionalDAO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BidTransactionDAO implements TransactionalDAO<BidTransaction> {
+    private static final Logger log = LoggerFactory.getLogger(BidTransactionDAO.class);
 
     public int insert(BidTransaction bt, Connection conn) throws SQLException {
         String sql = "INSERT INTO bid_transactions (id, auction_id, bidder_id, bid_amount, bid_time) VALUES (?,?,?,?,?)";
@@ -52,7 +57,8 @@ public class BidTransactionDAO implements TransactionalDAO<BidTransaction> {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Database error while finding top bidder for auction: {}", auctionId, e);
+            throw new DatabaseException("Failed to find top bidder for auction: " + auctionId, e);
         }
         return null;
     }
@@ -98,7 +104,8 @@ public class BidTransactionDAO implements TransactionalDAO<BidTransaction> {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Database error while selecting bid transactions for auction: {}", auctionId, e);
+            throw new DatabaseException("Failed to select bid transactions for auction: " + auctionId, e);
         }
         return result;
     }

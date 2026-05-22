@@ -5,11 +5,16 @@ import auction_server.dao.DAOProvider;
 import auction_server.dao.ItemDAO;
 import auction_server.entities.Auction;
 import auction_server.entities.Item;
+import auction_server.exception.DatabaseException;
+import auction_server.exception.TransactionFailedException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
 public class SellService {
+    private static final Logger log = LoggerFactory.getLogger(SellService.class);
     private final ItemDAO itemDAO;
     private final AuctionDAO auctionDAO;
 
@@ -18,20 +23,36 @@ public class SellService {
         this.auctionDAO = daoProvider.auctionDAO();
     }
 
-    public boolean publishItemAndAuction(Item item, Auction auction) {
+    public void publishItemAndAuction(Item item, Auction auction) {
+        if (item == null || auction == null) {
+            throw new IllegalArgumentException("Item and Auction cannot be null");
+        }
+        if (auction.getStartingPrice() >= auction.getBuyOutPrice()) {
+            throw new IllegalArgumentException("Starting price must be less than buy-out price");
+        }
+
         try (Connection conn = auctionDAO.getConnection()) {
             conn.setAutoCommit(false);
             try {
                 itemDAO.insert(item, conn);
                 auctionDAO.insert(auction, conn);
                 conn.commit();
-                return true;
+                log.info("Item and auction published successfully: {}", item.getId());
             } catch (SQLException e) {
                 conn.rollback();
-                return false;
+                log.error("Transaction failed while publishing item and auction: {}", item.getId(), e);
+                throw new TransactionFailedException("Failed to publish item and auction: " + item.getId(), e);
+            } catch (Exception e) {
+                conn.rollback();
+                log.error("Unexpected exception occurred while publishing item and auction: {}", item.getId(), e);
+                throw new TransactionFailedException("Unexpected error while publishing item and auction: " + item.getId(), e);
             }
         } catch (SQLException e) {
-            return false;
+            log.error("Database connection error while publishing item and auction: {}", item.getId(), e);
+            throw new DatabaseException("Failed to get database connection", e);
+        } catch (Exception e) {
+            log.error("Unexpected exception occurred while getting database connection for publishing: {}", item.getId(), e);
+            throw new DatabaseException("Unexpected error while getting database connection", e);
         }
     }
 }

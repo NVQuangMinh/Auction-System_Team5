@@ -5,9 +5,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import auction_server.exception.InactiveBidException;
-import auction_server.exception.InvalidBidAmountException;
-import auction_server.exception.SelfBiddingException;
+import auction_server.exception.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,13 +51,6 @@ public class MessageHandlerService {
      */
     public interface MessageSender {
         void sendMessage(NetworkMessage msg);
-    }
-
-    /**
-     * Interface để xử lý logout — cần remove client khỏi AuctionManager.
-     */
-    public interface LogoutHandler {
-        void onLogout();
     }
 
     /**
@@ -161,9 +152,9 @@ public class MessageHandlerService {
                 auctionDTO.isAntiSniping()
         );
 
-        boolean isSuccess = sellService.publishItemAndAuction(item, room);
+        try {
+            sellService.publishItemAndAuction(item, room);
 
-        if (isSuccess) {
             AuctionManager.getInstance().addRoom(room);
             AuctionManager.getInstance().broadCast(new NetworkMessage(
                     "UPDATE_BID",
@@ -173,7 +164,7 @@ public class MessageHandlerService {
             log.info("SELL SUCCESS");
             activities.add(new Notification("you have sold item successfully", LocalTime.now()));
             log.info("Added SELL notification, total activities: {}", activities.size());
-        } else {
+        } catch (IllegalArgumentException e) {
             messageSender.sendMessage(new NetworkMessage("SELL_FAILED", false));
             log.info("SELL FAIL");
             activities.add(new Notification("sell item failed", LocalTime.now()));
@@ -188,14 +179,24 @@ public class MessageHandlerService {
      */
     public void handleLogin(NetworkMessage msg) {
         SignUpDTO dto = (SignUpDTO) msg.getData();
-        User user = userService.login(dto.getUsername(), dto.getPassword());
-        boolean isSuccess = user != null;
-        if (isSuccess) {
-            this.loggedInUser = user;
+        try {
+            User user = userService.login(dto.getUsername(), dto.getPassword());
+            boolean isSuccess = user != null;
+            if (isSuccess) {
+                setLoggedInUser(user);
+            }
+            messageSender.sendMessage(new NetworkMessage("LOGIN", Mappers.toDTO(user)));
+            log.info("{}{}", dto.getUsername(), " successfully login");
+            activities.add(new Notification("login successfully", LocalTime.now()));
+        } catch (IllegalArgumentException | UserBannedException | UserNotFoundException e) {
+            messageSender.sendMessage(new NetworkMessage("LOGIN", null));
+            log.info("{}{}", dto.getUsername(), " failed to login");
+            activities.add(new Notification(
+                    e.getMessage(),
+                    LocalTime.now()
+            ));
         }
-        messageSender.sendMessage(new NetworkMessage("LOGIN", Mappers.toDTO(user)));
-        log.info("{}{}", dto.getUsername(), isSuccess ? " successfully login" : " failed to login");
-        activities.add(new Notification(isSuccess ? "login successfully" : "login failed", LocalTime.now()));
+
     }
     
     /**
@@ -274,11 +275,23 @@ public class MessageHandlerService {
     public void handleCreateAccount(NetworkMessage msg) {
         SignUpDTO dto = (SignUpDTO) msg.getData();
         User newUser = new User(dto.getId(), dto.getUsername(), dto.getPassword());
-        boolean isSuccess = userService.register(newUser);
-        messageSender.sendMessage(new NetworkMessage("CREATE_ACCOUNT", isSuccess));
-        activities.add(new Notification(isSuccess ? "account created successfully" : "account creation failed", 
-                LocalTime.now()));
-        log.info("{}{}", dto.getUsername(), isSuccess ? " successfully created account" : " failed to create account");
+        try {
+            userService.register(newUser);
+            messageSender.sendMessage(new NetworkMessage("CREATE_ACCOUNT", true));
+            activities.add(new Notification(
+                    "account created successfully",
+                    LocalTime.now()
+            ));
+            log.info("{}{}", dto.getUsername(),  " successfully created account");
+        } catch (IllegalArgumentException | DatabaseException e) {
+            messageSender.sendMessage(new NetworkMessage("CREATE_ACCOUNT", false));
+            log.info("{}{}", dto.getUsername(), " failed to create account");
+            activities.add(new Notification(
+                    e.getMessage(),
+                    LocalTime.now()
+            ));
+        }
+
     }
     
     /**
@@ -298,13 +311,18 @@ public class MessageHandlerService {
      */
     public void handleBanUser(NetworkMessage msg) {
         UserDTO userDTO = (UserDTO) msg.getData();
-        if (daoProvider.userDAO().userBan(userDTO)) {
+        try {
+            daoProvider.userDAO().userBan(userDTO);
             List<User> users = daoProvider.userDAO().getAllUsers();
             messageSender.sendMessage(new NetworkMessage("GET_USERS", (Serializable) Mappers.toUserDTOList(users)));
             AuctionManager.getInstance().broadCast(new NetworkMessage("BAN_USER", userDTO));
-        } else {
+            activities.add(new Notification("ban user successfully", LocalTime.now()));
+
+        } catch (DatabaseException e) {
             messageSender.sendMessage(new NetworkMessage("BAN_FAIL", null));
+            activities.add(new Notification(e.getMessage(), LocalTime.now()));
         }
+
     }
     
     /**

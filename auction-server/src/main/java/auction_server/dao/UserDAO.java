@@ -1,7 +1,10 @@
 package auction_server.dao;
 
 import auction_server.entities.User;
+import auction_server.exception.DatabaseException;
 import auction_shared.dto.UserDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,8 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserDAO {
-    public boolean insertUser(User user) {
+    private static final Logger log = LoggerFactory.getLogger(UserDAO.class);
 
+    public void insertUser(User user) {
         String sql = "INSERT INTO users (id, username, password, role, user_status) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseConnection.getConnection();
@@ -25,10 +29,13 @@ public class UserDAO {
             pstmt.setString(5, user.getUserStatus());
 
             int affectedRows = pstmt.executeUpdate();
-            return affectedRows > 0;
+            if (affectedRows == 0) {
+                throw new DatabaseException("Failed to insert user: " + user.getUsername());
+            }
+            log.info("User inserted successfully: {}", user.getUsername());
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            log.error("Database error while inserting user: {}", user.getUsername(), e);
+            throw new DatabaseException("Failed to insert user: " + user.getUsername(), e);
         }
     }
 
@@ -51,15 +58,14 @@ public class UserDAO {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Database error while getting user by username: {}", username, e);
+            throw new DatabaseException("Failed to get user: " + username, e);
         }
         return null;
     }
 
     public List<User> getAllUsers() {
-
         String sql = "SELECT * FROM users WHERE role = 'USER' AND user_status = 'AVAILABLE'";
-
         List<User> users = new ArrayList<>();
 
         try (Connection conn = DatabaseConnection.getConnection();
@@ -77,12 +83,13 @@ public class UserDAO {
                 users.add(user);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.error("Database error while getting all users", e);
+            throw new DatabaseException("Failed to get all users", e);
         }
         return users;
     }
 
-    public boolean userBan(UserDTO user) {
+    public void userBan(UserDTO user) {
         String sql = "UPDATE users SET user_status = 'BANNED' WHERE id = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
@@ -91,11 +98,13 @@ public class UserDAO {
             pstmt.setString(1, user.getId());
 
             int affectedRows = pstmt.executeUpdate();
-            return affectedRows > 0;
-
+            if (affectedRows == 0) {
+                throw new DatabaseException("Failed to ban user: " + user.getUsername());
+            }
+            log.info("User banned successfully: {}", user.getUsername());
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            log.error("Database error while banning user: {}", user.getUsername(), e);
+            throw new DatabaseException("Failed to ban user: " + user.getUsername(), e);
         }
     }
 }

@@ -11,6 +11,7 @@ import auction_client.UserSession;
 import auction_client.interfaces.AuctionUpdateListener;
 import auction_shared.Network.NetworkMessage;
 import auction_shared.dto.AuctionDTO;
+import auction_shared.dto.AuctionStatus;
 import auction_shared.dto.BidTransactionDTO;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -115,13 +116,15 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
             });
         } else if (action.equals("UPDATE_BID")) {
             List<AuctionDTO> auctions = (List<AuctionDTO>) msg.getData();
-            ClientService.getInstance().sendMessage(new NetworkMessage("GET_BID_HISTORY", auction));
             Platform.runLater(() -> {
                 boolean exist = false;
                 for (AuctionDTO auction : auctions) {
                     if (auction.getAuctionId().equals(this.auction.getAuctionId())) {
                         this.auction = auction;
                         exist = true;
+                        if (auction.getStatus().equals(AuctionStatus.ACTIVE)) {
+                            ClientService.getInstance().sendMessage(new NetworkMessage("GET_BID_HISTORY", auction));
+                        }
                         updateData();
                     }
                 }
@@ -147,7 +150,12 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
     public void initData(AuctionDTO auction) {
         this.auction = auction;
         updateData();
-        startCountdown();
+        if (auction.getStatus().equals(AuctionStatus.ACTIVE)) {
+            startCountdown();
+        }
+        else {
+            timeLeft.setText(String.valueOf(auction.getStatus()));
+        }
         ClientService.getInstance().sendMessage(new NetworkMessage("GET_BID_HISTORY", auction));
     }
 

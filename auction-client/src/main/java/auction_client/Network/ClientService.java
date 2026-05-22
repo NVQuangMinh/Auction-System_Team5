@@ -49,6 +49,7 @@ public class ClientService {
         try {
             out.writeObject(msg);
             out.flush();
+            out.reset();
         } catch (IOException e) {
             e.printStackTrace();
         }
