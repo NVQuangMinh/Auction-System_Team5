@@ -186,33 +186,42 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
     @FXML
     public void placeBidRequest() {
         /// missing the logic for auto-bidding.
-        double amount = Double.parseDouble(bidAmount.getText());
-        if (amount >= auction.getBuyOutPrice()) {
-            BidTransactionDTO transaction = new BidTransactionDTO(
-                    auction, UserSession.getInstance().getUser(),
-                    auction.getBuyOutPrice(), LocalDateTime.now());
-            ClientService.getInstance().sendMessage(new NetworkMessage("BUY_OUT", transaction));
-            // change the label (notify) -> transparent
-            error.setOpacity(0.0);
-            error.setManaged(false);
-            error.setVisible(false);
-        } else if ((amount - auction.getCurrentHighestBid()) % auction.getTickSize() == 0) {
-            BidTransactionDTO transaction = new BidTransactionDTO(
-                    auction, UserSession.getInstance().getUser(),
-                    amount, LocalDateTime.now());
-            ClientService.getInstance().sendMessage(new NetworkMessage("PLACE_BID", transaction));
-            // change the label (notify) -> transparent
-            error.setOpacity(0.0);
-            error.setManaged(false);
-            error.setVisible(false);
-        } else {
-            // notify invalid bidAmount
+        try {
+            double amount = Double.parseDouble(bidAmount.getText());
+            if (amount >= auction.getBuyOutPrice()) {
+                BidTransactionDTO transaction = new BidTransactionDTO(
+                        auction, UserSession.getInstance().getUser(),
+                        auction.getBuyOutPrice(), LocalDateTime.now());
+                ClientService.getInstance().sendMessage(new NetworkMessage("BUY_OUT", transaction));
+                // change the label (notify) -> transparent
+                error.setOpacity(0.0);
+                error.setManaged(false);
+                error.setVisible(false);
+            } else if ((amount - auction.getCurrentHighestBid()) % auction.getTickSize() == 0) {
+                BidTransactionDTO transaction = new BidTransactionDTO(
+                        auction, UserSession.getInstance().getUser(),
+                        amount, LocalDateTime.now());
+                ClientService.getInstance().sendMessage(new NetworkMessage("PLACE_BID", transaction));
+                // change the label (notify) -> transparent
+                error.setOpacity(0.0);
+                error.setManaged(false);
+                error.setVisible(false);
+            } else {
+                // notify invalid bidAmount
+                error.setVisible(true);
+                error.setManaged(true);
+                error.setOpacity(1.0);
+                error.setText("Invalid Bid Amount!");
+                error.setTextFill(Color.RED);
+            }
+        } catch (NumberFormatException e) {
             error.setVisible(true);
             error.setManaged(true);
             error.setOpacity(1.0);
-            error.setText("Invalid Bid Amount!");
+            error.setText("Please enter a valid number!");
             error.setTextFill(Color.RED);
         }
+
     }
 
     public void cleanUp() {

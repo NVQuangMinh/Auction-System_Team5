@@ -7,6 +7,8 @@ import java.util.UUID;
 
 import auction_client.Network.ClientService;
 import auction_client.UserSession;
+import auction_client.exception.InvalidPriceException;
+import auction_client.exception.InvalidTickSizeException;
 import auction_shared.Network.NetworkMessage;
 import auction_shared.dto.AuctionDTO;
 import auction_shared.dto.AuctionStatus;
@@ -77,7 +79,7 @@ public class ProductInfoSubmissionController implements Initializable {
         System.out.println("Add image clicked");
     }
 
-    private boolean handleSubmit() {
+    private void handleSubmit() {
         name = productName.getText().trim();
         description = productDescription.getText().trim();
         String startPriceStr = startingPrice.getText().trim();
@@ -88,20 +90,24 @@ public class ProductInfoSubmissionController implements Initializable {
         if (name.isBlank() || description.isBlank() ||
                 startPriceStr.isBlank() || buyOutPriceStr.isBlank() ||
                 tickStr.isBlank() || bidDurStr.isBlank()) {
-            return false;
+            throw new IllegalArgumentException("You missed some information");
         }
 
         String selectedType = types.getValue();
-        if (selectedType == null)
-            return false;
+        if (selectedType == null) {
+            throw new IllegalArgumentException("You have not selected item's type");
+        }
+
         type = switch (selectedType) {
             case "Art" -> ItemType.ARTS;
             case "Electronic" -> ItemType.ELECTRONICS;
             case "Vehicle" -> ItemType.VEHICLES;
             default -> null;
         };
-        if (type == null)
-            return false;
+        if (type == null) {
+            throw new IllegalArgumentException("You have not selected item's type");
+        }
+
 
         // ktra số
         try {
@@ -109,33 +115,33 @@ public class ProductInfoSubmissionController implements Initializable {
             buyOutPriceVal = Double.parseDouble(buyOutPriceStr);
             tickSizeVal = Double.parseDouble(tickStr);
         } catch (NumberFormatException e) {
-            return false;
+            throw new InvalidPriceException("Please enter valid numbers");
         }
 
-        if(buyOutPriceVal <= startPriceVal || tickSizeVal <= 0)
-            return false;
+        if(buyOutPriceVal <= startPriceVal)
+            throw new InvalidPriceException("Buy Out Price is less than Start Price");
 
-        if((buyOutPriceVal - startPriceVal) % tickSizeVal != 0)
-            return false;
+        if((buyOutPriceVal - startPriceVal) % tickSizeVal != 0 || tickSizeVal <= 0)
+            throw new InvalidTickSizeException("Invalid tick size");
 
         try {
             bidDuration = Integer.parseInt(bidDurStr);
             if (bidDuration <= 0)
-                return false;
+                throw new IllegalArgumentException("Bid duration must be positive");
         } catch (NumberFormatException e) {
-            return false;
+            throw new NumberFormatException("Please enter an integer");
         }
 
         antiSnipping = antiSnippingCheckbox.isSelected();
 
         startBidDate = LocalDateTime.now();
         endBidDate = startBidDate.plusMinutes(bidDuration);
-        return true;
     }
 
     @FXML
     public void addItem(ActionEvent event) {
-        if (handleSubmit()) {
+        try {
+            handleSubmit();
             error.setVisible(false);
             error.setManaged(false);
             error.setOpacity(0.0);
@@ -154,15 +160,22 @@ public class ProductInfoSubmissionController implements Initializable {
                     endBidDate,
                     antiSnipping,
                     null,
-                    startPriceVal);
+                    startPriceVal
+            );
 
             ClientService.getInstance().sendMessage(new NetworkMessage("SELL", auction));
             switchToUserProductList(event);
-        } else {
+        } catch (IllegalArgumentException | InvalidPriceException | InvalidTickSizeException e) {
             error.setVisible(true);
             error.setOpacity(1.0);
             error.setManaged(true);
-            error.setText("Please fill in all fields correctly!");
+            error.setText(e.getMessage());
+            error.setTextFill(Color.RED);
+        } catch (Exception e) {
+            error.setVisible(true);
+            error.setOpacity(1.0);
+            error.setManaged(true);
+            error.setText("Unknown error...");
             error.setTextFill(Color.RED);
         }
     }
