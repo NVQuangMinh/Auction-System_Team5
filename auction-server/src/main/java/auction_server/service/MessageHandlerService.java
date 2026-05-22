@@ -228,26 +228,17 @@ public class MessageHandlerService {
 
         try {
             bidService.processBuyOut(auction, transaction);
-            AuctionManager.getInstance().removeRoom(auction);
             AuctionDTO auctionDTO = Mappers.toDTO(auction);
             String winnerId = auction.getWinnerId();
             if (winnerId != null) {
-                for (ClientHandler client : AuctionManager.getInstance().getActiveClients()) {
-                    User u = client.getLoggedInUser();
-                    if (u != null && winnerId.equals(u.getId())) {
-                        client.sendMessage(new NetworkMessage("YOU_WON", auctionDTO));
-                        break;
-                    }
-                }
+                messageSender.sendMessage(new NetworkMessage("BUYOUT_SUCCESS", auctionDTO));
             }
 
-            AuctionManager.getInstance().broadCast(new NetworkMessage("AUCTION_ENDED", auctionDTO));
             AuctionManager.getInstance().broadCast(new NetworkMessage(
                     "UPDATE_BID",
                     (Serializable) Mappers.toAuctionDTOList(AuctionManager.getInstance().getAllRooms()))
             );
 
-            messageSender.sendMessage(new NetworkMessage("BUYOUT_SUCCESS", null));
             log.info("BUY OUT SUCCESS");
             activities.add(new Notification("you have buy out item successfully", LocalTime.now()));
         }
@@ -356,18 +347,8 @@ public class MessageHandlerService {
 
         List<BidTransactionDTO> history;
 
-        // Thử đọc từ RAM trước (ACTIVE auction)
         Auction auction = AuctionManager.getInstance().getRoom(itemId);
-
-        if (auction != null) {
-            // ACTIVE → Đọc từ RAM (performance)
-            history = Mappers.toBidTransactionDTOList(auction.getBidHistory());
-        } else {
-            // ENDED/SOLD → Đọc từ DB (durability)
-            List<BidTransaction> dbHistory = daoProvider.bidTransactionDAO().selectByAuctionId(itemId);
-            history = Mappers.toBidTransactionDTOList(dbHistory);
-        }
-
+        history = Mappers.toBidTransactionDTOList(auction.getBidHistory());
         messageSender.sendMessage(new NetworkMessage("GET_BID_HISTORY", (Serializable) history));
     }
     

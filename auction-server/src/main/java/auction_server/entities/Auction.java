@@ -193,6 +193,7 @@ public class Auction implements Serializable {
             item.setOwner(transaction.getBidder());
             status = AuctionStatus.SOLD;
             winnerId = transaction.getBidder().getId();
+            addTransaction(transaction);
         } finally {
             lock.unlock();
         }
