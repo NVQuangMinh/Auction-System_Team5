@@ -1,5 +1,7 @@
 package auction_server.behaviors;
 
+import auction_server.behaviors.profile.AdminProfile;
+
 public class AdminBehaviors implements AdminProfile {
 
     @Override

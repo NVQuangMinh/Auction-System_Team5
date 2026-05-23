@@ -1,12 +1,14 @@
-package auction_server.entities;
+package auction_server.service;
 
+import auction_server.entities.Auction;
+import auction_server.entities.BidTransaction;
 import auction_server.exception.BidException;
 import auction_server.exception.InactiveBidException;
 import auction_server.exception.InvalidBidAmountException;
 import auction_server.exception.SelfBiddingException;
 import auction_shared.dto.AuctionStatus;
 
-public class AuctionValidator {
+public class ValidatorService {
 
     public static void validateBid(Auction auction, BidTransaction transaction) throws BidException {
         if (auction.getStatus() != AuctionStatus.ACTIVE) {

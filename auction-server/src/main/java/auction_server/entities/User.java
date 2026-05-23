@@ -4,11 +4,11 @@ import java.io.Serializable;
 
 import auction_server.base.Entity;
 import auction_server.behaviors.AdminBehaviors;
-import auction_server.behaviors.AdminProfile;
+import auction_server.behaviors.profile.AdminProfile;
 import auction_server.behaviors.BidderBehaviors;
-import auction_server.behaviors.BidderProfile;
+import auction_server.behaviors.profile.BidderProfile;
 import auction_server.behaviors.SellerBehaviors;
-import auction_server.behaviors.SellerProfile;
+import auction_server.behaviors.profile.SellerProfile;
 
 public class User extends Entity implements Serializable {
     private String username;

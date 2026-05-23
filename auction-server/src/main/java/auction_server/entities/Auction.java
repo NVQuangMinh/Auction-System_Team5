@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
 import auction_server.exception.BidException;
+import auction_server.service.ValidatorService;
 import auction_shared.dto.AuctionStatus;
 
 public class Auction implements Serializable {
@@ -125,7 +126,7 @@ public class Auction implements Serializable {
     public void placeBid(BidTransaction transaction) throws BidException {
         lock.lock();
         try {
-            AuctionValidator.validateBid(this, transaction);
+            ValidatorService.validateBid(this, transaction);
             addTransaction(transaction);
             setCurrentHighestBid(transaction.getBidAmount());
         } finally {
@@ -136,7 +137,7 @@ public class Auction implements Serializable {
     public void buyOut(BidTransaction transaction) throws BidException {
         lock.lock();
         try {
-            AuctionValidator.validateBuyOut(this, transaction);
+            ValidatorService.validateBuyOut(this, transaction);
             this.originalOwnerBeforeBuyOut = item.getOwner();
             item.setOwner(transaction.getBidder());
             status = AuctionStatus.SOLD;
@@ -256,7 +257,7 @@ public class Auction implements Serializable {
      * Dùng bởi BidService để giữ lock qua toàn bộ operation (validation + DB persist).
      */
     public void prepareBidInMemory(BidTransaction transaction) throws BidException {
-        AuctionValidator.validateBid(this, transaction);
+        ValidatorService.validateBid(this, transaction);
         addTransaction(transaction);
         setCurrentHighestBid(transaction.getBidAmount());
     }

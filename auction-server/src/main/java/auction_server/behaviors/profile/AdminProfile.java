@@ -1,4 +1,4 @@
-package auction_server.behaviors;
+package auction_server.behaviors.profile;
 
 public interface AdminProfile {
     void manageUsers();

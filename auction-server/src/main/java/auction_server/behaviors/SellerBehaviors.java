@@ -1,5 +1,6 @@
 package auction_server.behaviors;
 
+import auction_server.behaviors.profile.SellerProfile;
 import auction_server.dao.ItemDAO;
 import auction_server.entities.Item;
 

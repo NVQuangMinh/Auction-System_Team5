@@ -1,4 +1,4 @@
-package auction_server.behaviors;
+package auction_server.behaviors.profile;
 
 import auction_server.entities.Item;
 

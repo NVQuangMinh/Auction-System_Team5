@@ -14,4 +14,6 @@ module auction.server {
     exports auction_server.mapper;
     exports auction_server.factory;
     opens auction_server.Network to auction.shared;
+    exports auction_server.behaviors.profile;
+    exports auction_server.service;
 }
