@@ -118,7 +118,7 @@
                         <Font name="System Bold Italic" size="14.0" />
                      </font>
                   </Label>
-                        <Label prefHeight="32.0" prefWidth="490.0" style="-fx-font-size: 13;" text="Bidding in the last 30s extend the timer by 60s." textFill="#00000091" />
+                        <Label prefHeight="32.0" prefWidth="490.0" style="-fx-font-size: 13;" text="Bidding in the last 30s extend the timer by 30s." textFill="#00000091" />
                     </children>
                 </VBox>
                 <VBox prefHeight="475.0" prefWidth="247.0" spacing="15.0" HBox.hgrow="ALWAYS">
