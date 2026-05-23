@@ -127,6 +127,14 @@ public class MessageHandlerService {
             log.info(e.getMessage());
             activities.add(new Notification(e.getMessage(), LocalTime.now()));
         }
+        catch (DatabaseException e) {
+            // Catch database errors
+            messageSender.sendMessage(new NetworkMessage("BID_FAILED", e.getMessage()));
+            log.error(e.getMessage());
+            activities.add(new Notification(e.getMessage(), LocalTime.now()));
+        }
+
+
 
 
     }
@@ -246,6 +254,11 @@ public class MessageHandlerService {
         catch (InvalidBidAmountException | InactiveBidException | SelfBiddingException e) {
             messageSender.sendMessage(new NetworkMessage("BID_FAILED", e.getMessage()));
             log.info(e.getMessage());
+            activities.add(new Notification(e.getMessage(), LocalTime.now()));
+        }
+        catch (DatabaseException e) {
+            messageSender.sendMessage(new NetworkMessage("BUYOUT_FAILED", e.getMessage()));
+            log.error(e.getMessage());
             activities.add(new Notification(e.getMessage(), LocalTime.now()));
         }
 
