@@ -13,6 +13,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import org.kordamp.ikonli.javafx.FontIcon;
 
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 
 public class ProductCardController {
@@ -33,12 +34,13 @@ public class ProductCardController {
     private HandleCardClicked cardClickedListener = null;
 
     public void setData(AuctionDTO auction, HandleCardClicked openAuctionDetail) {
+        DecimalFormat df = new DecimalFormat("#,###.###");
         this.auction = auction;
         this.cardClickedListener = openAuctionDetail;
         itemName.setText(auction.getItem().getName());
         itemState.setText(String.valueOf(auction.getStatus()));
-        currentPrice.setText(String.valueOf(auction.getCurrentHighestBid()));
-        buyOutPrice.setText(String.valueOf(auction.getBuyOutPrice()));
+        currentPrice.setText("$" + df.format(auction.getCurrentHighestBid()));
+        buyOutPrice.setText("$" + df.format(auction.getBuyOutPrice()));
         description.setText(auction.getItem().getDescription());
     }
 

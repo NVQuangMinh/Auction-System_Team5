@@ -5,7 +5,6 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.effect.DropShadow?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
@@ -33,39 +32,34 @@
             <Insets />
          </VBox.margin>
       </HBox>
-      <StackPane fx:id="productImage" prefHeight="8.0" prefWidth="202.0" style="-fx-background-color: #e9e4de; -fx-background-radius: 15;">
-         <children>
-            <ImageView fx:id="itemIMage" fitHeight="122.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
-         </children>
+      <StackPane fx:id="productImage" prefHeight="132.0" prefWidth="222.0" style="-fx-background-color: #e9e4de; -fx-background-radius: 15;">
          <VBox.margin>
             <Insets bottom="15.0" />
          </VBox.margin>
       </StackPane>
-      <HBox prefHeight="65.0" prefWidth="244.0">
+      <HBox maxHeight="90.0" prefWidth="222.0">
          <children>
-            <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+            <VBox alignment="TOP_CENTER" prefWidth="100.0" HBox.hgrow="ALWAYS">
                <children>
                   <Label alignment="CENTER" prefHeight="20.0" prefWidth="152.0" style="-fx-font-size: 14;" text="Current Price" textAlignment="CENTER" textFill="#9ca3af" />
-                  <HBox spacing="1.0">
+                  <HBox alignment="CENTER" spacing="1.0">
                      <children>
-                        <Label alignment="TOP_RIGHT" prefHeight="45.0" prefWidth="135.0" style="-fx-font-size: 20; -fx-font-weight: bold;" text="\$" />
-                        <Label fx:id="currentPrice" alignment="TOP_LEFT" prefHeight="45.0" prefWidth="149.0" style="-fx-font-size: 20; -fx-font-weight: bold;" text="00" />
+                        <Label fx:id="currentPrice" style="-fx-font-size: 20; -fx-font-weight: bold;" text="00" wrapText="true" HBox.hgrow="ALWAYS" />
                      </children>
                   </HBox>
                </children>
             </VBox>
-            <Separator depthTest="DISABLE" orientation="VERTICAL" prefHeight="200.0">
+            <Separator depthTest="DISABLE" orientation="VERTICAL" prefHeight="180.0">
                <HBox.margin>
                   <Insets left="13.0" right="7.0" />
                </HBox.margin>
             </Separator>
-            <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+            <VBox alignment="TOP_CENTER" prefWidth="100.0" HBox.hgrow="ALWAYS">
                <children>
                   <Label alignment="CENTER" prefHeight="17.0" prefWidth="233.0" style="-fx-font-size: 14;" text="Buy Out" textFill="#9ca3af" />
-                  <HBox prefHeight="65.0" prefWidth="47.0" spacing="1.0">
+                  <HBox alignment="CENTER" spacing="1.0">
                      <children>
-                        <Label alignment="TOP_RIGHT" prefHeight="45.0" prefWidth="136.0" style="-fx-font-size: 20; -fx-font-weight: bold;" text="\$" />
-                        <Label fx:id="buyOutPrice" alignment="TOP_LEFT" prefHeight="45.0" prefWidth="149.0" style="-fx-font-size: 20; -fx-font-weight: bold;" text="00" />
+                        <Label fx:id="buyOutPrice" style="-fx-font-size: 20; -fx-font-weight: bold;" text="00" wrapText="true" HBox.hgrow="ALWAYS" />
                      </children>
                   </HBox>
                </children>
