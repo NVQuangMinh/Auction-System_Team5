@@ -133,6 +133,10 @@ public class AuctionDAO implements WritableDAO<Auction> {
      */
     public List<Auction> selectEndedSaledAuctions(String categoryFilter, int page, int pageSize) {
         String statusCondition = "(a.auction_status = 'ENDED' OR a.auction_status = 'SOLD')";
+        String categoryCondition = "";
+        if (categoryFilter != null && !categoryFilter.isEmpty() && !"ALL".equals(categoryFilter)) {
+            categoryCondition = " AND i.item_type = ? ";
+        }
         String baseSql = "SELECT a.*, " +
                 "i.id as item_id, i.item_name, i.description, i.item_type, " +
                 "i.artist_name, i.model, i.brand, " +
@@ -140,7 +144,7 @@ public class AuctionDAO implements WritableDAO<Auction> {
                 "FROM auctions a " +
                 "JOIN items i ON a.item_id = i.id " +
                 "JOIN users u ON i.owner_id = u.id " +
-                "WHERE " + statusCondition + " " +
+                "WHERE " + statusCondition + categoryCondition +
                 "ORDER BY a.end_time DESC " +
                 "LIMIT ? OFFSET ?";
 
@@ -194,9 +198,13 @@ public class AuctionDAO implements WritableDAO<Auction> {
      */
     public int countEndedSaledAuctions(String categoryFilter) {
         String statusCondition = "(a.auction_status = 'ENDED' OR a.auction_status = 'SOLD')";
+        String categoryCondition = "";
+        if (categoryFilter != null && !categoryFilter.isEmpty() && !"ALL".equals(categoryFilter)) {
+            categoryCondition = " AND i.item_type = ? ";
+        }
         String baseSql = "SELECT COUNT(*) FROM auctions a " +
                 "JOIN items i ON a.item_id = i.id " +
-                "WHERE " + statusCondition;
+                "WHERE " + statusCondition + categoryCondition;
 
         try (Connection conn = DatabaseConnection.getConnection();
                 PreparedStatement ps = conn.prepareStatement(baseSql)) {

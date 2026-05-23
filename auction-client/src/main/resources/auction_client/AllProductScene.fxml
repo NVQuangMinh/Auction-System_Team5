@@ -17,6 +17,9 @@
       <ToggleGroup fx:id="categoryGroup" />
       <ToggleGroup fx:id="statusGroup" />
    </fx:define>
+   <top>
+      <fx:include source="WebMenuBar.fxml" />
+   </top>
    <left>
       <VBox alignment="TOP_CENTER" prefWidth="200.0" spacing="10.0" style="-fx-background-color: #ffffff; -fx-border-color: #e0e0e0; -fx-border-width: 0 1 0 0;">
          <padding>
@@ -54,8 +57,7 @@
                   <Insets bottom="15.0" left="10.0" right="10.0" top="15.0" />
                </padding>
                <children>
-                  <RadioButton fx:id="allStatusRadio" mnemonicParsing="false" onAction="#onStatusSelected" selected="true" style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #333;" text="All" toggleGroup="$statusGroup" />
-                  <RadioButton fx:id="activeStatusRadio" mnemonicParsing="false" onAction="#onStatusSelected" style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #333;" text="Active" toggleGroup="$statusGroup" />
+                  <RadioButton fx:id="activeStatusRadio" mnemonicParsing="false" onAction="#onStatusSelected" selected="true" style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #333;" text="Active" toggleGroup="$statusGroup" />
                   <RadioButton fx:id="endedStatusRadio" mnemonicParsing="false" onAction="#onStatusSelected" style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #333;" text="Ended" toggleGroup="$statusGroup" />
                </children>
             </VBox>

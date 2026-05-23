@@ -63,7 +63,7 @@ public class WebMenuBarController implements Initializable {
     @FXML
     public void switchToAllProductScene(ActionEvent event) throws IOException {
         cleanupCurrentScene(event);
-        switchScene(event, "/auction_client/AuctionMain.fxml");
+        switchScene(event, "/auction_client/AllProductScene.fxml");
     }
 
     @FXML
@@ -88,6 +88,8 @@ public class WebMenuBarController implements Initializable {
         Object controller = root.getProperties().get("fx_controller");
         if (controller instanceof AuctionMainController mainController) {
             mainController.cleanup();
+        } else if (controller instanceof AllProductController allProductController) {
+            allProductController.cleanup();
         } else if (controller instanceof BidProductSceneController bidController) {
             bidController.cleanup();
         } else if (controller instanceof FilteredProductSceneController filteredController) {

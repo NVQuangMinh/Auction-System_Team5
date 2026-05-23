@@ -45,7 +45,6 @@ public class AllProductController implements Initializable, AuctionUpdateListene
     @FXML private ToggleGroup categoryGroup;
 
     // Status filters
-    @FXML private RadioButton allStatusRadio;
     @FXML private RadioButton activeStatusRadio;
     @FXML private RadioButton endedStatusRadio;
     @FXML private ToggleGroup statusGroup;
@@ -68,7 +67,7 @@ public class AllProductController implements Initializable, AuctionUpdateListene
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         allCategoryRadio.setSelected(true);
-        allStatusRadio.setSelected(true);
+        activeStatusRadio.setSelected(true);
 
         prevButton.setOnMouseClicked(e -> handlePrevPage());
         nextButton.setOnMouseClicked(e -> handleNextPage());
@@ -109,9 +108,6 @@ public class AllProductController implements Initializable, AuctionUpdateListene
         } else if (endedStatusRadio.isSelected()) {
             // Chỉ hiển thị ENDED/SOLD (từ DB)
             requestEndedPage(endedPage);
-        } else {
-            // ALL: ACTIVE + ENDED/SOLD
-            displayAllPage();
         }
     }
 
@@ -120,17 +116,6 @@ public class AllProductController implements Initializable, AuctionUpdateListene
         List<AuctionDTO> pageItems = paginate(filtered, 0, PAGE_SIZE);
 
         updateProductList(pageItems);
-        updatePageInfo(1, 1);
-        updateNavButtons(0, 1);
-    }
-
-    private void displayAllPage() {
-        // ACTIVE luôn ở trang đầu
-        List<AuctionDTO> filteredActive = filterCategory(activeAuctions);
-        List<AuctionDTO> pageItems = paginate(filteredActive, 0, PAGE_SIZE);
-
-        updateProductList(pageItems);
-        // Trong chế độ ALL, 1 page = tất cả ACTIVE
         updatePageInfo(1, 1);
         updateNavButtons(0, 1);
     }

@@ -38,12 +38,13 @@ public class ProductCardController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        Rectangle clip = new Rectangle(
-                itemIMage.getFitWidth(),
-                itemIMage.getFitHeight()
-        );
+        Rectangle clip = new Rectangle();
         clip.setArcWidth(30);
         clip.setArcHeight(30);
+        itemIMage.layoutBoundsProperty().addListener((obs, oldVal, newVal) -> {
+            clip.setWidth(newVal.getWidth());
+            clip.setHeight(newVal.getHeight());
+        });
         itemIMage.setClip(clip);
     }
 

@@ -228,7 +228,15 @@ public class MessageHandlerService {
                 .filter(a -> a.getStatus() == AuctionStatus.ACTIVE)
                 .collect(Collectors.toList());
 
-        List<Auction> endedFromDb = daoProvider.auctionDAO().selectEndedSaledAuctions(null, 0, PAGE_SIZE_ENDED);
+        List<Auction> endedFromDb;
+        User user = getLoggedInUser();
+        if (user != null && "ADMIN".equalsIgnoreCase(user.getRole())) {
+            endedFromDb = daoProvider.auctionDAO().selectAllAuctions().stream()
+                    .filter(a -> a.getStatus() == AuctionStatus.ENDED || a.getStatus() == AuctionStatus.SOLD)
+                    .collect(Collectors.toList());
+        } else {
+            endedFromDb = daoProvider.auctionDAO().selectEndedSaledAuctions(null, 0, PAGE_SIZE_ENDED);
+        }
         int endedCount = daoProvider.auctionDAO().countEndedSaledAuctions(null);
 
         List<AuctionDTO> activeDTOs = Mappers.toAuctionDTOList(activeFromRam);
