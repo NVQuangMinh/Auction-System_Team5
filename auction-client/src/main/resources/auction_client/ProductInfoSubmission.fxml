@@ -94,6 +94,14 @@
             <ChoiceBox fx:id="types" prefHeight="40.0" prefWidth="207.0" />
          </children>
       </HBox>
+      <TextField fx:id="typeSpecificField" prefHeight="50.0" prefWidth="440.0" promptText="Artist Name / Model / Brand" style="-fx-background-radius: 10;">
+         <font>
+            <Font size="15.0" />
+         </font>
+         <cursor>
+            <Cursor fx:constant="TEXT" />
+         </cursor>
+      </TextField>
       <TextField fx:id="bidDurationField" prefHeight="50.0" prefWidth="440.0" promptText="Bid Duration (minutes)" style="-fx-background-radius: 10;">
          <font>
             <Font size="15.0" />

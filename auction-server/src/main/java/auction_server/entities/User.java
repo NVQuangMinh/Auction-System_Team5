@@ -1,14 +1,14 @@
 package auction_server.entities;
 
+import java.io.Serializable;
+
 import auction_server.base.Entity;
-import auction_server.behaviors.AdminProfile;
-import auction_server.behaviors.BidderProfile;
 import auction_server.behaviors.AdminBehaviors;
+import auction_server.behaviors.AdminProfile;
 import auction_server.behaviors.BidderBehaviors;
+import auction_server.behaviors.BidderProfile;
 import auction_server.behaviors.SellerBehaviors;
 import auction_server.behaviors.SellerProfile;
-
-import java.io.Serializable;
 
 public class User extends Entity implements Serializable {
     private String username;
@@ -18,7 +18,7 @@ public class User extends Entity implements Serializable {
 
     private BidderProfile bidder = null;
     private SellerProfile seller = null;
-    private AdminProfile adminProfile = null;
+    private AdminProfile adminBehavior = null;
 
     public User(String id, String username, String password) {
         super(id);
@@ -40,7 +40,7 @@ public class User extends Entity implements Serializable {
 
     private void initBehaviors() {
         if ("ADMIN".equals(role)) {
-            this.adminProfile = new AdminBehaviors();
+            this.adminBehavior = new AdminBehaviors();
         } else if ("USER".equals(role)) {
             this.bidder = new BidderBehaviors(this);
             this.seller = new SellerBehaviors();

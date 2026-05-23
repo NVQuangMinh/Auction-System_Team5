@@ -7,9 +7,6 @@ import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
 import auction_server.exception.BidException;
-import auction_server.exception.InactiveBidException;
-import auction_server.exception.InvalidBidAmountException;
-import auction_server.exception.SelfBiddingException;
 import auction_shared.dto.AuctionStatus;
 
 public class Auction implements Serializable {
@@ -128,37 +125,7 @@ public class Auction implements Serializable {
     public void placeBid(BidTransaction transaction) throws BidException {
         lock.lock();
         try {
-            if (status != AuctionStatus.ACTIVE) {
-                throw new InactiveBidException("Auction đã kết thúc!");
-            }
-            if (isExpired()) {
-                endAuction();
-                throw new InactiveBidException("Auction đã hết hạn chốt!");
-            }
-
-            double bidAmount = transaction.getBidAmount();
-
-            if (getItem().getOwner().getUsername().equals(transaction.getBidder().getUsername())) {
-                throw new SelfBiddingException("Người đấu giá không được là người bán hàng!");
-            }
-
-            if (bidAmount <= getCurrentHighestBid()) {
-                throw new InvalidBidAmountException("Giá đặt phải lớn hơn giá hiện tại!");
-            }
-
-            // bid >= buyOutPrice phải đi qua luồng BUY_OUT, không chấp nhận ở đây
-            if (bidAmount >= buyOutPrice) {
-                throw new InvalidBidAmountException("Giá đặt phải nhỏ hơn giá mua ngay!");
-            }
-
-            // validate tickSize: (bidAmount - currentHighestBid) phải là bội số của tickSize
-            double increment = bidAmount - getCurrentHighestBid();
-            // Dùng Math.round để tránh lỗi floating-point (VD: 0.1 + 0.2 != 0.3)
-            long ticks = Math.round(increment / tickSize);
-            if (ticks <= 0 || Math.abs(increment - ticks * tickSize) > 0.001) {
-                throw new InvalidBidAmountException("Giá đặt không hợp lệ! Giá trị chênh lệch phải là bội số của " + tickSize);
-            }
-
+            AuctionValidator.validateBid(this, transaction);
             addTransaction(transaction);
             setCurrentHighestBid(transaction.getBidAmount());
         } finally {
@@ -169,27 +136,8 @@ public class Auction implements Serializable {
     public void buyOut(BidTransaction transaction) throws BidException {
         lock.lock();
         try {
-            if (status != AuctionStatus.ACTIVE){
-                throw new InactiveBidException("Auction đã kết thúc!");
-            }
-            if (isExpired()) {
-                endAuction();
-                throw new InactiveBidException("Auction đã hết hạn chốt!");
-            }
-
-            // chặn owner tự mua hàng của mình
-            if (transaction.getBidder().getUsername().equals(getItem().getOwner().getUsername())) {
-                throw new SelfBiddingException("Người đấu giá không được là người bán hàng!");
-            }
-
-            // validate giá buy out phải đúng bằng buyOutPrice
-            if (Math.abs(transaction.getBidAmount() - buyOutPrice) > 0.001) {
-                throw new InvalidBidAmountException("Giá mua ngay không hợp lệ! Phải đúng bằng giá buyOutPrice = " + buyOutPrice);
-            }
-
-            // Lưu lại owner cũ để có thể revert nếu DB lỗi
+            AuctionValidator.validateBuyOut(this, transaction);
             this.originalOwnerBeforeBuyOut = item.getOwner();
-
             item.setOwner(transaction.getBidder());
             status = AuctionStatus.SOLD;
             winnerId = transaction.getBidder().getId();
@@ -298,4 +246,18 @@ public class Auction implements Serializable {
         return bidHistory;
     }
 
+    public ReentrantLock getLock() {
+        return lock;
+    }
+
+    /**
+     * Chuẩn bị bid trong RAM (validate + cập nhật state).
+     * KHÔNG lock — caller phải acquire lock trước và giữ qua DB transaction.
+     * Dùng bởi BidService để giữ lock qua toàn bộ operation (validation + DB persist).
+     */
+    public void prepareBidInMemory(BidTransaction transaction) throws BidException {
+        AuctionValidator.validateBid(this, transaction);
+        addTransaction(transaction);
+        setCurrentHighestBid(transaction.getBidAmount());
+    }
 }

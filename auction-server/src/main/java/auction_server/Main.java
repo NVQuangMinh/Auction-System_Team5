@@ -19,14 +19,16 @@ public class Main {
         AuctionDAO auctionDAO = daoProvider.auctionDAO();
         BidTransactionDAO bidDAO = daoProvider.bidTransactionDAO();
 
-        // Rebuild active auctions từ DB vào AuctionManager
+        // Rebuild all auctions from DB into AuctionManager
+        // - ACTIVE auctions: added to AuctionManager (receives bids, tracked by scheduler)
+        // - ENDED/SOLD auctions: added to AuctionManager (visible to clients, not modified)
         AuctionManager manager = AuctionManager.getInstance();
         List<Auction> activeAuctions = auctionDAO.selectActiveAuctions();
+        int activeCount = 0;
 
         for (Auction auction : activeAuctions) {
             manager.addRoom(auction);
-
-            // Rebuild bid history từ DB cho mỗi auction
+            activeCount++;
             List<BidTransaction> history = bidDAO.selectByAuctionId(auction.getAuctionId());
             auction.setBidHistory(history);
         }
@@ -40,6 +42,5 @@ public class Main {
 
         System.out.println("[System] Starting Socket Server...");
         new SocketServer().start(8080);
-        System.out.println("Hello World");
     }
 }

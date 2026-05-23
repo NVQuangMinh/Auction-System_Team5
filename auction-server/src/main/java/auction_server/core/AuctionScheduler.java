@@ -13,6 +13,7 @@ import auction_server.entities.User;
 import auction_server.mapper.Mappers;
 import auction_server.service.WinnerService;
 import auction_shared.Network.NetworkMessage;
+import auction_shared.dto.AuctionStatus;
 import auction_shared.dto.AuctionDTO;
 
 public class AuctionScheduler {
@@ -35,25 +36,36 @@ public class AuctionScheduler {
 
     private void checkExpiredAuctions() {
         for (Auction auction : auctionManager.getAllRooms()) {
-            if (auction.isExpired()) {
-                auction.endAuction();
-                String winnerId = winnerService.determineWinner(auction.getBidHistory());
-                auctionDAO.update(auction);
-                AuctionDTO auctionDTO = Mappers.toDTO(auction);
+            auction.getLock().lock();
+            try {
+                if (auction.isExpired() && auction.getStatus() == AuctionStatus.ACTIVE) {
+                    auction.endAuction();
+                    String winnerId = winnerService.determineWinner(auction.getBidHistory());
+                    auctionDAO.update(auction);
+                    AuctionDTO auctionDTO = Mappers.toDTO(auction);
 
-                if (winnerId != null) {
-                    for (ClientHandler client : auctionManager.getActiveClients()) {
-                        User u = client.getLoggedInUser();
-                        if (u != null && winnerId.equals(u.getId())) {
-                            client.sendMessage(new NetworkMessage("YOU_WON", auctionDTO));
-                            break;
+                    if (winnerId != null) {
+                        for (ClientHandler client : auctionManager.getActiveClients()) {
+                            User u = client.getLoggedInUser();
+                            if (u != null && winnerId.equals(u.getId())) {
+                                client.sendMessage(new NetworkMessage("YOU_WON", auctionDTO));
+                                break;
+                            }
                         }
                     }
-                }
 
-                auctionManager.broadCast(new NetworkMessage("AUCTION_ENDED", auctionDTO));
-                auctionManager.broadCast(new NetworkMessage("UPDATE_BID",
-                        (Serializable) Mappers.toAuctionDTOList(auctionManager.getAllRooms())));
+                    auctionManager.broadcast(new NetworkMessage("AUCTION_ENDED", auctionDTO));
+                    // Chỉ broadcast ACTIVE từ RAM — client giữ ENDED/SOLD từ DB
+                    var activeOnly = auctionManager.getAllRooms().stream()
+                            .filter(a -> a.getStatus() == AuctionStatus.ACTIVE)
+                            .collect(java.util.stream.Collectors.toList());
+                    auctionManager.broadcast(new NetworkMessage("UPDATE_BID",
+                            (Serializable) Mappers.toAuctionDTOList(activeOnly)));
+                    // Xóa auction đã ENDED khỏi RAM — ENDED/SOLD serve từ DB
+                    auctionManager.removeRoom(auction);
+                }
+            } finally {
+                auction.getLock().unlock();
             }
         }
     }

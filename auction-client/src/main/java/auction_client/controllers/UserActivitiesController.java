@@ -37,7 +37,7 @@ public class UserActivitiesController implements AuctionUpdateListener, Initiali
                 Parent item = loader.load();
 
                 ActivitiesItemController controller = loader.getController();
-                controller.setData(notification.getNotificationMSG(), String.valueOf(notification.getNotificationTime()));
+                controller.setData(notification.getNotificationMessage(), String.valueOf(notification.getNotificationTime()));
                 notificationContainer.getChildren().addFirst(item);
             } catch (IOException e) {
                 System.out.println("Error loading notification item: " + e.getMessage());

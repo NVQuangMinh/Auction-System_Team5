@@ -5,10 +5,6 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 
 import auction_server.exception.BidException;
-import auction_server.exception.DatabaseException;
-import auction_server.exception.InactiveBidException;
-import auction_server.exception.InvalidBidAmountException;
-import auction_server.exception.SelfBiddingException;
 import auction_server.exception.TransactionFailedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,87 +38,93 @@ public class BidService {
         return null;
     }
 
+    /**
+     * Xử lý đặt bid với lock từ đầu đến cuối operation.
+     * Luồng: acquire lock -> validate + update RAM -> DB transaction -> release lock.
+     * Nếu DB lỗi: rollback DB + hoàn tác RAM state (revertLastBid tự lock lại).
+     */
     public void processAndSaveBid(Auction auction, BidTransaction transaction) throws BidException {
-        auction.placeBid(transaction);
+        auction.getLock().lock();
+        try {
+            auction.prepareBidInMemory(transaction);
 
-        try (Connection conn = DatabaseConnection.getConnection()) {
-            conn.setAutoCommit(false);
-            try {
-                bidDAO.insert(transaction, conn);
-                auctionDAO.updateHighestBid(auction, conn);
+            try (Connection conn = DatabaseConnection.getConnection()) {
+                conn.setAutoCommit(false);
+                try {
+                    bidDAO.insert(transaction, conn);
+                    auctionDAO.updateHighestBid(auction, conn);
+                    conn.commit();
 
-                conn.commit();
-                // Anti-sniping: gia hạn nếu còn <= 30s
-                if (auction.isAntiSniping()) {
-                    LocalDateTime oldEndTime = auction.getEndTime();
-                    auction.extendTime();
-                    if (!oldEndTime.equals(auction.getEndTime())) {
-                        auctionDAO.updateEndTime(auction, conn);
+                    if (auction.isAntiSniping()) {
+                        LocalDateTime oldEndTime = auction.getEndTime();
+                        auction.extendTime();
+                        if (!oldEndTime.equals(auction.getEndTime())) {
+                            auctionDAO.updateEndTime(auction, conn);
+                        }
                     }
-                }
 
-                log.info("Bid thành công: Auction={}, Bidder={}, BidAmount={}",
-                        auction.getAuctionId(), transaction.getBidder().getUsername(), transaction.getBidAmount());
-            } catch (SQLException e) {
-                conn.rollback();
-                log.error("Lỗi Transaction DB khi lưu Bid, đang rollback cả DB và RAM...", e);
-                auction.revertLastBid(transaction);
-                throw new TransactionFailedException("Failed to save bid transaction", e);
-            } catch (Exception e) {
-                conn.rollback();
-                log.error("Unexpected exception occurred while processing bid", e);
-                auction.revertLastBid(transaction);
-                throw new TransactionFailedException("Unexpected error while processing bid", e);
+                    log.info("Bid thành công: Auction={}, Bidder={}, BidAmount={}",
+                            auction.getAuctionId(), transaction.getBidder().getUsername(), transaction.getBidAmount());
+                } catch (SQLException e) {
+                    conn.rollback();
+                    throw new TransactionFailedException("Failed to save bid transaction", e);
+                }
             }
-        } catch (SQLException e) {
-            log.error("Không thể lấy Connection DB", e);
+        } catch (TransactionFailedException e) {
+            log.error("Lỗi Transaction DB khi lưu Bid, đang hoàn tác RAM...", e);
             auction.revertLastBid(transaction);
-            throw new DatabaseException("Failed to get database connection", e);
+            throw e;
+        } catch (BidException e) {
+            log.error("Bid validation failed: Auction={}", auction.getAuctionId(), e);
+            auction.revertLastBid(transaction);
+            throw e;
         } catch (Exception e) {
-            log.error("Unexpected exception occurred while getting database connection", e);
+            log.error("Unexpected exception occurred while processing bid", e);
             auction.revertLastBid(transaction);
-            throw new DatabaseException("Unexpected error while getting database connection", e);
+            throw new TransactionFailedException("Unexpected error while processing bid", e);
+        } finally {
+            auction.getLock().unlock();
         }
     }
 
     /**
-     * Xử lý Buy Out với đầy đủ DB Transaction.
-     * Luồng: validate in-memory (auction.buyOut) -> mở Transaction DB ->
-     * insert BidTransaction + update Auction status/winner -> commit.
-     * Nếu DB lỗi: rollback DB + hoàn tác in-memory state.
+     * Xử lý Buy Out với lock từ đầu đến cuối operation.
+     * Luồng: acquire lock -> validate + update RAM -> DB transaction -> release lock.
+     * Nếu DB lỗi: rollback DB + hoàn tác RAM state.
      */
     public void processBuyOut(Auction auction, BidTransaction transaction) throws BidException {
-        // Validate và cập nhật in-memory state
-        auction.buyOut(transaction);
-        // Persist xuống DB trong một Transaction
-        try (Connection conn = DatabaseConnection.getConnection()) {
-            conn.setAutoCommit(false);
-            try {
-                bidDAO.insert(transaction, conn);
-                auctionDAO.updateStatusAndWinner(auction, conn);
+        auction.getLock().lock();
+        try {
+            auction.buyOut(transaction);
 
-                conn.commit();
-                log.info("Buy Out thành công: Auction={}, Winner={}",
-                        auction.getAuctionId(), auction.getWinnerId());
-            } catch (SQLException e) {
-                conn.rollback();
-                log.error("Lỗi Transaction DB khi Buy Out, đang rollback cả DB và RAM...", e);
-                auction.revertBuyOut(transaction);
-                throw new TransactionFailedException("Failed to process buy-out transaction", e);
-            } catch (Exception e) {
-                conn.rollback();
-                log.error("Unexpected exception occurred while processing buy-out", e);
-                auction.revertBuyOut(transaction);
-                throw new TransactionFailedException("Unexpected error while processing buy-out", e);
+            try (Connection conn = DatabaseConnection.getConnection()) {
+                conn.setAutoCommit(false);
+                try {
+                    bidDAO.insert(transaction, conn);
+                    auctionDAO.updateStatusAndWinner(auction, conn);
+                    conn.commit();
+
+                    log.info("Buy Out thành công: Auction={}, Winner={}",
+                            auction.getAuctionId(), auction.getWinnerId());
+                } catch (SQLException e) {
+                    conn.rollback();
+                    throw new TransactionFailedException("Failed to process buy-out transaction", e);
+                }
             }
-        } catch (SQLException e) {
-            log.error("Không thể lấy Connection DB cho Buy Out", e);
+        } catch (TransactionFailedException e) {
+            log.error("Lỗi Transaction DB khi Buy Out, đang hoàn tác RAM...", e);
             auction.revertBuyOut(transaction);
-            throw new DatabaseException("Failed to get database connection", e);
+            throw e;
+        } catch (BidException e) {
+            log.error("Buy-out validation failed: Auction={}", auction.getAuctionId(), e);
+            auction.revertBuyOut(transaction);
+            throw e;
         } catch (Exception e) {
-            log.error("Unexpected exception occurred while getting database connection for buy-out", e);
+            log.error("Unexpected exception occurred while processing buy-out", e);
             auction.revertBuyOut(transaction);
-            throw new DatabaseException("Unexpected error while getting database connection", e);
+            throw new TransactionFailedException("Unexpected error while processing buy-out", e);
+        } finally {
+            auction.getLock().unlock();
         }
     }
 }

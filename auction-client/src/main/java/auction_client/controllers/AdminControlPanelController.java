@@ -5,6 +5,7 @@ import auction_client.interfaces.AuctionUpdateListener;
 import auction_shared.Network.NetworkMessage;
 import auction_shared.dto.AuctionDTO;
 import auction_shared.dto.AuctionStatus;
+import auction_shared.dto.ProductListResponse;
 import auction_shared.dto.UserDTO;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -19,6 +20,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -29,41 +31,39 @@ public class AdminControlPanelController implements Initializable, AuctionUpdate
     TableView<AuctionDTO> itemTable;
 
     @FXML
-    TableColumn<UserDTO,String> colUserId;
+    TableColumn<UserDTO, String> colUserId;
     @FXML
-    TableColumn<UserDTO,String> colUsername;
+    TableColumn<UserDTO, String> colUsername;
     @FXML
-    TableColumn<UserDTO,String> colUserRole;
+    TableColumn<UserDTO, String> colUserRole;
     @FXML
-    TableColumn<UserDTO,Void> colUserAction; //button
+    TableColumn<UserDTO, Void> colUserAction;
 
     @FXML
-    TableColumn<AuctionDTO,String> colItemName;
+    TableColumn<AuctionDTO, String> colItemName;
     @FXML
-    TableColumn<AuctionDTO,Double> colItemPrice;
+    TableColumn<AuctionDTO, Double> colItemPrice;
     @FXML
     TableColumn<AuctionDTO, AuctionStatus> colItemStatus;
     @FXML
-    TableColumn<AuctionDTO,Void> colItemAction; //button
+    TableColumn<AuctionDTO, Void> colItemAction;
+
+    private List<AuctionDTO> activeItems = new ArrayList<>();
+    private List<AuctionDTO> endedItems = new ArrayList<>();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // set up tables nha ae
         setupUserTable();
         setupItemTable();
-        // request data nha ae
         ClientService.getInstance().addListener(this);
         ClientService.getInstance().sendMessage(new NetworkMessage("GET_USERS", null));
-        ClientService.getInstance().sendMessage(new NetworkMessage("GET_PRODUCTS",null));
+        ClientService.getInstance().sendMessage(new NetworkMessage("GET_PRODUCTS", null));
     }
 
     private void setupUserTable() {
         colUserId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colUsername.setCellValueFactory(new PropertyValueFactory<>("username"));
         colUserRole.setCellValueFactory(new PropertyValueFactory<>("role"));
-        //colUserAction
-        //set action button
-        // Setup button column
         colUserAction.setCellFactory(param -> new TableCell<>() {
             private final Button actionButton = new Button("Ban");
 
@@ -75,14 +75,8 @@ public class AdminControlPanelController implements Initializable, AuctionUpdate
                     setGraphic(null);
                 } else {
                     setGraphic(actionButton);
-
-                    // Lấy user của row hiện tại
                     UserDTO user = getTableView().getItems().get(getIndex());
-
-                    // Set action cho button
-                    actionButton.setOnAction(event -> {
-                        handleBanUser(user);
-                    });
+                    actionButton.setOnAction(event -> handleBanUser(user));
                 }
             }
         });
@@ -99,8 +93,6 @@ public class AdminControlPanelController implements Initializable, AuctionUpdate
                 new SimpleObjectProperty<>(cellData.getValue().getStatus())
         );
 
-        //colItemAction
-        //set action button
         colItemAction.setCellFactory(param -> new TableCell<>() {
             private final Button actionButton = new Button("Remove");
 
@@ -113,14 +105,10 @@ public class AdminControlPanelController implements Initializable, AuctionUpdate
                 } else {
                     setGraphic(actionButton);
                     AuctionDTO auction = getTableView().getItems().get(getIndex());
-
-                    actionButton.setOnAction(event -> {
-                        handleRemoveAuction(auction);
-                    });
+                    actionButton.setOnAction(event -> handleRemoveAuction(auction));
                 }
             }
         });
-
     }
 
     @Override
@@ -131,24 +119,33 @@ public class AdminControlPanelController implements Initializable, AuctionUpdate
             userTable.getItems().clear();
             userTable.getItems().addAll(users);
 
-        }
-        else if (action.equals("GET_PRODUCTS")) {
+        } else if (action.equals("GET_PRODUCTS")) {
+            ProductListResponse response = (ProductListResponse) msg.getData();
+            this.activeItems = response.getActiveAuctions() != null ? new ArrayList<>(response.getActiveAuctions()) : new ArrayList<>();
+            this.endedItems = response.getEndedSaledAuctions() != null ? new ArrayList<>(response.getEndedSaledAuctions()) : new ArrayList<>();
+            refreshItemTable();
+
+        } else if (action.equals("UPDATE_BID")) {
             List<AuctionDTO> auctions = (List<AuctionDTO>) msg.getData();
-            itemTable.getItems().clear();
-            itemTable.getItems().addAll(auctions);
+            // UPDATE_BID chỉ chứa ACTIVE auctions từ RAM
+            // Chỉ cập nhật phần ACTIVE, giữ nguyên ENDED/SOLD
+            this.activeItems = auctions != null ? new ArrayList<>(auctions) : new ArrayList<>();
+            refreshItemTable();
         }
-        else if (action.equals("UPDATE_BID")) {
-            List<AuctionDTO> auctions = (List<AuctionDTO>) msg.getData();
-            itemTable.getItems().clear();
-            itemTable.getItems().addAll(auctions);
-        }
+    }
+
+    private void refreshItemTable() {
+        List<AuctionDTO> merged = new ArrayList<>(activeItems);
+        merged.addAll(endedItems);
+        itemTable.getItems().clear();
+        itemTable.getItems().addAll(merged);
     }
 
     public void handleBanUser(UserDTO user) {
         ClientService.getInstance().sendMessage(new NetworkMessage("BAN_USER", user));
     }
-    public void handleRemoveAuction(AuctionDTO auction){
-        ClientService.getInstance().sendMessage(new NetworkMessage("REMOVE_ITEM", auction));
 
+    public void handleRemoveAuction(AuctionDTO auction) {
+        ClientService.getInstance().sendMessage(new NetworkMessage("REMOVE_ITEM", auction));
     }
 }

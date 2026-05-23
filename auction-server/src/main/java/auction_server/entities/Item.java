@@ -1,11 +1,11 @@
 package auction_server.entities;
 
+import java.io.Serializable;
+
 import auction_server.base.Entity;
 import auction_shared.dto.ItemType;
 
-import java.io.Serializable;
-
-public abstract class Item extends Entity implements Serializable {
+public abstract class Item<T> extends Entity implements Serializable {
 
     protected String itemName;
     protected String description;
@@ -19,6 +19,11 @@ public abstract class Item extends Entity implements Serializable {
     }
 
     public abstract ItemType getType();
+
+    public abstract T getTypeSpecificAttribute();
+    public abstract void setTypeSpecificAttribute(T value);
+
+    public abstract String getTypeAttributeLabel();
 
     public String getName() {
         return this.itemName;

@@ -7,7 +7,6 @@ public class AuctionDTO implements Serializable {
     private String auctionId;
     private AuctionStatus status;
     private ItemDTO item;
-    private ItemType type;
     private double startingPrice;
     private double buyOutPrice;
     private double tickSize;
@@ -17,13 +16,12 @@ public class AuctionDTO implements Serializable {
     private String winnerId;
     private double currentHighestBid;
 
-    public AuctionDTO(ItemDTO item, ItemType type, AuctionStatus status, double startingPrice, double buyOutPrice,
+    public AuctionDTO(ItemDTO item, AuctionStatus status, double startingPrice, double buyOutPrice,
                       double tickSize, LocalDateTime startTime, LocalDateTime endTime,
                       boolean antiSniping, String winnerId, double currentHighestBid) {
         this.auctionId = item.getId();
         this.status = status;
         this.item = item;
-        this.type = type;
         this.startingPrice = startingPrice;
         this.buyOutPrice = buyOutPrice;
         this.tickSize = tickSize;
@@ -44,10 +42,6 @@ public class AuctionDTO implements Serializable {
 
     public ItemDTO getItem() {
         return item;
-    }
-
-    public ItemType getType() {
-        return type;
     }
 
     public double getStartingPrice() {

@@ -18,6 +18,9 @@ CREATE TABLE items (
     item_name   VARCHAR(255) NOT NULL,
     description TEXT,
     owner_id    VARCHAR(36)  NOT NULL,
+    artist_name VARCHAR(255) DEFAULT NULL,
+    model       VARCHAR(255) DEFAULT NULL,
+    brand       VARCHAR(255) DEFAULT NULL,
     FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCADE
 );
 

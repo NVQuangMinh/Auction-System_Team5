@@ -1,8 +1,14 @@
 package auction_client.controllers;
 
-import auction_client.interfaces.AuctionUpdateListener;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
+
 import auction_client.Network.ClientService;
 import auction_client.UserSession;
+import auction_client.interfaces.AuctionUpdateListener;
 import auction_client.interfaces.HandleCardClicked;
 import auction_shared.Network.NetworkMessage;
 import auction_shared.dto.AuctionDTO;
@@ -20,27 +26,26 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.List;
-import java.util.ResourceBundle;
-
 public class SellProductSceneController implements Initializable, AuctionUpdateListener, HandleCardClicked {
     @FXML
     public AnchorPane overlayPane;
     @FXML
     FlowPane myListFlowPane;
 
-    private List<AuctionDTO> myAuctions = null;
-
+    // Always use a mutable list so we can replace its contents cleanly
+    private List<AuctionDTO> myAuctions = new ArrayList<>();
 
     public void initialize(URL url, ResourceBundle resourceBundle) {
         ClientService.getInstance().addListener(this);
         ClientService.getInstance().sendMessage(new NetworkMessage("GET_MY_LIST", UserSession.getInstance().getUsername()));
     }
 
+    public void cleanup() {
+        ClientService.getInstance().removeListener(this);
+    }
+
     @FXML
-    public void handleUserAddItem(ActionEvent event) throws IOException{
+    public void handleUserAddItem(ActionEvent event) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/auction_client/ProductInfoSubmission.fxml"));
         Parent root = fxmlLoader.load();
         Scene scene = new Scene(root);
@@ -57,55 +62,43 @@ public class SellProductSceneController implements Initializable, AuctionUpdateL
         stage.show();
     }
 
-    public void updateMyList(List<AuctionDTO> auctions){
-        Platform.runLater(() -> {
-            // 1. Xóa các card cũ để tránh trùng lặp khi cập nhật
-            myListFlowPane.getChildren().clear();
-
-            for (AuctionDTO auction : auctions) {
-                try {
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/auction_client/ProductCard.fxml"));
-                    Parent card = loader.load();
-
-                    ProductCardController cardController = loader.getController();
-                    cardController.setData(auction, this::openAuctionDetail);
-                    myListFlowPane.getChildren().add(card);
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    System.err.println("Unable to load ProductCard!");
-                }
+    private void updateMyList(List<AuctionDTO> auctions) {
+        // Already on JavaFX thread via Platform.runLater
+        myListFlowPane.getChildren().clear();
+        for (AuctionDTO auction : auctions) {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/auction_client/ProductCard.fxml"));
+                Parent card = loader.load();
+                ProductCardController cardController = loader.getController();
+                cardController.setData(auction, this::openAuctionDetail);
+                myListFlowPane.getChildren().add(card);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        });
+        }
     }
-
 
     public void onUpdateReceived(NetworkMessage msg) {
         String action = msg.getAction();
-        if (action.equals("GET_MY_LIST")){
-            this.myAuctions = (List<AuctionDTO>) msg.getData();
+        if (action.equals("GET_MY_LIST")) {
+            this.myAuctions = new ArrayList<>((List<AuctionDTO>) msg.getData());
             Platform.runLater(() -> updateMyList(myAuctions));
-        }
-        else if (action.equals("UPDATE_BID")){
-
-            List<AuctionDTO> allRooms = (List<AuctionDTO>) msg.getData();
-            Platform.runLater(() -> {
-                this.myAuctions.clear();
-                for (AuctionDTO room : allRooms){
-                    if (room.getItem().getOwner().getUsername().equals(UserSession.getInstance().getUsername())) {
-                        myAuctions.add(room);
-                    }
+        } else if (action.equals("UPDATE_BID")) {
+            List<AuctionDTO> rooms = (List<AuctionDTO>) msg.getData();
+            // Tạo lại list
+            List<AuctionDTO> rebuilt = new ArrayList<>();
+            for (AuctionDTO room : rooms) {
+                if (room.getItem().getOwner().getUsername().equals(UserSession.getInstance().getUsername())) {
+                    rebuilt.add(room);
                 }
-                updateMyList(myAuctions);
-            });
-
-            //ClientService.getInstance().sendMessage(new NetworkMessage("GET_MY_LIST", UserSession.getInstance().getUsername()));
-            // cách 2 nha anh em
+            }
+            this.myAuctions = rebuilt;
+            Platform.runLater(() -> updateMyList(myAuctions));
         }
     }
 
     public void openAuctionDetail(AuctionDTO auction) {
-        try{
+        try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/auction_client/SellProductInfo.fxml"));
             Parent root = loader.load();
 
@@ -115,18 +108,15 @@ public class SellProductSceneController implements Initializable, AuctionUpdateL
             Stage sellProductInfoStage = new Stage();
             sellProductInfoStage.setTitle("Auction Detail");
             sellProductInfoStage.initModality(Modality.APPLICATION_MODAL);
-
             sellProductInfoStage.initStyle(StageStyle.TRANSPARENT);
             Scene scene = new Scene(root);
             scene.setFill(null);
 
             sellProductInfoStage.setScene(scene);
             sellProductInfoStage.centerOnScreen();
-
             sellProductInfoStage.setOnCloseRequest(event -> controller.cleanUp());
             sellProductInfoStage.show();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

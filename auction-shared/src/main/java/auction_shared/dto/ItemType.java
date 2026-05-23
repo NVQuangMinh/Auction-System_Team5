@@ -13,8 +13,15 @@ public enum ItemType {
         };
     }
 
-    // Dịch enum về String để ghi vào DB.
     public String toDbValue() {
-        return this.name(); // "ARTS", "ELECTRONICS", "VEHICLES"
+        return this.name();
+    }
+
+    public String attributeColumn() {
+        return switch (this) {
+            case ARTS -> "artist_name";
+            case ELECTRONICS -> "model";
+            case VEHICLES -> "brand";
+        };
     }
 }

@@ -5,6 +5,7 @@ import auction_client.Network.ClientService;
 import auction_client.interfaces.HandleCardClicked;
 import auction_shared.Network.NetworkMessage;
 import auction_shared.dto.AuctionDTO;
+import auction_shared.dto.ProductListResponse;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -18,6 +19,7 @@ import javafx.stage.StageStyle;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -31,62 +33,60 @@ public class BidProductSceneController implements Initializable, AuctionUpdateLi
         ClientService.getInstance().sendMessage(new NetworkMessage("GET_PRODUCTS", null));
     }
 
+    public void cleanup() {
+        ClientService.getInstance().removeListener(this);
+    }
+
     public void updateProductList(List<AuctionDTO> auctions) {
-        Platform.runLater(() -> {
-            // 1. Xóa các card cũ để tránh trùng lặp khi cập nhật
-            productFlowPane.getChildren().clear();
-
-            for (AuctionDTO auction : auctions) {
-                try {
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/auction_client/ProductCard.fxml"));
-                    Parent card = loader.load();
-
-                    ProductCardController cardController = loader.getController();
-                    cardController.setData(auction, this);
-                    productFlowPane.getChildren().add(card);
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    System.err.println("Unable to load ProductCard!");
-                }
+        productFlowPane.getChildren().clear();
+        for (AuctionDTO auction : auctions) {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/auction_client/ProductCard.fxml"));
+                Parent card = loader.load();
+                ProductCardController cardController = loader.getController();
+                cardController.setData(auction, this);
+                productFlowPane.getChildren().add(card);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        });
+        }
     }
 
     public void openAuctionDetail(AuctionDTO auction) {
-        try{
+        try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/auction_client/BidProductInfo.fxml"));
             Parent root = loader.load();
 
             BidProductInfoController controller = loader.getController();
             controller.initData(auction);
 
-            Stage bidProductInfoStage = new Stage();
-            bidProductInfoStage.setTitle("Auction Detail");
-            bidProductInfoStage.initModality(Modality.APPLICATION_MODAL);
-
-            bidProductInfoStage.initStyle(StageStyle.TRANSPARENT);
+            Stage stage = new Stage();
+            stage.setTitle("Auction Detail");
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.initStyle(StageStyle.TRANSPARENT);
             Scene scene = new Scene(root);
             scene.setFill(null);
 
-            bidProductInfoStage.setScene(scene);
-            bidProductInfoStage.centerOnScreen();
-
-            bidProductInfoStage.setOnCloseRequest(event -> controller.cleanUp());
-            bidProductInfoStage.show();
-        }
-        catch (IOException e) {
+            stage.setScene(scene);
+            stage.centerOnScreen();
+            stage.setOnCloseRequest(event -> controller.cleanUp());
+            stage.show();
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public void onUpdateReceived(NetworkMessage msg) {
         String action = msg.getAction();
-        if (action.equals("GET_PRODUCTS")){
-            this.auctions = (List<AuctionDTO>) msg.getData();
-            Platform.runLater(() -> updateProductList(auctions));
-        }
-        else if (action.equals("UPDATE_BID")){
+        if (action.equals("GET_PRODUCTS")) {
+            ProductListResponse response = (ProductListResponse) msg.getData();
+            List<AuctionDTO> active = response.getActiveAuctions() != null ? response.getActiveAuctions() : new ArrayList<>();
+            List<AuctionDTO> ended = response.getEndedSaledAuctions() != null ? response.getEndedSaledAuctions() : new ArrayList<>();
+
+            this.auctions = new ArrayList<>(active);
+            this.auctions.addAll(ended);
+            Platform.runLater(() -> updateProductList(this.auctions));
+        } else if (action.equals("UPDATE_BID")) {
             this.auctions = (List<AuctionDTO>) msg.getData();
             Platform.runLater(() -> updateProductList(auctions));
         }

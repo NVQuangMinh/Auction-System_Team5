@@ -1,11 +1,19 @@
 package auction_client.controllers;
 
-import auction_client.interfaces.AuctionUpdateListener;
+import java.net.URL;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.ResourceBundle;
+
 import auction_client.Network.ClientService;
+import auction_client.interfaces.AuctionUpdateListener;
 import auction_shared.Network.NetworkMessage;
 import auction_shared.dto.AuctionDTO;
 import auction_shared.dto.AuctionStatus;
 import auction_shared.dto.BidTransactionDTO;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -15,23 +23,15 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
-
-import javafx.animation.Animation;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.util.Duration;
-
-import java.net.URL;
-import java.text.DecimalFormat;
-import java.util.List;
-import java.time.LocalDateTime;
-import java.util.ResourceBundle;
 
 public class SellProductInfoController implements Initializable, AuctionUpdateListener {
     @FXML
     Label itemName;
     @FXML
     Label description;
+    @FXML
+    Label typeSpecificDisplay;
     @FXML
     Label currentPrice;
     @FXML
@@ -88,13 +88,18 @@ public class SellProductInfoController implements Initializable, AuctionUpdateLi
     }
 
     public void updateData() {
-        DecimalFormat df = new DecimalFormat("#,###.###");
         Platform.runLater(() -> {
-            currentPrice.setText("$" + df.format(auction.getCurrentHighestBid()));
+            currentPrice.setText(String.valueOf(auction.getCurrentHighestBid()));
             itemName.setText(auction.getItem().getName());
-            buyOut.setText("$" + df.format(auction.getBuyOutPrice()));
-            tickRate.setText("$" + df.format(auction.getTickSize()));
+            buyOut.setText(String.valueOf(auction.getBuyOutPrice()));
+            tickRate.setText(String.valueOf(auction.getTickSize()));
             description.setText(auction.getItem().getDescription());
+
+            String attr = auction.getItem().getTypeSpecificAttribute();
+            if (attr != null && !attr.isBlank()) {
+                String label = auction.getItem().getTypeAttributeLabel() + ": " + attr;
+                typeSpecificDisplay.setText(label);
+            }
         });
     }
 
@@ -121,7 +126,7 @@ public class SellProductInfoController implements Initializable, AuctionUpdateLi
                 }
                 if (!exist) {
                     cleanUp();
-                    switchToUserProductList();
+                    closeModal();
                 }
             });
         } else if (action.equals("GET_BID_HISTORY")) {
@@ -136,14 +141,16 @@ public class SellProductInfoController implements Initializable, AuctionUpdateLi
     }
 
     @FXML
-    private void switchToUserProductList() {
-        ClientService.getInstance().sendMessage(new NetworkMessage("GET_PRODUCTS", null));
-        Stage stage = (Stage) itemName.getScene().getWindow();
+    private void closeModal() {
         cleanUp();
+        Stage stage = (Stage) itemName.getScene().getWindow();
         stage.close();
     }
 
     public void cleanUp() {
+        if (countdownTimeline != null) {
+            countdownTimeline.stop();
+        }
         ClientService.getInstance().removeListener(this);
     }
 }

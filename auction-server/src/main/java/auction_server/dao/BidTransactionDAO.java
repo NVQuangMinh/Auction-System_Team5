@@ -7,17 +7,18 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import auction_server.entities.BidTransaction;
 import auction_server.entities.User;
 import auction_server.exception.DatabaseException;
-import auction_server.exception.TransactionFailedException;
 import auction_server.interfaces.TransactionalDAO;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class BidTransactionDAO implements TransactionalDAO<BidTransaction> {
     private static final Logger log = LoggerFactory.getLogger(BidTransactionDAO.class);
 
+    @Override
     public int insert(BidTransaction bt, Connection conn) throws SQLException {
         String sql = "INSERT INTO bid_transactions (id, auction_id, bidder_id, bid_amount, bid_time) VALUES (?,?,?,?,?)";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -71,7 +72,7 @@ public class BidTransactionDAO implements TransactionalDAO<BidTransaction> {
      * Được sử dụng khi auction đã ENDED/SOLD (không còn trong RAM).
      */
     public ArrayList<BidTransaction> selectByAuctionId(String auctionId) {
-        String sql = "SELECT bt.*, u.username, u.user_status " +
+        String sql = "SELECT bt.*, u.username, u.role, u.user_status " +
                 "FROM bid_transactions bt " +
                 "JOIN users u ON bt.bidder_id = u.id " +
                 "WHERE bt.auction_id = ? " +
@@ -89,7 +90,9 @@ public class BidTransactionDAO implements TransactionalDAO<BidTransaction> {
                     User bidder = new User(
                             rs.getString("bidder_id"),
                             rs.getString("username"),
-                            null);
+                            null,
+                            rs.getString("role"),
+                            rs.getString("user_status"));
 
                     BidTransaction tx = new BidTransaction(
                             null,

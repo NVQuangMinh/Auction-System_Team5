@@ -3,7 +3,6 @@ package auction_client.controllers;
 import auction_client.Network.ClientService;
 import auction_client.UserSession;
 import auction_shared.Network.NetworkMessage;
-import javafx.beans.property.BooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -24,7 +23,7 @@ public class WebMenuBarController implements Initializable {
     @FXML
     public ImageView logoutImage;
     @FXML
-    public MenuButton productsMenuButton; // Đã sửa từ Button sang MenuButton
+    public Button productsMenuButton;
     @FXML
     public Button userProductListButton;
     @FXML
@@ -40,20 +39,6 @@ public class WebMenuBarController implements Initializable {
         userProductListButton.visibleProperty().bind(SignInController.isAdmin.not());
 
         setWelcomeUsername(UserSession.getInstance().getUsername());
-        // Lắng nghe sự kiện khi MenuButton hiển thị menu thả xuống
-        productsMenuButton.showingProperty().addListener((obs, wasShowing, isShowing) -> {
-            if (isShowing) {
-                double width = productsMenuButton.getWidth();
-                var contextMenu = productsMenuButton.getContextMenu();
-
-                if (contextMenu != null) {
-                    // Ép kích thước menu con bằng đúng kích thước nút cha
-                    contextMenu.setMinWidth(width);
-                    contextMenu.setPrefWidth(width);
-                    contextMenu.setMaxWidth(width);
-                }
-            }
-        });
     }
 
     public void setWelcomeUsername(String username) {
@@ -64,58 +49,58 @@ public class WebMenuBarController implements Initializable {
 
     @FXML
     public void switchToMainScene(MouseEvent event) throws IOException {
+        cleanupCurrentScene(event);
         switchScene(event, "/auction_client/AuctionMain.fxml");
     }
 
     @FXML
     public void switchToUserProductListScene(ActionEvent event) throws IOException {
+        cleanupCurrentScene(event);
         ClientService.getInstance().sendMessage(new NetworkMessage("GET_MY_LIST", UserSession.getInstance().getUsername()));
         switchScene(event, "/auction_client/SellProductScene.fxml");
     }
 
     @FXML
-    public void switchToProductScene(ActionEvent event) throws IOException {
-        switchSceneFromMenuItem("/auction_client/BidProductScene.fxml");
+    public void switchToAllProductScene(ActionEvent event) throws IOException {
+        cleanupCurrentScene(event);
+        switchScene(event, "/auction_client/AuctionMain.fxml");
     }
 
     @FXML
     public void switchToActivitiesScene(ActionEvent event) throws IOException {
+        cleanupCurrentScene(event);
         switchScene(event, "/auction_client/ActivitiesScene.fxml");
     }
 
     @FXML
     public void switchToAdminControlPanel(ActionEvent event) throws IOException {
+        cleanupCurrentScene(event);
         switchScene(event, "/auction_client/AdminControlPanel.fxml");
     }
 
-    @FXML
-    public void switchToArtScene(ActionEvent event) throws IOException {
-        switchSceneFromMenuItem("/auction_client/ArtScene.fxml");
-    }
-
-    @FXML
-    public void switchToElectronicScene(ActionEvent event) throws IOException {
-        switchSceneFromMenuItem("/auction_client/ElectronicScene.fxml");
-    }
-
-    @FXML
-    public void switchToVehicleScene(ActionEvent event) throws IOException {
-        switchSceneFromMenuItem("/auction_client/VehicleScene.fxml");
+    /**
+     * Retrieves the controller of the current scene's root BorderPane
+     * and calls cleanup() if it implements the cleanup interface.
+     */
+    private void cleanupCurrentScene(javafx.event.Event event) {
+        Node source = (Node) event.getSource();
+        Parent root = source.getScene().getRoot();
+        Object controller = root.getProperties().get("fx_controller");
+        if (controller instanceof AuctionMainController mainController) {
+            mainController.cleanup();
+        } else if (controller instanceof BidProductSceneController bidController) {
+            bidController.cleanup();
+        } else if (controller instanceof FilteredProductSceneController filteredController) {
+            filteredController.cleanup();
+        } else if (controller instanceof SellProductSceneController sellController) {
+            sellController.cleanup();
+        }
     }
 
     private void switchScene(javafx.event.Event event, String fxmlPath) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(fxmlPath));
         Parent root = fxmlLoader.load();
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.getScene().setRoot(root);
-        stage.centerOnScreen();
-        stage.show();
-    }
-
-    private void switchSceneFromMenuItem(String fxmlPath) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(fxmlPath));
-        Parent root = fxmlLoader.load();
-        Stage stage = (Stage) productsMenuButton.getScene().getWindow();
         stage.getScene().setRoot(root);
         stage.centerOnScreen();
         stage.show();
@@ -129,11 +114,9 @@ public class WebMenuBarController implements Initializable {
         logOutAlert.setContentText("Are you sure you want to logout?");
 
         if (logOutAlert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
+            cleanupCurrentScene(event);
             UserSession.getInstance().closeApp();
             switchScene(event, "/auction_client/SignInScene.fxml");
         }
     }
-
-
-
 }

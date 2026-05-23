@@ -6,16 +6,18 @@ import auction_client.interfaces.HandleCardClicked;
 import auction_shared.Network.NetworkMessage;
 import auction_shared.dto.AuctionDTO;
 import auction_shared.dto.BidTransactionDTO;
-import auction_shared.dto.ItemType;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
-import org.kordamp.ikonli.javafx.FontIcon;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.shape.Rectangle;
 
+import java.net.URL;
 import java.time.LocalDateTime;
+import java.util.ResourceBundle;
 
-public class ProductCardController {
+public class ProductCardController implements Initializable {
     @FXML
     protected Label itemName;
     @FXML
@@ -27,19 +29,64 @@ public class ProductCardController {
     @FXML
     protected Label description;
     @FXML
-    protected FontIcon productIcon;
+    protected Label typeSpecificLabel;
+    @FXML
+    protected ImageView itemIMage;
 
     private AuctionDTO auction = null;
     private HandleCardClicked cardClickedListener = null;
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        Rectangle clip = new Rectangle(
+                itemIMage.getFitWidth(),
+                itemIMage.getFitHeight()
+        );
+        clip.setArcWidth(30);
+        clip.setArcHeight(30);
+        itemIMage.setClip(clip);
+    }
 
     public void setData(AuctionDTO auction, HandleCardClicked openAuctionDetail) {
         this.auction = auction;
         this.cardClickedListener = openAuctionDetail;
         itemName.setText(auction.getItem().getName());
-        itemState.setText(String.valueOf(auction.getStatus()));
-        currentPrice.setText(String.valueOf(auction.getCurrentHighestBid()));
-        buyOutPrice.setText(String.valueOf(auction.getBuyOutPrice()));
+        itemState.setText(auction.getStatus().name());
+
+        currentPrice.setText(formatPrice(auction.getCurrentHighestBid()));
+        buyOutPrice.setText(formatPrice(auction.getBuyOutPrice()));
         description.setText(auction.getItem().getDescription());
+
+        String itemTypeStr = auction.getItem().getType().toString().toLowerCase();
+        String imagePath = "/auction_client/images/" + itemTypeStr + ".jpg";
+        try {
+            Image image = new Image(getClass().getResourceAsStream(imagePath));
+            if (!image.isError()) {
+                itemIMage.setImage(image);
+            }
+        } catch (NullPointerException e) {
+            System.out.println("Cannot find image at: " + imagePath);
+        }
+
+        String attr = auction.getItem().getTypeSpecificAttribute();
+        if (attr != null && !attr.isBlank()) {
+            String label = auction.getItem().getTypeAttributeLabel() + ": " + attr;
+            typeSpecificLabel.setText(label);
+            typeSpecificLabel.setVisible(true);
+            typeSpecificLabel.setManaged(true);
+        } else {
+            typeSpecificLabel.setText("");
+            typeSpecificLabel.setVisible(false);
+            typeSpecificLabel.setManaged(false);
+        }
+    }
+
+    private String formatPrice(double value) {
+        if (value == (long) value) {
+            return String.format("%,d", (long) value);
+        } else {
+            return String.format("%,.2f", value);
+        }
     }
 
     public void handleCardClick() {
@@ -51,6 +98,5 @@ public class ProductCardController {
         BidTransactionDTO transaction = new BidTransactionDTO(auction, UserSession.getInstance().getUser(),
                 auction.getBuyOutPrice(), LocalDateTime.now());
         ClientService.getInstance().sendMessage(new NetworkMessage("BUY_OUT", transaction));
-
     }
 }

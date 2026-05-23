@@ -4,16 +4,16 @@ import java.io.Serializable;
 import java.time.LocalTime;
 
 public class Notification implements Serializable {
-    private String notificationMSG;
+    private String notificationMessage;
     private LocalTime notificationTime;
 
-    public Notification(String notificationMSG, LocalTime notificationTime) {
-        this.notificationMSG = notificationMSG;
+    public Notification(String notificationMessage, LocalTime notificationTime) {
+        this.notificationMessage = notificationMessage;
         this.notificationTime = notificationTime;
     }
 
-    public String getNotificationMSG(){
-        return this.notificationMSG;
+    public String getNotificationMessage(){
+        return this.notificationMessage;
     }
 
     public LocalTime getNotificationTime() {

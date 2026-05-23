@@ -20,6 +20,7 @@ public class Mappers {
         return new UserDTO(user.getId(), user.getUsername(),user.getRole());
     }
 
+    @SuppressWarnings("rawtypes")
     public static ItemDTO toDTO(Item item) {
         if (item == null)
             return null;
@@ -28,7 +29,8 @@ public class Mappers {
                 item.getName(),
                 item.getDescription(),
                 toDTO(item.getOwner()),
-                item.getType());
+                item.getType(),
+                (String) item.getTypeSpecificAttribute());
     }
 
     public static AuctionDTO toDTO(Auction auction) {
@@ -36,7 +38,6 @@ public class Mappers {
             return null;
         return new AuctionDTO(
                 toDTO(auction.getItem()),
-                auction.getItem().getType(),
                 auction.getStatus(),
                 auction.getStartingPrice(),
                 auction.getBuyOutPrice(),
@@ -44,7 +45,7 @@ public class Mappers {
                 auction.getStartTime(),
                 auction.getEndTime(),
                 auction.isAntiSniping(),
-                null,
+                auction.getWinnerId(),
                 auction.getCurrentHighestBid()
         );
     }

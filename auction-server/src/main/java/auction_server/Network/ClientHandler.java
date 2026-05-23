@@ -46,7 +46,6 @@ public class ClientHandler implements Runnable {
     public ClientHandler(Socket socket, DAOProvider daoProvider) {
         this.socket = socket;
         this.messageHandler = new MessageHandlerService(
-                activities,
                 this::sendMessage,
                 daoProvider
         );
@@ -135,6 +134,9 @@ public class ClientHandler implements Runnable {
                 break;
             case "GET_BID_HISTORY":
                 messageHandler.handleGetBidHistory(msg);
+                break;
+            case "GET_ENDED_PRODUCTS":
+                messageHandler.handleGetEndedProducts(msg);
                 break;
             case "LOGOUT":
                 messageHandler.handleLogout(msg);

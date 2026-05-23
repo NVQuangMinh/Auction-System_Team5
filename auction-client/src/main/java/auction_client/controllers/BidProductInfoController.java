@@ -14,6 +14,7 @@ import auction_shared.Network.NetworkMessage;
 import auction_shared.dto.AuctionDTO;
 import auction_shared.dto.AuctionStatus;
 import auction_shared.dto.BidTransactionDTO;
+import auction_shared.dto.ItemType;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -61,6 +62,8 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
 
     @FXML
     TextField bidAmount;
+    @FXML
+    Label typeSpecificDisplay;
 
     @FXML
     LineChart<String, Number> bidHistory;
@@ -101,6 +104,12 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
             buyOut.setText("$" + df.format(auction.getBuyOutPrice()));
             tickRate.setText("$" + df.format(auction.getTickSize()));
             description.setText(auction.getItem().getDescription());
+
+            String attr = auction.getItem().getTypeSpecificAttribute();
+            if (attr != null && !attr.isBlank()) {
+                String label = auction.getItem().getTypeAttributeLabel() + ": " + attr;
+                typeSpecificDisplay.setText(label);
+            }
         });
     }
 
@@ -133,7 +142,7 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
                 }
                 if (!exist) {
                     cleanUp();
-                    switchToUserProductList();
+                    closeModal();
                 }
             });
         } else if (action.equals("GET_BID_HISTORY")) {
@@ -179,10 +188,9 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
     }
 
     @FXML
-    private void switchToUserProductList() {
-        ClientService.getInstance().sendMessage(new NetworkMessage("GET_PRODUCTS", null));
-        Stage stage = (Stage) tickRate.getScene().getWindow();
+    private void closeModal() {
         cleanUp();
+        Stage stage = (Stage) tickRate.getScene().getWindow();
         stage.close();
     }
 
@@ -228,6 +236,9 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
     }
 
     public void cleanUp() {
+        if (countdownTimeline != null) {
+            countdownTimeline.stop();
+        }
         ClientService.getInstance().removeListener(this);
     }
 }

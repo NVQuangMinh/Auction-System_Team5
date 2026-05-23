@@ -1,15 +1,15 @@
 package auction_server.core;
 
-import auction_server.Network.ClientHandler;
-import auction_server.entities.Auction;
-import auction_shared.Network.NetworkMessage;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.ReentrantLock;
+
+import auction_server.Network.ClientHandler;
+import auction_server.entities.Auction;
+import auction_shared.Network.NetworkMessage;
 
 public class AuctionManager {
     private static volatile AuctionManager manager = null;
@@ -52,7 +52,7 @@ public class AuctionManager {
         activeClients.remove(client);
     }
 
-    public void broadCast(NetworkMessage msg) {
+    public void broadcast(NetworkMessage msg) {
         for (ClientHandler client : activeClients) {
             client.sendMessage(msg);
         }
