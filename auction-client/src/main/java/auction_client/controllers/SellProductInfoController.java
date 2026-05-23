@@ -22,6 +22,7 @@ import javafx.animation.Timeline;
 import javafx.util.Duration;
 
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.time.LocalDateTime;
 import java.util.ResourceBundle;
@@ -87,11 +88,12 @@ public class SellProductInfoController implements Initializable, AuctionUpdateLi
     }
 
     public void updateData() {
+        DecimalFormat df = new DecimalFormat("#,###.###");
         Platform.runLater(() -> {
-            currentPrice.setText(String.valueOf(auction.getCurrentHighestBid()));
+            currentPrice.setText("$" + df.format(auction.getCurrentHighestBid()));
             itemName.setText(auction.getItem().getName());
-            buyOut.setText(String.valueOf(auction.getBuyOutPrice()));
-            tickRate.setText(String.valueOf(auction.getTickSize()));
+            buyOut.setText("$" + df.format(auction.getBuyOutPrice()));
+            tickRate.setText("$" + df.format(auction.getTickSize()));
             description.setText(auction.getItem().getDescription());
         });
     }

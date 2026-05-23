@@ -1,6 +1,7 @@
 package auction_client.controllers;
 
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -71,9 +72,10 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
     // Tạo một Series dữ liệu (Đường bọc các điểm tọa độ)
     private XYChart.Series<String, Number> priceSeries = new XYChart.Series<>();
 
-
     AuctionDTO auction = null;
     private Timeline countdownTimeline;
+
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -92,11 +94,12 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
     }
 
     public void updateData() {
+        DecimalFormat df = new DecimalFormat("#,###.##");
         Platform.runLater(() -> {
-            currentPrice.setText(String.valueOf(auction.getCurrentHighestBid()));
+            currentPrice.setText("$" + df.format(auction.getCurrentHighestBid()));
             itemName.setText(auction.getItem().getName());
-            buyOut.setText(String.valueOf(auction.getBuyOutPrice()));
-            tickRate.setText(String.valueOf(auction.getTickSize()));
+            buyOut.setText("$" + df.format(auction.getBuyOutPrice()));
+            tickRate.setText("$" + df.format(auction.getTickSize()));
             description.setText(auction.getItem().getDescription());
         });
     }

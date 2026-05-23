@@ -6,9 +6,12 @@ import auction_client.interfaces.HandleCardClicked;
 import auction_shared.Network.NetworkMessage;
 import auction_shared.dto.AuctionDTO;
 import auction_shared.dto.BidTransactionDTO;
+import auction_shared.dto.ItemType;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.time.LocalDateTime;
 
@@ -23,6 +26,8 @@ public class ProductCardController {
     protected Label buyOutPrice;
     @FXML
     protected Label description;
+    @FXML
+    protected FontIcon productIcon;
 
     private AuctionDTO auction = null;
     private HandleCardClicked cardClickedListener = null;
