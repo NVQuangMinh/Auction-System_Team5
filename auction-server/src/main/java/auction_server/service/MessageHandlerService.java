@@ -205,7 +205,7 @@ public class MessageHandlerService {
             messageSender.sendMessage(new NetworkMessage("LOGIN", Mappers.toDTO(user)));
             log.info("{}{}", dto.getUsername(), " successfully login");
             activities.add(new Notification("login successfully", LocalTime.now()));
-        } catch (IllegalArgumentException | UserBannedException | UserNotFoundException e) {
+        } catch (IllegalArgumentException | UserBannedException | UserNotFoundException | DatabaseException e) {
             messageSender.sendMessage(new NetworkMessage("LOGIN", null));
             log.info("{}{}", dto.getUsername(), " failed to login");
             activities.add(new Notification(

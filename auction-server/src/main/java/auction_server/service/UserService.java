@@ -66,9 +66,9 @@ public class UserService {
         } catch (DatabaseException e) {
             log.error("Database error during login for user: {}", username, e);
             throw e;
-        } catch (Exception e) {
+        } catch (UserBannedException | UserNotFoundException e) {
             log.error("Unexpected exception occurred during login for user: {}", username, e);
-            throw new DatabaseException("Unexpected error during login", e);
+            throw e;
         }
     }
 }
