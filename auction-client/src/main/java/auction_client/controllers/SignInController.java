@@ -36,6 +36,12 @@ public class SignInController implements Initializable, AuctionUpdateListener {
         ClientService.getInstance().addListener(this);
     }
 
+    /**
+     * Xử lí khi người dùng ấn vào nút đăng nhập
+     *
+     * Kiểm tra nếu tên đăng nhập và mật khẩu trống thì cảnh báo
+     * Nếu không lỗi thì khởi tạo SignUpDTO gửi dữ liệu người dùng cùng tin nhắn "LOGIN" cho ClientService
+     */
     @FXML
     public void onSignInClicked() {
         String inputUsername = username.getText().trim();
@@ -70,6 +76,12 @@ public class SignInController implements Initializable, AuctionUpdateListener {
         }
     }
 
+    /**
+     * Vào trang chủ
+     *
+     * Chuyển từ cửa sổ SignIn vào trang chủ AuctionMain
+     * @exception IOException khi không load được trang chủ thì báo lỗi
+     */
     private void switchToMainScene() {
         try {
             ClientService.getInstance().removeListener(this);
