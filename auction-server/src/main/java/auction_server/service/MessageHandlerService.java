@@ -393,15 +393,26 @@ public class MessageHandlerService {
     }
     
     /**
-     * Xử lý xóa sản phẩm.
-     * 
+     * Xử lý xóa (ban) sản phẩm bởi Admin.
+     * - Nếu ACTIVE (còn trong RAM): remove khỏi AuctionManager + đánh dấu BANNED trong DB + broadcast UPDATE_BID.
+     * - Nếu ENDED/SOLD (chỉ trong DB): đánh dấu BANNED trong DB + broadcast REMOVE_ITEM để client xóa khỏi UI.
+     *
      * @param msg NetworkMessage chứa AuctionDTO
      */
     public void handleRemoveItem(NetworkMessage msg) {
         AuctionDTO auctionDTO = (AuctionDTO) msg.getData();
-        Auction auction = AuctionManager.getInstance().getRoom(auctionDTO.getItem().getId());
+        String itemId = auctionDTO.getItem().getId();
+
+        Auction auction = AuctionManager.getInstance().getRoom(itemId);
         if (auction != null) {
+            // ACTIVE: remove khỏi RAM trước, rồi ban trong DB
             AuctionManager.getInstance().removeRoom(auction);
+            try {
+                daoProvider.auctionDAO().updateStatusOnly(itemId, AuctionStatus.BANNED);
+                log.info("Auction {} has been banned (was ACTIVE)", itemId);
+            } catch (DatabaseException e) {
+                log.error("Failed to ban active auction {} in DB", itemId, e);
+            }
             var activeOnly = AuctionManager.getInstance().getAllRooms().stream()
                     .filter(a -> a.getStatus() == AuctionStatus.ACTIVE)
                     .collect(Collectors.toList());
@@ -409,6 +420,18 @@ public class MessageHandlerService {
                     "UPDATE_BID",
                     (Serializable) Mappers.toAuctionDTOList(activeOnly)
             ));
+        } else {
+            // ENDED/SOLD: chỉ tồn tại trong DB
+            try {
+                daoProvider.auctionDAO().updateStatusOnly(itemId, AuctionStatus.BANNED);
+                log.info("Auction {} has been banned (was ENDED/SOLD)", itemId);
+                // Thông báo cho tất cả client Admin xóa item khỏi danh sách
+                AuctionManager.getInstance().broadcast(new NetworkMessage(
+                        "REMOVE_ITEM", auctionDTO
+                ));
+            } catch (DatabaseException e) {
+                log.error("Failed to ban ended auction {} in DB", itemId, e);
+            }
         }
     }
     

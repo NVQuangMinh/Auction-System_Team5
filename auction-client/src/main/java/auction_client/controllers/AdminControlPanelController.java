@@ -257,6 +257,17 @@ public class AdminControlPanelController implements Initializable, AuctionUpdate
                     showActivePage();
                 }
             });
+
+        } else if (action.equals("REMOVE_ITEM")) {
+            // Auction ENDED/SOLD bị Admin ban: xóa khỏi danh sách local, refresh UI
+            AuctionDTO removed = (AuctionDTO) msg.getData();
+            Platform.runLater(() -> {
+                endedItems.removeIf(a ->
+                        a.getItem().getId().equals(removed.getItem().getId()));
+                if (endedStatusRadio.isSelected()) {
+                    showEndedPage();
+                }
+            });
         }
     }
 

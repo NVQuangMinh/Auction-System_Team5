@@ -108,6 +108,26 @@ public class AuctionDAO implements WritableDAO<Auction> {
     }
 
     /**
+     * Cập nhật chỉ trạng thái của auction (không thay đổi winner/bid).
+     * Dùng khi Admin ban một auction — giữ nguyên toàn bộ lịch sử.
+     *
+     * @param auctionId ID của auction cần cập nhật
+     * @param status    Trạng thái mới (thường là BANNED)
+     */
+    public int updateStatusOnly(String auctionId, AuctionStatus status) {
+        String sql = "UPDATE auctions SET auction_status = ? WHERE id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, status.name());
+            ps.setString(2, auctionId);
+            return ps.executeUpdate();
+        } catch (SQLException e) {
+            log.error("Database error while updating status for auction: {}", auctionId, e);
+            throw new DatabaseException("Failed to update status for auction: " + auctionId, e);
+        }
+    }
+
+    /**
      * Load tất cả auction có trạng thái ACTIVE từ DB.
      * Dùng khi server khởi động lại để rebuild in-memory state.
      */
