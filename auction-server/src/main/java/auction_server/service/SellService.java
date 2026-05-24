@@ -50,6 +50,9 @@ public class SellService {
         } catch (SQLException e) {
             log.error("Database connection error while publishing item and auction: {}", item.getId(), e);
             throw new DatabaseException("Failed to get database connection", e);
+            // thêm catch TransactionFailedException ở đây vì nếu không nó sẽ nhảy vào Exception bên dưới và throw nhầm
+        } catch (TransactionFailedException e) {
+            throw e;
         } catch (Exception e) {
             log.error("Unexpected exception occurred while getting database connection for publishing: {}", item.getId(), e);
             throw new DatabaseException("Unexpected error while getting database connection", e);

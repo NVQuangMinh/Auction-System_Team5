@@ -16,4 +16,9 @@ module auction.server {
     opens auction_server.Network to auction.shared;
     exports auction_server.behaviors.profile;
     exports auction_server.service;
+
+    // Cho phép Mockito truy cập các package này khi chạy test
+    opens auction_server.dao;
+    opens auction_server.entities;
+    opens auction_server.service;
 }
