@@ -31,13 +31,7 @@ import auction_shared.dto.SignUpDTO;
 import auction_shared.dto.UserDTO;
 
 /**
- * Service xử lý các message từ client.
- * 
- * Class này chứa logic xử lý cho tất cả các loại action từ client,
- * bao gồm đặt giá thầu, bán sản phẩm, đăng nhập, đăng ký, v.v.
- * 
- * @author Team 5
- * @version 1.0
+ * Service xử lý các message từ client
  */
 public class MessageHandlerService {
 
