@@ -91,8 +91,6 @@ public class WebMenuBarController implements Initializable {
             mainController.cleanup();
         } else if (controller instanceof AllProductController allProductController) {
             allProductController.cleanup();
-        } else if (controller instanceof BidProductSceneController bidController) {
-            bidController.cleanup();
         } else if (controller instanceof FilteredProductSceneController filteredController) {
             filteredController.cleanup();
         } else if (controller instanceof SellProductSceneController sellController) {
