@@ -54,7 +54,6 @@ import static org.mockito.Mockito.*;
  * ============================================================
  */
 public class AllProductControllerTest extends ApplicationTest {
-
     private AllProductController controller;
     private ClientService mockClientService;
     private MockedStatic<ClientService> mockedStaticClientService;
@@ -71,7 +70,7 @@ public class AllProductControllerTest extends ApplicationTest {
         // ① Mock TRƯỚC khi load FXML – initialize() sẽ thấy mock ngay
         mockClientService = mock(ClientService.class);
         mockedStaticClientService = mockStatic(ClientService.class);
-        mockedStaticClientService.when(ClientService::getInstance).thenReturn(mockClientService);
+        mockedStaticClientService.when(() -> ClientService.getInstance()).thenReturn(mockClientService);
 
         // ② Đúng tên file FXML
         FXMLLoader loader = new FXMLLoader(

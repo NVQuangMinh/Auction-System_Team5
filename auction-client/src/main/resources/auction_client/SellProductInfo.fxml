@@ -96,7 +96,7 @@
                            </HBox.margin>
                         </ImageView>
                         <Label prefHeight="64.0" prefWidth="459.0" style="-fx-font-size: 25; -fx-font-weight: bold;" text="Price History" />
-                        <Label fx:id="closeButton" alignment="TOP_RIGHT" onMouseClicked="#switchToUserProductList" prefHeight="57.0" prefWidth="151.0" style="-fx-font-size: 18; -fx-font-weight: bold;" text="X" textAlignment="RIGHT" textFill="#00000051">
+                        <Label fx:id="closeButton" alignment="TOP_RIGHT" onMouseClicked="#closeModal" prefHeight="57.0" prefWidth="151.0" style="-fx-font-size: 18; -fx-font-weight: bold;" text="X" textAlignment="RIGHT" textFill="#00000051">
                            <cursor>
                               <Cursor fx:constant="HAND" />
                            </cursor>

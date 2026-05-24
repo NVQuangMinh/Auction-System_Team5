@@ -11,10 +11,7 @@ import auction_client.Network.ClientService;
 import auction_client.UserSession;
 import auction_client.interfaces.AuctionUpdateListener;
 import auction_shared.Network.NetworkMessage;
-import auction_shared.dto.AuctionDTO;
-import auction_shared.dto.AuctionStatus;
-import auction_shared.dto.BidTransactionDTO;
-import auction_shared.dto.ItemType;
+import auction_shared.dto.*;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -77,8 +74,6 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
 
     AuctionDTO auction = null;
     private Timeline countdownTimeline;
-
-
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
