@@ -120,6 +120,12 @@ public class MessageHandlerService {
             messageSender.sendMessage(new NetworkMessage("BID_SUCCESS", Mappers.toDTO(auction)));
             var activeOnly = AuctionManager.getInstance().getAllRooms().stream()
                     .filter(a -> a.getStatus() == AuctionStatus.ACTIVE)
+                    /**
+                     * Cái dấu -> là lambda
+                     * Ở bên trái: a (là phần tử được duyệt)
+                     * Bên phải: điều kiện (if)
+                     * Nếu đúng điều kiện (active) thì sẽ trả veef true cho hàm filter
+                     */
                     .collect(Collectors.toList());
             AuctionManager.getInstance().broadcast(new NetworkMessage(
                     "UPDATE_BID",
@@ -165,6 +171,12 @@ public class MessageHandlerService {
             AuctionManager.getInstance().addRoom(room);
             var activeOnly = AuctionManager.getInstance().getAllRooms().stream()
                     .filter(a -> a.getStatus() == AuctionStatus.ACTIVE)
+                    /**
+                     * Cái dấu -> là lambda
+                     * Ở bên trái: a (là phần tử được duyệt)
+                     * Bên phải: điều kiện (if)
+                     * Nếu đúng điều kiện (active) thì sẽ trả veef true cho hàm filter
+                     */
                     .collect(Collectors.toList());
             AuctionManager.getInstance().broadcast(new NetworkMessage(
                     "UPDATE_BID",
@@ -219,7 +231,6 @@ public class MessageHandlerService {
         List<Auction> activeFromRam = AuctionManager.getInstance().getAllRooms().stream()
                 .filter(a -> a.getStatus() == AuctionStatus.ACTIVE)
                 .collect(Collectors.toList());
-
         List<Auction> endedFromDb = daoProvider.auctionDAO()
                 .selectEndedSaledAuctions(null, 0, PAGE_SIZE_ENDED);
         int endedCount = daoProvider.auctionDAO().countEndedSaledAuctions(null);
