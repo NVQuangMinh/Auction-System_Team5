@@ -220,6 +220,7 @@ public class MessageHandlerService {
      * Xử lý lấy danh sách sản phẩm (hybrid).
      * - ACTIVE: lấy từ RAM (AuctionManager)
      * - ENDED/SOLD: lấy từ DB (phân trang, trang đầu)
+     * Áp dụng phân trang cho cả Admin và User để tránh OutOfMemory.
      *
      * @param msg NetworkMessage
      */
@@ -228,15 +229,8 @@ public class MessageHandlerService {
                 .filter(a -> a.getStatus() == AuctionStatus.ACTIVE)
                 .collect(Collectors.toList());
 
-        List<Auction> endedFromDb;
-        User user = getLoggedInUser();
-        if (user != null && "ADMIN".equalsIgnoreCase(user.getRole())) {
-            endedFromDb = daoProvider.auctionDAO().selectAllAuctions().stream()
-                    .filter(a -> a.getStatus() == AuctionStatus.ENDED || a.getStatus() == AuctionStatus.SOLD)
-                    .collect(Collectors.toList());
-        } else {
-            endedFromDb = daoProvider.auctionDAO().selectEndedSaledAuctions(null, 0, PAGE_SIZE_ENDED);
-        }
+        List<Auction> endedFromDb = daoProvider.auctionDAO()
+                .selectEndedSaledAuctions(null, 0, PAGE_SIZE_ENDED);
         int endedCount = daoProvider.auctionDAO().countEndedSaledAuctions(null);
 
         List<AuctionDTO> activeDTOs = Mappers.toAuctionDTOList(activeFromRam);

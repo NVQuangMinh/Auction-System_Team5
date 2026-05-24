@@ -29,6 +29,7 @@ public class AuctionDAO implements WritableDAO<Auction> {
     public Connection getConnection() throws SQLException {
         return DatabaseConnection.getConnection();
     }
+
     @Override
     public int insert(Auction auction) {
         String sql = "INSERT INTO auctions (id, item_id, starting_price, buy_out_price, tick_size, current_highest_bid, start_time, end_time, auction_status, anti_snipe) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -126,9 +127,10 @@ public class AuctionDAO implements WritableDAO<Auction> {
      * Load auction ENDED/SOLD từ DB với phân trang và lọc theo category.
      * ACTIVE auctions được serve từ RAM, không query DB.
      *
-     * @param categoryFilter "ALL", "ARTS", "ELECTRONICS", "VEHICLES" hoặc null (ALL)
-     * @param page          số trang (0-based)
-     * @param pageSize      số item mỗi trang
+     * @param categoryFilter "ALL", "ARTS", "ELECTRONICS", "VEHICLES" hoặc null
+     *                       (ALL)
+     * @param page           số trang (0-based)
+     * @param pageSize       số item mỗi trang
      * @return danh sách Auction
      */
     public List<Auction> selectEndedSaledAuctions(String categoryFilter, int page, int pageSize) {
@@ -140,12 +142,12 @@ public class AuctionDAO implements WritableDAO<Auction> {
         String baseSql = "SELECT a.*, " +
                 "i.id as item_id, i.item_name, i.description, i.item_type, " +
                 "i.artist_name, i.model, i.brand, " +
-                "u.id as owner_id, u.username, u.password " +
+                "u.id as owner_id, u.username " +
                 "FROM auctions a " +
                 "JOIN items i ON a.item_id = i.id " +
                 "JOIN users u ON i.owner_id = u.id " +
                 "WHERE " + statusCondition + categoryCondition +
-                "ORDER BY a.end_time DESC " +
+                " ORDER BY a.end_time DESC " +
                 "LIMIT ? OFFSET ?";
 
         List<Auction> auctions = new ArrayList<>();
@@ -162,12 +164,12 @@ public class AuctionDAO implements WritableDAO<Auction> {
                     User owner = new User(
                             rs.getString("owner_id"),
                             rs.getString("username"),
-                            rs.getString("password")
-                    );
+                            null);
                     Item item = mapRowToItem(rs, owner);
 
                     LocalDateTime startTime = rs.getTimestamp("start_time").toLocalDateTime();
                     LocalDateTime endTime = rs.getTimestamp("end_time").toLocalDateTime();
+
                     if (startTime == null || endTime == null) {
                         continue;
                     }
@@ -181,8 +183,7 @@ public class AuctionDAO implements WritableDAO<Auction> {
                             endTime,
                             rs.getBoolean("anti_snipe"),
                             rs.getDouble("current_highest_bid"),
-                            AuctionStatus.valueOf(rs.getString("auction_status"))
-                    ));
+                            AuctionStatus.valueOf(rs.getString("auction_status"))));
                 }
             }
         } catch (SQLException e) {
@@ -263,8 +264,7 @@ public class AuctionDAO implements WritableDAO<Auction> {
                     User owner = new User(
                             rs.getString("owner_id"),
                             rs.getString("username"),
-                            rs.getString("password")
-                    );
+                            rs.getString("password"));
                     Item item = mapRowToItem(rs, owner);
 
                     LocalDateTime startTime = rs.getTimestamp("start_time").toLocalDateTime();
@@ -283,8 +283,7 @@ public class AuctionDAO implements WritableDAO<Auction> {
                             endTime,
                             rs.getBoolean("anti_snipe"),
                             rs.getDouble("current_highest_bid"),
-                            AuctionStatus.valueOf(rs.getString("auction_status"))
-                    );
+                            AuctionStatus.valueOf(rs.getString("auction_status")));
                 }
             }
         } catch (SQLException e) {
@@ -312,8 +311,7 @@ public class AuctionDAO implements WritableDAO<Auction> {
                 User owner = new User(
                         rs.getString("owner_id"),
                         rs.getString("username"),
-                        rs.getString("password")
-                );
+                        rs.getString("password"));
                 Item item = mapRowToItem(rs, owner);
 
                 LocalDateTime startTime = rs.getTimestamp("start_time").toLocalDateTime();
@@ -332,8 +330,7 @@ public class AuctionDAO implements WritableDAO<Auction> {
                         endTime,
                         rs.getBoolean("anti_snipe"),
                         rs.getDouble("current_highest_bid"),
-                        AuctionStatus.valueOf(rs.getString("auction_status"))
-                ));
+                        AuctionStatus.valueOf(rs.getString("auction_status"))));
             }
         } catch (SQLException e) {
             log.error("Database error while selecting auctions by condition", e);
@@ -344,7 +341,8 @@ public class AuctionDAO implements WritableDAO<Auction> {
 
     @Override
     public int update(Auction auction) {
-        // Cập nhật status và winner_id khi phiên đấu giá kết thúc (được gọi bởi Scheduler)
+        // Cập nhật status và winner_id khi phiên đấu giá kết thúc (được gọi bởi
+        // Scheduler)
         String sql = "UPDATE auctions SET auction_status = ?, winner_id = ?, current_highest_bid = ? WHERE id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql)) {
