@@ -288,6 +288,7 @@ public class MessageHandlerService {
 
         try {
             bidService.processBuyOut(auction, transaction);
+            AuctionManager.getInstance().removeRoom(auction);
             AuctionDTO auctionDTO = Mappers.toDTO(auction);
             String winnerId = auction.getWinnerId();
             if (winnerId != null) {
