@@ -1,6 +1,8 @@
 package auction_server;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import auction_server.Network.SocketServer;
 import auction_server.core.AuctionManager;
@@ -24,13 +26,18 @@ public class Main {
         // - ENDED/SOLD auctions: added to AuctionManager (visible to clients, not modified)
         AuctionManager manager = AuctionManager.getInstance();
         List<Auction> activeAuctions = auctionDAO.selectActiveAuctions();
-        int activeCount = 0;
+
+        Map<String, List<BidTransaction>> activeHistories = bidDAO.selectActiveAuctionsBidHistory();
 
         for (Auction auction : activeAuctions) {
-            manager.addRoom(auction);
-            activeCount++;
-            List<BidTransaction> history = bidDAO.selectByAuctionId(auction.getAuctionId());
+            List<BidTransaction> history = activeHistories.getOrDefault(auction.getAuctionId(), new ArrayList<>());
+            
+            for (BidTransaction tx : history) {
+                tx.setAuction(auction);
+            }
+            
             auction.setBidHistory(history);
+            manager.addRoom(auction);
         }
 
         System.out.println("[System] Loaded " + activeAuctions.size() + " active auction(s) from database.");

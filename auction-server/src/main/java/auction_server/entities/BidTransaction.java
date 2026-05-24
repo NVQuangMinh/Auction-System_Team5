@@ -31,6 +31,10 @@ public class BidTransaction implements Serializable {
         return auction;
     }
 
+    public void setAuction(Auction auction) {
+        this.auction = auction;
+    }
+
     public String getId() {
         return id;
     }

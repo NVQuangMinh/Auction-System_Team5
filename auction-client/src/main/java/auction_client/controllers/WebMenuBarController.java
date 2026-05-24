@@ -30,7 +30,7 @@ public class WebMenuBarController implements Initializable {
     public Button adminControlPanelButton;
 
     @Override
-    public void initialize(URL url, ResourceBundle resourceBundle){
+    public void initialize(URL url, ResourceBundle resourceBundle) {
         adminControlPanelButton.managedProperty().bind(adminControlPanelButton.visibleProperty());
         productsMenuButton.managedProperty().bind(productsMenuButton.visibleProperty());
         userProductListButton.managedProperty().bind(userProductListButton.visibleProperty());
@@ -56,7 +56,8 @@ public class WebMenuBarController implements Initializable {
     @FXML
     public void switchToUserProductListScene(ActionEvent event) throws IOException {
         cleanupCurrentScene(event);
-        ClientService.getInstance().sendMessage(new NetworkMessage("GET_MY_LIST", UserSession.getInstance().getUsername()));
+        ClientService.getInstance()
+                .sendMessage(new NetworkMessage("GET_MY_LIST", UserSession.getInstance().getUsername()));
         switchScene(event, "/auction_client/SellProductScene.fxml");
     }
 
@@ -90,8 +91,6 @@ public class WebMenuBarController implements Initializable {
             mainController.cleanup();
         } else if (controller instanceof AllProductController allProductController) {
             allProductController.cleanup();
-        } else if (controller instanceof BidProductSceneController bidController) {
-            bidController.cleanup();
         } else if (controller instanceof FilteredProductSceneController filteredController) {
             filteredController.cleanup();
         } else if (controller instanceof SellProductSceneController sellController) {
@@ -104,6 +103,7 @@ public class WebMenuBarController implements Initializable {
     private void switchScene(javafx.event.Event event, String fxmlPath) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(fxmlPath));
         Parent root = fxmlLoader.load();
+        root.getProperties().put("fx_controller", fxmlLoader.getController());
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.getScene().setRoot(root);
         stage.centerOnScreen();

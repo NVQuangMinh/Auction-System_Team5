@@ -40,7 +40,7 @@ import auction_shared.dto.UserDTO;
  * @version 1.0
  */
 public class MessageHandlerService {
-    
+
     private static final Logger log = LoggerFactory.getLogger(MessageHandlerService.class);
     private static final int PAGE_SIZE_ENDED = 12;
 
@@ -50,7 +50,7 @@ public class MessageHandlerService {
     private final List<Notification> activities = new CopyOnWriteArrayList<>();
     private User loggedInUser;
     private final MessageSender messageSender;
-    
+
     /**
      * Interface để gửi message về client.
      */
@@ -61,18 +61,18 @@ public class MessageHandlerService {
     /**
      * Khởi tạo MessageHandlerService.
      *
-     * @param activities Danh sách hoạt động của user
+     * @param activities    Danh sách hoạt động của user
      * @param messageSender Callback để gửi message về client
      *
      */
     public MessageHandlerService(MessageSender messageSender,
-                                 DAOProvider daoProvider) {
+            DAOProvider daoProvider) {
         this.daoProvider = daoProvider;
         this.userService = new UserService(daoProvider);
         this.sellService = new SellService(daoProvider);
         this.messageSender = messageSender;
     }
-    
+
     /**
      * Thiết lập user đã đăng nhập.
      *
@@ -81,7 +81,7 @@ public class MessageHandlerService {
     public void setLoggedInUser(User user) {
         this.loggedInUser = user;
     }
-    
+
     /**
      * Lấy user đã đăng nhập.
      * 
@@ -90,7 +90,7 @@ public class MessageHandlerService {
     public User getLoggedInUser() {
         return loggedInUser;
     }
-    
+
     /**
      * Xử lý đặt giá bid.
      * 
@@ -101,7 +101,7 @@ public class MessageHandlerService {
 
         Auction auction = AuctionManager.getInstance().getRoom(transactionDTO.getAuction().getItem().getId());
         if (auction == null) {
-            messageSender.sendMessage(new NetworkMessage("BID_FAILED", null));
+            messageSender.sendMessage(new NetworkMessage("BID_FAILED", "This auction has ended or no longer exists!"));
             activities.add(new Notification("bid failed: auction not found", LocalTime.now()));
             return;
         }
@@ -120,31 +120,31 @@ public class MessageHandlerService {
             messageSender.sendMessage(new NetworkMessage("BID_SUCCESS", Mappers.toDTO(auction)));
             var activeOnly = AuctionManager.getInstance().getAllRooms().stream()
                     .filter(a -> a.getStatus() == AuctionStatus.ACTIVE)
+                    /**
+                     * Cái dấu -> là lambda
+                     * Ở bên trái: a (là phần tử được duyệt)
+                     * Bên phải: điều kiện (if)
+                     * Nếu đúng điều kiện (active) thì sẽ trả veef true cho hàm filter
+                     */
                     .collect(Collectors.toList());
             AuctionManager.getInstance().broadcast(new NetworkMessage(
                     "UPDATE_BID",
-                    (Serializable) Mappers.toAuctionDTOList(activeOnly)
-            ));
+                    (Serializable) Mappers.toAuctionDTOList(activeOnly)));
             log.info("A new bid has been placed");
             activities.add(new Notification("you have placed bid successfully", LocalTime.now()));
-        }
-        catch (InvalidBidAmountException | SelfBiddingException | InactiveBidException e) {
+        } catch (InvalidBidAmountException | SelfBiddingException | InactiveBidException e) {
             messageSender.sendMessage(new NetworkMessage("BID_FAILED", e.getMessage()));
             log.info(e.getMessage());
             activities.add(new Notification(e.getMessage(), LocalTime.now()));
-        }
-        catch (DatabaseException e) {
+        } catch (DatabaseException e) {
             // Catch database errors
             messageSender.sendMessage(new NetworkMessage("BID_FAILED", e.getMessage()));
             log.error(e.getMessage());
             activities.add(new Notification(e.getMessage(), LocalTime.now()));
         }
 
-
-
-
     }
-    
+
     /**
      * Xử lý bán sản phẩm.
      * 
@@ -163,8 +163,7 @@ public class MessageHandlerService {
                 auctionDTO.getTickSize(),
                 auctionDTO.getStartTime(),
                 auctionDTO.getEndTime(),
-                auctionDTO.isAntiSniping()
-        );
+                auctionDTO.isAntiSniping());
 
         try {
             sellService.publishItemAndAuction(item, room);
@@ -172,11 +171,16 @@ public class MessageHandlerService {
             AuctionManager.getInstance().addRoom(room);
             var activeOnly = AuctionManager.getInstance().getAllRooms().stream()
                     .filter(a -> a.getStatus() == AuctionStatus.ACTIVE)
+                    /**
+                     * Cái dấu -> là lambda
+                     * Ở bên trái: a (là phần tử được duyệt)
+                     * Bên phải: điều kiện (if)
+                     * Nếu đúng điều kiện (active) thì sẽ trả veef true cho hàm filter
+                     */
                     .collect(Collectors.toList());
             AuctionManager.getInstance().broadcast(new NetworkMessage(
                     "UPDATE_BID",
-                    (Serializable) Mappers.toAuctionDTOList(activeOnly)
-            ));
+                    (Serializable) Mappers.toAuctionDTOList(activeOnly)));
             messageSender.sendMessage(new NetworkMessage("SELL_SUCCESS", true));
             log.info("SELL SUCCESS");
             activities.add(new Notification("you have sold item successfully", LocalTime.now()));
@@ -188,7 +192,7 @@ public class MessageHandlerService {
             log.info("Added SELL FAILED notification, total activities: {}", activities.size());
         }
     }
-    
+
     /**
      * Xử lý đăng nhập.
      * 
@@ -210,12 +214,11 @@ public class MessageHandlerService {
             log.info("{}{}", dto.getUsername(), " failed to login");
             activities.add(new Notification(
                     e.getMessage(),
-                    LocalTime.now()
-            ));
+                    LocalTime.now()));
         }
 
     }
-    
+
     /**
      * Xử lý lấy danh sách sản phẩm (hybrid).
      * - ACTIVE: lấy từ RAM (AuctionManager)
@@ -228,7 +231,6 @@ public class MessageHandlerService {
         List<Auction> activeFromRam = AuctionManager.getInstance().getAllRooms().stream()
                 .filter(a -> a.getStatus() == AuctionStatus.ACTIVE)
                 .collect(Collectors.toList());
-
         List<Auction> endedFromDb = daoProvider.auctionDAO()
                 .selectEndedSaledAuctions(null, 0, PAGE_SIZE_ENDED);
         int endedCount = daoProvider.auctionDAO().countEndedSaledAuctions(null);
@@ -259,11 +261,10 @@ public class MessageHandlerService {
                 java.util.Collections.emptyList(),
                 Mappers.toAuctionDTOList(endedFromDb),
                 totalCount,
-                0
-        );
+                0);
         messageSender.sendMessage(new NetworkMessage("GET_ENDED_PRODUCTS", response));
     }
-    
+
     /**
      * Xử lý mua ngay.
      *
@@ -273,7 +274,8 @@ public class MessageHandlerService {
         BidTransactionDTO transactionDTO = (BidTransactionDTO) msg.getData();
         Auction auction = AuctionManager.getInstance().getRoom(transactionDTO.getAuction().getItem().getId());
         if (auction == null) {
-            messageSender.sendMessage(new NetworkMessage("BUYOUT_FAILED", null));
+            messageSender
+                    .sendMessage(new NetworkMessage("BUYOUT_FAILED", "This auction has ended or no longer exists!"));
             return;
         }
 
@@ -288,6 +290,7 @@ public class MessageHandlerService {
 
         try {
             bidService.processBuyOut(auction, transaction);
+            AuctionManager.getInstance().removeRoom(auction);
             AuctionDTO auctionDTO = Mappers.toDTO(auction);
             String winnerId = auction.getWinnerId();
             if (winnerId != null) {
@@ -299,25 +302,22 @@ public class MessageHandlerService {
                     .collect(Collectors.toList());
             AuctionManager.getInstance().broadcast(new NetworkMessage(
                     "UPDATE_BID",
-                    (Serializable) Mappers.toAuctionDTOList(activeOnly)
-            ));
+                    (Serializable) Mappers.toAuctionDTOList(activeOnly)));
 
             log.info("BUY OUT SUCCESS");
             activities.add(new Notification("you have buy out item successfully", LocalTime.now()));
-        }
-        catch (InvalidBidAmountException | InactiveBidException | SelfBiddingException e) {
+        } catch (InvalidBidAmountException | InactiveBidException | SelfBiddingException e) {
             messageSender.sendMessage(new NetworkMessage("BID_FAILED", e.getMessage()));
             log.info(e.getMessage());
             activities.add(new Notification(e.getMessage(), LocalTime.now()));
-        }
-        catch (DatabaseException e) {
+        } catch (DatabaseException e) {
             messageSender.sendMessage(new NetworkMessage("BUYOUT_FAILED", e.getMessage()));
             log.error(e.getMessage());
             activities.add(new Notification(e.getMessage(), LocalTime.now()));
         }
 
     }
-    
+
     /**
      * Xử lý lấy danh sách sản phẩm của user.
      * 
@@ -333,7 +333,7 @@ public class MessageHandlerService {
         }
         messageSender.sendMessage(new NetworkMessage("GET_MY_LIST", (Serializable) Mappers.toAuctionDTOList(myList)));
     }
-    
+
     /**
      * Xử lý tạo tài khoản.
      * 
@@ -347,20 +347,18 @@ public class MessageHandlerService {
             messageSender.sendMessage(new NetworkMessage("CREATE_ACCOUNT", true));
             activities.add(new Notification(
                     "account created successfully",
-                    LocalTime.now()
-            ));
-            log.info("{}{}", dto.getUsername(),  " successfully created account");
+                    LocalTime.now()));
+            log.info("{}{}", dto.getUsername(), " successfully created account");
         } catch (IllegalArgumentException | DatabaseException e) {
             messageSender.sendMessage(new NetworkMessage("CREATE_ACCOUNT", false));
             log.info("{}{}", dto.getUsername(), " failed to create account");
             activities.add(new Notification(
                     e.getMessage(),
-                    LocalTime.now()
-            ));
+                    LocalTime.now()));
         }
 
     }
-    
+
     /**
      * Xử lý lấy danh sách hoạt động.
      * 
@@ -370,7 +368,7 @@ public class MessageHandlerService {
         log.info("GET_ACTIVITIES request received, sending {} notifications", activities.size());
         messageSender.sendMessage(new NetworkMessage("GET_ACTIVITIES", (Serializable) activities));
     }
-    
+
     /**
      * Xử lý ban user.
      * 
@@ -391,11 +389,13 @@ public class MessageHandlerService {
         }
 
     }
-    
+
     /**
      * Xử lý xóa (ban) sản phẩm bởi Admin.
-     * - Nếu ACTIVE (còn trong RAM): remove khỏi AuctionManager + đánh dấu BANNED trong DB + broadcast UPDATE_BID.
-     * - Nếu ENDED/SOLD (chỉ trong DB): đánh dấu BANNED trong DB + broadcast REMOVE_ITEM để client xóa khỏi UI.
+     * - Nếu ACTIVE (còn trong RAM): remove khỏi AuctionManager + đánh dấu BANNED
+     * trong DB + broadcast UPDATE_BID.
+     * - Nếu ENDED/SOLD (chỉ trong DB): đánh dấu BANNED trong DB + broadcast
+     * REMOVE_ITEM để client xóa khỏi UI.
      *
      * @param msg NetworkMessage chứa AuctionDTO
      */
@@ -418,8 +418,7 @@ public class MessageHandlerService {
                     .collect(Collectors.toList());
             AuctionManager.getInstance().broadcast(new NetworkMessage(
                     "UPDATE_BID",
-                    (Serializable) Mappers.toAuctionDTOList(activeOnly)
-            ));
+                    (Serializable) Mappers.toAuctionDTOList(activeOnly)));
         } else {
             // ENDED/SOLD: chỉ tồn tại trong DB
             try {
@@ -427,14 +426,13 @@ public class MessageHandlerService {
                 log.info("Auction {} has been banned (was ENDED/SOLD)", itemId);
                 // Thông báo cho tất cả client Admin xóa item khỏi danh sách
                 AuctionManager.getInstance().broadcast(new NetworkMessage(
-                        "REMOVE_ITEM", auctionDTO
-                ));
+                        "REMOVE_ITEM", auctionDTO));
             } catch (DatabaseException e) {
                 log.error("Failed to ban ended auction {} in DB", itemId, e);
             }
         }
     }
-    
+
     /**
      * Xử lý lấy danh sách users.
      * 
@@ -444,7 +442,7 @@ public class MessageHandlerService {
         List<User> users = daoProvider.userDAO().getAllUsers();
         messageSender.sendMessage(new NetworkMessage("GET_USERS", (Serializable) Mappers.toUserDTOList(users)));
     }
-    
+
     /**
      * Xử lý lấy lịch sử đặt giá.
      * Hybrid: ACTIVE auction → đọc từ RAM
@@ -463,12 +461,11 @@ public class MessageHandlerService {
             history = Mappers.toBidTransactionDTOList(auction.getBidHistory());
         } else {
             history = Mappers.toBidTransactionDTOList(
-                    daoProvider.bidTransactionDAO().selectByAuctionId(itemId)
-            );
+                    daoProvider.bidTransactionDAO().selectByAuctionId(itemId));
         }
         messageSender.sendMessage(new NetworkMessage("GET_BID_HISTORY", (Serializable) history));
     }
-    
+
     /**
      * Xử lý đăng xuất.
      * 

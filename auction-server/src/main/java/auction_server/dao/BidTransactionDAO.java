@@ -6,6 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,6 +65,46 @@ public class BidTransactionDAO implements TransactionalDAO<BidTransaction> {
             throw new DatabaseException("Failed to find top bidder for auction: " + auctionId, e);
         }
         return null;
+    }
+
+    public Map<String, List<BidTransaction>> selectActiveAuctionsBidHistory() {
+        Map<String, List<BidTransaction>> resultMap = new HashMap<>();
+
+        String sql = "SELECT bt.*, u.username, u.role, u.user_status " +
+                "FROM bid_transactions bt " +
+                "JOIN users u ON bt.bidder_id = u.id " +
+                "JOIN auctions a ON bt.auction_id = a.id " +
+                "WHERE a.auction_status = 'ACTIVE' " +
+                "ORDER BY bt.bid_time ASC";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                String auctionId = rs.getString("auction_id");
+
+                User bidder = new User(
+                        rs.getString("bidder_id"),
+                        rs.getString("username"),
+                        null,
+                        rs.getString("role"),
+                        rs.getString("user_status"));
+
+                BidTransaction tx = new BidTransaction(null, bidder, rs.getDouble("bid_amount"));
+                tx.setId(rs.getString("id"));
+                Timestamp timestamp = rs.getTimestamp("bid_time");
+                if (timestamp != null) {
+                    tx.setBidTime(timestamp.toLocalDateTime());
+                }
+
+                resultMap.computeIfAbsent(auctionId, k -> new ArrayList<>()).add(tx);
+            }
+        } catch (SQLException e) {
+            log.error("Database error while selecting active auctions bid histories", e);
+            throw new DatabaseException("Failed to select active auctions bid histories", e);
+        }
+        return resultMap;
     }
 
     /**
