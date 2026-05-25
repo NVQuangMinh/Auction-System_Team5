@@ -150,9 +150,40 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
                         transaction.getBidAmount()
                 ));
             }
+
+        } else if (action.equals("AUCTION_ENDED") || action.equals("AUCTION_SOLD")) {
+            // Auction kết thúc hết giờ hoặc được mua ngay: chuyển modal sang read-only
+            AuctionDTO incoming = (AuctionDTO) msg.getData();
+            if (this.auction != null
+                    && incoming.getAuctionId().equals(this.auction.getAuctionId())) {
+                this.auction = incoming;
+                Platform.runLater(() -> {
+                    if (countdownTimeline != null) countdownTimeline.stop();
+                    timeLeft.setText(String.valueOf(incoming.getStatus()));
+                    bidAmount.setEditable(false);
+                });
+            }
+
+        } else if (action.equals("REMOVE_ITEM")) {
+            // Admin hủy auction: thông báo trong modal, khóa nhập liệu
+            AuctionDTO removed = (AuctionDTO) msg.getData();
+            if (this.auction != null
+                    && removed.getAuctionId().equals(this.auction.getAuctionId())) {
+                Platform.runLater(() -> {
+                    if (countdownTimeline != null) countdownTimeline.stop();
+                    timeLeft.setText("CANCELLED");
+                    bidAmount.setEditable(false);
+                    error.setVisible(true);
+                    error.setManaged(true);
+                    error.setOpacity(1.0);
+                    error.setText("Sản phẩm này đã bị hủy bởi Admin.");
+                    error.setTextFill(javafx.scene.paint.Color.ORANGE);
+                });
+            }
         }
 
     }
+
 
     public void initData(AuctionDTO auction) {
         this.auction = auction;

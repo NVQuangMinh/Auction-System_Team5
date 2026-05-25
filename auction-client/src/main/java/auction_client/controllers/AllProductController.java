@@ -35,24 +35,36 @@ import java.util.stream.Collectors;
 public class AllProductController implements Initializable, AuctionUpdateListener, HandleCardClicked {
     private static final int PAGE_SIZE = 12;
 
-    @FXML private FlowPane productFlowPane;
+    @FXML
+    private FlowPane productFlowPane;
 
     // Category filters
-    @FXML private RadioButton allCategoryRadio;
-    @FXML private RadioButton artsCategoryRadio;
-    @FXML private RadioButton electronicsCategoryRadio;
-    @FXML private RadioButton vehiclesCategoryRadio;
-    @FXML private ToggleGroup categoryGroup;
+    @FXML
+    private RadioButton allCategoryRadio;
+    @FXML
+    private RadioButton artsCategoryRadio;
+    @FXML
+    private RadioButton electronicsCategoryRadio;
+    @FXML
+    private RadioButton vehiclesCategoryRadio;
+    @FXML
+    private ToggleGroup categoryGroup;
 
     // Status filters
-    @FXML private RadioButton activeStatusRadio;
-    @FXML private RadioButton endedStatusRadio;
-    @FXML private ToggleGroup statusGroup;
+    @FXML
+    private RadioButton activeStatusRadio;
+    @FXML
+    private RadioButton endedStatusRadio;
+    @FXML
+    private ToggleGroup statusGroup;
 
     // Pagination
-    @FXML private Label pageInfoLabel;
-    @FXML private Label prevButton;
-    @FXML private Label nextButton;
+    @FXML
+    private Label pageInfoLabel;
+    @FXML
+    private Label prevButton;
+    @FXML
+    private Label nextButton;
 
     // ACTIVE auctions: từ RAM (server broadcast UPDATE_BID)
     private List<AuctionDTO> activeAuctions = new ArrayList<>();
@@ -94,10 +106,14 @@ public class AllProductController implements Initializable, AuctionUpdateListene
     }
 
     private String resolveCategoryFilter() {
-        if (allCategoryRadio.isSelected()) return "ALL";
-        if (artsCategoryRadio.isSelected()) return "ARTS";
-        if (electronicsCategoryRadio.isSelected()) return "ELECTRONICS";
-        if (vehiclesCategoryRadio.isSelected()) return "VEHICLES";
+        if (allCategoryRadio.isSelected())
+            return "ALL";
+        if (artsCategoryRadio.isSelected())
+            return "ARTS";
+        if (electronicsCategoryRadio.isSelected())
+            return "ELECTRONICS";
+        if (vehiclesCategoryRadio.isSelected())
+            return "VEHICLES";
         return "ALL";
     }
 
@@ -128,7 +144,8 @@ public class AllProductController implements Initializable, AuctionUpdateListene
     }
 
     private void handleNextPage() {
-        if (!endedStatusRadio.isSelected()) return;
+        if (!endedStatusRadio.isSelected())
+            return;
 
         int totalEndedPages = (int) Math.ceil((double) endedTotalCount / PAGE_SIZE);
         if (endedPage + 1 < totalEndedPages) {
@@ -137,11 +154,20 @@ public class AllProductController implements Initializable, AuctionUpdateListene
         }
     }
 
+    @FXML
+    private void onRefreshClicked() {
+        if (activeStatusRadio.isSelected()) {
+            ClientService.getInstance().sendMessage(new NetworkMessage("GET_PRODUCTS", null));
+        } else {
+            endedPage = 0;
+            requestEndedPage(endedPage);
+        }
+    }
+
     private void requestEndedPage(int page) {
         ClientService.getInstance().sendMessage(
                 new NetworkMessage("GET_ENDED_PRODUCTS",
-                        new EndedProductsRequest(currentCategoryFilter, page, PAGE_SIZE))
-        );
+                        new EndedProductsRequest(currentCategoryFilter, page, PAGE_SIZE)));
     }
 
     private List<AuctionDTO> filterCategory(List<AuctionDTO> auctions) {
@@ -152,23 +178,30 @@ public class AllProductController implements Initializable, AuctionUpdateListene
     }
 
     private boolean matchesCategory(AuctionDTO a) {
-        if (allCategoryRadio.isSelected()) return true;
-        if (artsCategoryRadio.isSelected()) return a.getItem().getType() == ItemType.ARTS;
-        if (electronicsCategoryRadio.isSelected()) return a.getItem().getType() == ItemType.ELECTRONICS;
-        if (vehiclesCategoryRadio.isSelected()) return a.getItem().getType() == ItemType.VEHICLES;
+        if (allCategoryRadio.isSelected())
+            return true;
+        if (artsCategoryRadio.isSelected())
+            return a.getItem().getType() == ItemType.ARTS;
+        if (electronicsCategoryRadio.isSelected())
+            return a.getItem().getType() == ItemType.ELECTRONICS;
+        if (vehiclesCategoryRadio.isSelected())
+            return a.getItem().getType() == ItemType.VEHICLES;
         return true;
     }
 
     private List<AuctionDTO> paginate(List<AuctionDTO> list, int page, int pageSize) {
-        if (list == null || list.isEmpty()) return Collections.emptyList();
+        if (list == null || list.isEmpty())
+            return Collections.emptyList();
         int from = page * pageSize;
-        if (from >= list.size()) return Collections.emptyList();
+        if (from >= list.size())
+            return Collections.emptyList();
         int to = Math.min(from + pageSize, list.size());
         return list.subList(from, to);
     }
 
     private int getTotalEndedPages() {
-        if (endedTotalCount == 0) return 1;
+        if (endedTotalCount == 0)
+            return 1;
         return (int) Math.ceil((double) endedTotalCount / PAGE_SIZE);
     }
 
@@ -246,6 +279,27 @@ public class AllProductController implements Initializable, AuctionUpdateListene
         } else if (action.equals("UPDATE_BID")) {
             List<AuctionDTO> allDTOs = (List<AuctionDTO>) msg.getData();
             Platform.runLater(() -> handleUpdateBid(allDTOs));
+
+        } else if (action.equals("AUCTION_ENDED") || action.equals("AUCTION_SOLD")) {
+            AuctionDTO dto = (AuctionDTO) msg.getData();
+            Platform.runLater(() -> {
+                String itemName = dto.getItem().getName();
+                UserPushUpNotificationController.showNotification(
+                        "Phiên đấu giá kết thúc: " + itemName, "INFO");
+            });
+
+        } else if (action.equals("REMOVE_ITEM")) {
+            AuctionDTO removed = (AuctionDTO) msg.getData();
+            Platform.runLater(() -> {
+                // Xóa khỏi cả 2 list khi bị banned
+                activeAuctions.removeIf(a -> a.getItem().getId().equals(removed.getItem().getId()));
+                boolean wasInEnded = endedSaledAuctions.removeIf(
+                        a -> a.getItem().getId().equals(removed.getItem().getId()));
+                if (wasInEnded) {
+                    endedTotalCount = Math.max(0, endedTotalCount - 1);
+                }
+                refreshCurrentView();
+            });
         }
     }
 

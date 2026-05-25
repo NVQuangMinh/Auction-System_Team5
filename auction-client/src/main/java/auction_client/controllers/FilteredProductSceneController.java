@@ -24,12 +24,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class FilteredProductSceneController implements Initializable, AuctionUpdateListener, HandleCardClicked {
     @FXML
     private FlowPane productFlowPane;
 
-    private List<AuctionDTO> allAuctions = null;
+    private List<AuctionDTO> activeAuctions = new ArrayList<>();
+    private List<AuctionDTO> endedAuctions = new ArrayList<>();
+
     private ItemType targetType = null;
 
     @Override
@@ -66,6 +69,12 @@ public class FilteredProductSceneController implements Initializable, AuctionUpd
         }
     }
 
+    private List<AuctionDTO> buildFilteredList() {
+        return Stream.concat(activeAuctions.stream(), endedAuctions.stream())
+                .filter(a -> a.getItem().getType() == targetType)
+                .collect(Collectors.toList());
+    }
+
     public void openAuctionDetail(AuctionDTO auction) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/auction_client/BidProductInfo.fxml"));
@@ -93,30 +102,50 @@ public class FilteredProductSceneController implements Initializable, AuctionUpd
     @Override
     public void onUpdateReceived(NetworkMessage msg) {
         String action = msg.getAction();
+
         if (action.equals("GET_PRODUCTS")) {
             ProductListResponse response = (ProductListResponse) msg.getData();
-            List<AuctionDTO> active = response.getActiveAuctions() != null ? response.getActiveAuctions() : new ArrayList<>();
-            List<AuctionDTO> ended = response.getEndedSaledAuctions() != null ? response.getEndedSaledAuctions() : new ArrayList<>();
 
-            List<AuctionDTO> merged = new ArrayList<>(active);
-            merged.addAll(ended);
-            this.allAuctions = merged;
+            if(response.getActiveAuctions() != null){
+                this.activeAuctions = new ArrayList<>(response.getActiveAuctions());
+            } else {
+                this.activeAuctions = new ArrayList<>();
+            }
 
-            Platform.runLater(() -> {
-                List<AuctionDTO> filtered = allAuctions.stream()
-                        .filter(a -> a.getItem().getType() == targetType)
-                        .collect(Collectors.toList());
-                updateProductList(filtered);
-            });
+            if(response.getEndedSaledAuctions() != null){
+                this.endedAuctions = new ArrayList<>(response.getEndedSaledAuctions());
+            } else {
+                this.activeAuctions = new ArrayList<>();
+            }
+
+            List<AuctionDTO> toShow = buildFilteredList();
+            Platform.runLater(() -> updateProductList(toShow));
+
         } else if (action.equals("UPDATE_BID")) {
+            // Fix bug: chỉ cập nhật phần ACTIVE, giữ nguyên ENDED
             List<AuctionDTO> rawList = (List<AuctionDTO>) msg.getData();
-            this.allAuctions = rawList;
-            Platform.runLater(() -> {
-                List<AuctionDTO> filtered = allAuctions.stream()
-                        .filter(a -> a.getItem().getType() == targetType)
-                        .collect(Collectors.toList());
-                updateProductList(filtered);
-            });
+            this.activeAuctions = rawList != null ? new ArrayList<>(rawList) : new ArrayList<>();
+
+            List<AuctionDTO> toShow = buildFilteredList();
+            Platform.runLater(() -> updateProductList(toShow));
+
+        } else if (action.equals("AUCTION_ENDED") || action.equals("AUCTION_SOLD")) {
+            // chuyển auction từ active sang ended trong local state, không query DB
+            AuctionDTO dto = (AuctionDTO) msg.getData();
+            activeAuctions.removeIf(a -> a.getAuctionId().equals(dto.getAuctionId()));
+            endedAuctions.add(0, dto);
+
+            List<AuctionDTO> toShow = buildFilteredList();
+            Platform.runLater(() -> updateProductList(toShow));
+
+        } else if (action.equals("REMOVE_ITEM")) {
+            // Admin hủy auction: xóa khỏi cả 2 list
+            AuctionDTO removed = (AuctionDTO) msg.getData();
+            activeAuctions.removeIf(a -> a.getAuctionId().equals(removed.getAuctionId()));
+            endedAuctions.removeIf(a -> a.getAuctionId().equals(removed.getAuctionId()));
+
+            List<AuctionDTO> toShow = buildFilteredList();
+            Platform.runLater(() -> updateProductList(toShow));
         }
     }
 }

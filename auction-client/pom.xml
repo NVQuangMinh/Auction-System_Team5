@@ -103,6 +103,10 @@
                 <version>3.2.5</version>
                 <configuration>
                     <argLine>
+                        --add-opens auction.client/auction_client.controllers=ALL-UNNAMED
+                        --add-opens auction.client/auction_client.Network=ALL-UNNAMED
+                        --add-opens auction.client/auction_client.launcher=ALL-UNNAMED
+                        --add-opens auction.client/auction_client=ALL-UNNAMED
                         -XX:+EnableDynamicAgentLoading
                         -Dnet.bytebuddy.experimental=true
                     </argLine>

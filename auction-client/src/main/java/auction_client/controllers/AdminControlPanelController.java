@@ -34,34 +34,51 @@ public class AdminControlPanelController implements Initializable, AuctionUpdate
     private static final int PAGE_SIZE = 12;
 
     // ── User table ─────────────────────────────────────────────────────────────
-    @FXML TableView<UserDTO> userTable;
-    @FXML TableColumn<UserDTO, String> colUserId;
-    @FXML TableColumn<UserDTO, String> colUsername;
-    @FXML TableColumn<UserDTO, String> colUserRole;
-    @FXML TableColumn<UserDTO, Void>   colUserAction;
+    @FXML
+    TableView<UserDTO> userTable;
+    @FXML
+    TableColumn<UserDTO, String> colUserId;
+    @FXML
+    TableColumn<UserDTO, String> colUsername;
+    @FXML
+    TableColumn<UserDTO, String> colUserRole;
+    @FXML
+    TableColumn<UserDTO, Void> colUserAction;
 
     // ── Item table ─────────────────────────────────────────────────────────────
-    @FXML TableView<AuctionDTO>          itemTable;
-    @FXML TableColumn<AuctionDTO, String>        colItemName;
-    @FXML TableColumn<AuctionDTO, Double>        colItemPrice;
-    @FXML TableColumn<AuctionDTO, AuctionStatus> colItemStatus;
-    @FXML TableColumn<AuctionDTO, Void>          colItemAction;
+    @FXML
+    TableView<AuctionDTO> itemTable;
+    @FXML
+    TableColumn<AuctionDTO, String> colItemName;
+    @FXML
+    TableColumn<AuctionDTO, Double> colItemPrice;
+    @FXML
+    TableColumn<AuctionDTO, AuctionStatus> colItemStatus;
+    @FXML
+    TableColumn<AuctionDTO, Void> colItemAction;
 
     // ── Status filter ──────────────────────────────────────────────────────────
-    @FXML RadioButton activeStatusRadio;
-    @FXML RadioButton endedStatusRadio;
-    @FXML ToggleGroup statusGroup;
+    @FXML
+    RadioButton activeStatusRadio;
+    @FXML
+    RadioButton endedStatusRadio;
+    @FXML
+    ToggleGroup statusGroup;
 
     // ── Pagination ─────────────────────────────────────────────────────────────
-    @FXML HBox  paginationBox;
-    @FXML Label prevButton;
-    @FXML Label pageInfoLabel;
-    @FXML Label nextButton;
+    @FXML
+    HBox paginationBox;
+    @FXML
+    Label prevButton;
+    @FXML
+    Label pageInfoLabel;
+    @FXML
+    Label nextButton;
 
     // ── State ──────────────────────────────────────────────────────────────────
     private List<AuctionDTO> activeItems = new ArrayList<>();
-    private List<AuctionDTO> endedItems  = new ArrayList<>();
-    private int endedPage       = 0;
+    private List<AuctionDTO> endedItems = new ArrayList<>();
+    private int endedPage = 0;
     private int endedTotalCount = 0;
 
     // ──────────────────────────────────────────────────────────────────────────
@@ -96,6 +113,7 @@ public class AdminControlPanelController implements Initializable, AuctionUpdate
         colUserRole.setCellValueFactory(new PropertyValueFactory<>("role"));
         colUserAction.setCellFactory(param -> new TableCell<>() {
             private final Button actionButton = new Button("Ban");
+
             @Override
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
@@ -111,15 +129,14 @@ public class AdminControlPanelController implements Initializable, AuctionUpdate
     }
 
     private void setupItemTable() {
-        colItemName.setCellValueFactory(cellData ->
-                new SimpleStringProperty(cellData.getValue().getItem().getName()));
-        colItemPrice.setCellValueFactory(cellData ->
-                new SimpleDoubleProperty(cellData.getValue().getCurrentHighestBid()).asObject());
-        colItemStatus.setCellValueFactory(cellData ->
-                new SimpleObjectProperty<>(cellData.getValue().getStatus()));
+        colItemName.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getItem().getName()));
+        colItemPrice.setCellValueFactory(
+                cellData -> new SimpleDoubleProperty(cellData.getValue().getCurrentHighestBid()).asObject());
+        colItemStatus.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getStatus()));
 
         colItemAction.setCellFactory(param -> new TableCell<>() {
             private final Button actionButton = new Button("Remove");
+
             @Override
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
@@ -175,7 +192,8 @@ public class AdminControlPanelController implements Initializable, AuctionUpdate
     }
 
     private void handleNextPage() {
-        if (!endedStatusRadio.isSelected()) return;
+        if (!endedStatusRadio.isSelected())
+            return;
         int totalPages = getTotalEndedPages();
         if (endedPage + 1 < totalPages) {
             endedPage++;
@@ -184,7 +202,8 @@ public class AdminControlPanelController implements Initializable, AuctionUpdate
     }
 
     private int getTotalEndedPages() {
-        if (endedTotalCount == 0) return 1;
+        if (endedTotalCount == 0)
+            return 1;
         return (int) Math.ceil((double) endedTotalCount / PAGE_SIZE);
     }
 
@@ -206,15 +225,15 @@ public class AdminControlPanelController implements Initializable, AuctionUpdate
     private void updateNavButtons() {
         int totalPages = getTotalEndedPages();
         boolean atFirst = endedPage == 0;
-        boolean atLast  = endedPage >= totalPages - 1;
+        boolean atLast = endedPage >= totalPages - 1;
 
-        String enabledStyle  = "-fx-text-fill: #138eff; -fx-opacity: 1.0; -fx-cursor: hand;";
+        String enabledStyle = "-fx-text-fill: #138eff; -fx-opacity: 1.0; -fx-cursor: hand;";
         String disabledStyle = "-fx-text-fill: #aaa;    -fx-opacity: 0.4;";
 
         prevButton.setDisable(atFirst);
         nextButton.setDisable(atLast);
         prevButton.setStyle(atFirst ? disabledStyle : enabledStyle);
-        nextButton.setStyle(atLast  ? disabledStyle : enabledStyle);
+        nextButton.setStyle(atLast ? disabledStyle : enabledStyle);
     }
 
     // ── Network listener ───────────────────────────────────────────────────────
@@ -232,16 +251,21 @@ public class AdminControlPanelController implements Initializable, AuctionUpdate
         } else if (action.equals("GET_PRODUCTS")) {
             ProductListResponse response = (ProductListResponse) msg.getData();
             Platform.runLater(() -> {
-                this.activeItems      = response.getActiveAuctions()      != null ? new ArrayList<>(response.getActiveAuctions())      : new ArrayList<>();
-                this.endedItems       = response.getEndedSaledAuctions()  != null ? new ArrayList<>(response.getEndedSaledAuctions())  : new ArrayList<>();
-                this.endedTotalCount  = response.getEndedTotalCount();
+                this.activeItems = response.getActiveAuctions() != null ? new ArrayList<>(response.getActiveAuctions())
+                        : new ArrayList<>();
+                this.endedItems = response.getEndedSaledAuctions() != null
+                        ? new ArrayList<>(response.getEndedSaledAuctions())
+                        : new ArrayList<>();
+                this.endedTotalCount = response.getEndedTotalCount();
                 refreshCurrentView();
             });
 
         } else if (action.equals("GET_ENDED_PRODUCTS")) {
             ProductListResponse response = (ProductListResponse) msg.getData();
             Platform.runLater(() -> {
-                this.endedItems      = response.getEndedSaledAuctions()  != null ? new ArrayList<>(response.getEndedSaledAuctions())  : new ArrayList<>();
+                this.endedItems = response.getEndedSaledAuctions() != null
+                        ? new ArrayList<>(response.getEndedSaledAuctions())
+                        : new ArrayList<>();
                 this.endedTotalCount = response.getEndedTotalCount();
                 if (endedStatusRadio.isSelected()) {
                     showEndedPage();
@@ -262,16 +286,34 @@ public class AdminControlPanelController implements Initializable, AuctionUpdate
             // Auction ENDED/SOLD bị Admin ban: xóa khỏi danh sách local, refresh UI
             AuctionDTO removed = (AuctionDTO) msg.getData();
             Platform.runLater(() -> {
-                endedItems.removeIf(a ->
-                        a.getItem().getId().equals(removed.getItem().getId()));
+                endedItems.removeIf(a -> a.getItem().getId().equals(removed.getItem().getId()));
                 if (endedStatusRadio.isSelected()) {
                     showEndedPage();
                 }
+            });
+
+        } else if (action.equals("AUCTION_ENDED") || action.equals("AUCTION_SOLD")) {
+            // Push-based: thông báo cho admin
+            AuctionDTO dto = (AuctionDTO) msg.getData();
+            Platform.runLater(() -> {
+                String itemName = dto.getItem().getName();
+                UserPushUpNotificationController.showNotification(
+                        "Phiên đấu giá kết thúc: " + itemName, "INFO");
             });
         }
     }
 
     // ── Actions ────────────────────────────────────────────────────────────────
+
+    @FXML
+    public void onRefreshClicked() {
+        if (activeStatusRadio.isSelected()) {
+            ClientService.getInstance().sendMessage(new NetworkMessage("GET_PRODUCTS", null));
+        } else {
+            endedPage = 0;
+            requestEndedPage(endedPage);
+        }
+    }
 
     public void handleBanUser(UserDTO user) {
         ClientService.getInstance().sendMessage(new NetworkMessage("BAN_USER", user));

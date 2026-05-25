@@ -3,6 +3,8 @@ package auction_client.controllers;
 import auction_client.Network.ClientService;
 import auction_shared.Network.NetworkMessage;
 import auction_shared.dto.UserDTO;
+import auction_shared.dto.ItemDTO;
+import auction_shared.dto.AuctionDTO;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -16,7 +18,6 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.testfx.framework.junit5.ApplicationTest;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
@@ -38,7 +39,7 @@ class AdminControlPanelControllerTest extends ApplicationTest {
     }
 
     @AfterEach
-    public void closeMock(){
+    public void closeMock() {
         mockedStaticClientService.close();
     }
 
@@ -83,7 +84,36 @@ class AdminControlPanelControllerTest extends ApplicationTest {
 
     @Test
     public void testOnUpdateReceived_ProductTable() {
-        
+        // Prepare some items
+    }
+
+    @Test
+    public void testOnUpdateReceived_AuctionEnded_Notification() {
+        try (MockedStatic<UserPushUpNotificationController> mockedNotification = mockStatic(
+                UserPushUpNotificationController.class)) {
+            ItemDTO item = new ItemDTO(
+                    "item-1", "Laptop", "desc", null, auction_shared.dto.ItemType.ELECTRONICS);
+            AuctionDTO dto = new AuctionDTO(
+                    item,
+                    auction_shared.dto.AuctionStatus.ENDED,
+                    100.0,
+                    500.0,
+                    10.0,
+                    java.time.LocalDateTime.now(),
+                    java.time.LocalDateTime.now(),
+                    false,
+                    null,
+                    100.0);
+
+            NetworkMessage msg = new NetworkMessage("AUCTION_ENDED", dto);
+
+            interact(() -> {
+                controller.onUpdateReceived(msg);
+            });
+
+            mockedNotification.verify(() -> UserPushUpNotificationController.showNotification(
+                    "Phiên đấu giá kết thúc: Laptop", "INFO"), times(1));
+        }
     }
 
     @Test

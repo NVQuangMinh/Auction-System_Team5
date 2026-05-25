@@ -87,6 +87,11 @@
                                                         <RadioButton fx:id="endedStatusRadio" mnemonicParsing="false" onAction="#onStatusSelected" style="-fx-font-size: 13; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" text="Ended / Sold" toggleGroup="$statusGroup" />
                                                     </children>
                                                 </HBox>
+                                                <Button mnemonicParsing="false" onAction="#onRefreshClicked" style="-fx-background-color: #138eff; -fx-background-radius: 15; -fx-font-weight: bold; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 6 15 6 15;" text="Refresh">
+                                                    <graphic>
+                                                        <FontIcon iconColor="WHITE" iconLiteral="fas-sync-alt" iconSize="13" />
+                                                    </graphic>
+                                                </Button>
                                             </children>
                                         </HBox>
                                         <!-- Bảng Item -->

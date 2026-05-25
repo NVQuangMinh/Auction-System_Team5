@@ -193,4 +193,50 @@ public class AllProductControllerTest extends ApplicationTest {
         interact(() -> controller.cleanup());
         verify(mockClientService).removeListener(controller);
     }
+
+    // ------------------------------------------------------------------
+    // TEST 6: Nhận AUCTION_ENDED → phải gọi showNotification
+    // ------------------------------------------------------------------
+    @Test
+    public void testOnUpdateReceived_AuctionEnded_Notification() {
+        try (MockedStatic<UserPushUpNotificationController> mockedNotification = mockStatic(UserPushUpNotificationController.class)) {
+            ItemDTO item = new ItemDTO("item-1", "Laptop", "desc", null, ItemType.ELECTRONICS);
+            AuctionDTO dto = new AuctionDTO(
+                    item,
+                    AuctionStatus.ENDED,
+                    100.0,
+                    500.0,
+                    10.0,
+                    LocalDateTime.now(),
+                    LocalDateTime.now(),
+                    false,
+                    null,
+                    100.0
+            );
+
+            NetworkMessage msg = new NetworkMessage("AUCTION_ENDED", dto);
+
+            interact(() -> controller.onUpdateReceived(msg));
+
+            mockedNotification.verify(() -> UserPushUpNotificationController.showNotification(
+                    "Phiên đấu giá kết thúc: Laptop", "INFO"
+            ), times(1));
+        }
+    }
+
+    // ------------------------------------------------------------------
+    // TEST 7: Click nút LÀM MỚI (Refresh)
+    // ------------------------------------------------------------------
+    @Test
+    public void testRefreshButton_Click() {
+        // Mặc định đang ở tab Active
+        clickOn("#refreshButton");
+
+        ArgumentCaptor<NetworkMessage> captor = ArgumentCaptor.forClass(NetworkMessage.class);
+        verify(mockClientService, atLeastOnce()).sendMessage(captor.capture());
+
+        List<NetworkMessage> allMessages = captor.getAllValues();
+        String lastAction = allMessages.get(allMessages.size() - 1).getAction();
+        assertEquals("GET_PRODUCTS", lastAction);
+    }
 }

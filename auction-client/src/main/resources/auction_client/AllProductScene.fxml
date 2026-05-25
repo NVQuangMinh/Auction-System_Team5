@@ -2,9 +2,11 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.FlowPane?>
@@ -72,11 +74,19 @@
             </Label>
             <HBox alignment="CENTER" prefWidth="160.0" spacing="5.0">
                <children>
-                  <Label fx:id="prevButton" style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #138eff;" text="&lt;" />
+                  <Label fx:id="prevButton" style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #138eff; -fx-cursor: hand;" text="&lt;" />
                   <Label fx:id="pageInfoLabel" alignment="CENTER" prefWidth="80.0" style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #333;" text="1 / 1" />
-                  <Label fx:id="nextButton" style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #138eff;" text="&gt;" />
+                  <Label fx:id="nextButton" style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #138eff; -fx-cursor: hand;" text="&gt;" />
                </children>
             </HBox>
+            <Button mnemonicParsing="false" onAction="#onRefreshClicked" prefHeight="35.0" prefWidth="160.0" style="-fx-background-color: #138eff; -fx-background-radius: 10; -fx-font-weight: bold; -fx-text-fill: white; -fx-cursor: hand; -fx-font-size: 14;" text=" LÀM MỚI">
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="fas-sync-alt" iconSize="14" />
+               </graphic>
+               <VBox.margin>
+                  <Insets top="15.0" />
+               </VBox.margin>
+            </Button>
          </children>
       </VBox>
    </left>

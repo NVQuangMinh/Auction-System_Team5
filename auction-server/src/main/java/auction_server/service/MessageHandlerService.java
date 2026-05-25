@@ -291,6 +291,9 @@ public class MessageHandlerService {
                 messageSender.sendMessage(new NetworkMessage("BUYOUT_SUCCESS", auctionDTO));
             }
 
+            // Broadcast cho tất cả client biết auction đã SOLD (push-based, không cần
+            // client query DB)
+            AuctionManager.getInstance().broadcast(new NetworkMessage("AUCTION_SOLD", auctionDTO));
             var activeOnly = AuctionManager.getInstance().getAllRooms().stream()
                     .filter(a -> a.getStatus() == AuctionStatus.ACTIVE)
                     .collect(Collectors.toList());
@@ -407,6 +410,7 @@ public class MessageHandlerService {
             } catch (DatabaseException e) {
                 log.error("Failed to ban active auction {} in DB", itemId, e);
             }
+            AuctionManager.getInstance().broadcast(new NetworkMessage("REMOVE_ITEM", auctionDTO));
             var activeOnly = AuctionManager.getInstance().getAllRooms().stream()
                     .filter(a -> a.getStatus() == AuctionStatus.ACTIVE)
                     .collect(Collectors.toList());
