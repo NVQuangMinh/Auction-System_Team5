@@ -28,6 +28,14 @@ public class AuctionManager {
         return manager;
     }
 
+    /**
+     * Reset instance Singleton của AuctionManager về null.
+     * Chỉ sử dụng cho mục đích kiểm thử độc lập trạng thái giữa các test cases.
+     */
+    static synchronized void resetForTest() {
+        manager = null;
+    }
+
     public void addRoom(Auction auction) {
         activeRooms.put(auction.getItem().getId(), auction);
     }
