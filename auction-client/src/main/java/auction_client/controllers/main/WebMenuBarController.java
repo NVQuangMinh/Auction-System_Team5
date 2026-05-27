@@ -1,7 +1,11 @@
-package auction_client.controllers;
+package auction_client.controllers.main;
 
 import auction_client.Network.ClientService;
 import auction_client.UserSession;
+import auction_client.controllers.admin.AdminControlPanelController;
+import auction_client.controllers.auth.SignInController;
+import auction_client.controllers.bidder.AllProductController;
+import auction_client.interfaces.Cleanable;
 import auction_shared.Network.NetworkMessage;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -87,16 +91,8 @@ public class WebMenuBarController implements Initializable {
         Node source = (Node) event.getSource();
         Parent root = source.getScene().getRoot();
         Object controller = root.getProperties().get("fx_controller");
-        if (controller instanceof AuctionMainController mainController) {
-            mainController.cleanup();
-        } else if (controller instanceof AllProductController allProductController) {
-            allProductController.cleanup();
-        } else if (controller instanceof FilteredProductSceneController filteredController) {
-            filteredController.cleanup();
-        } else if (controller instanceof SellProductSceneController sellController) {
-            sellController.cleanup();
-        } else if (controller instanceof AdminControlPanelController adminController) {
-            adminController.cleanup();
+        if (controller instanceof Cleanable cleanable) {
+            cleanable.cleanup();
         }
     }
 

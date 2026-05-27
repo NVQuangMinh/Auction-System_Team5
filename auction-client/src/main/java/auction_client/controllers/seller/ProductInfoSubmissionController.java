@@ -1,4 +1,4 @@
-package auction_client.controllers;
+package auction_client.controllers.seller;
 
 import java.net.URL;
 import java.time.LocalDateTime;

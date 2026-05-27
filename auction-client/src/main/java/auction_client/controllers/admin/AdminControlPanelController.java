@@ -1,7 +1,9 @@
-package auction_client.controllers;
+package auction_client.controllers.admin;
 
 import auction_client.Network.ClientService;
+import auction_client.controllers.notification.UserPushUpNotificationController;
 import auction_client.interfaces.AuctionUpdateListener;
+import auction_client.interfaces.Cleanable;
 import auction_shared.Network.NetworkMessage;
 import auction_shared.dto.AuctionDTO;
 import auction_shared.dto.AuctionStatus;
@@ -29,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class AdminControlPanelController implements Initializable, AuctionUpdateListener {
+public class AdminControlPanelController implements Initializable, AuctionUpdateListener, Cleanable {
 
     private static final int PAGE_SIZE = 12;
 
@@ -100,7 +102,7 @@ public class AdminControlPanelController implements Initializable, AuctionUpdate
         ClientService.getInstance().sendMessage(new NetworkMessage("GET_PRODUCTS", null));
     }
 
-    /** Gọi khi rời màn hình Admin để tránh memory leak / zombie listener. */
+    @Override
     public void cleanup() {
         ClientService.getInstance().removeListener(this);
     }

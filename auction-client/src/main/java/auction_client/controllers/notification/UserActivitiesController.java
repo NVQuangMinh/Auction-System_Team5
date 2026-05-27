@@ -1,7 +1,8 @@
-package auction_client.controllers;
+package auction_client.controllers.notification;
 
 import auction_client.Network.ClientService;
 import auction_client.interfaces.AuctionUpdateListener;
+import auction_client.interfaces.Cleanable;
 import auction_shared.Network.NetworkMessage;
 import auction_shared.Network.Notification;
 
@@ -17,7 +18,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class UserActivitiesController implements AuctionUpdateListener, Initializable {
+public class UserActivitiesController implements AuctionUpdateListener, Initializable, Cleanable {
     @FXML
     VBox notificationContainer;
 
@@ -27,6 +28,11 @@ public class UserActivitiesController implements AuctionUpdateListener, Initiali
     public void initialize(URL location, ResourceBundle resources) {
         ClientService.getInstance().addListener(this);
         ClientService.getInstance().sendMessage(new NetworkMessage("GET_ACTIVITIES", null));
+    }
+
+    @Override
+    public void cleanup() {
+        ClientService.getInstance().removeListener(this);
     }
 
     public void loadNotifications() {

@@ -1,9 +1,12 @@
-package auction_client.controllers;
+package auction_client.controllers.bidder;
 
 import auction_client.Network.ClientService;
+import auction_client.controllers.notification.UserPushUpNotificationController;
 import auction_client.interfaces.AuctionUpdateListener;
+import auction_client.interfaces.Cleanable;
 import auction_client.interfaces.HandleCardClicked;
 import auction_shared.Network.NetworkMessage;
+import auction_client.models.ProductListManager;
 import auction_shared.dto.AuctionDTO;
 import auction_shared.dto.AuctionStatus;
 import auction_shared.dto.EndedProductsRequest;
@@ -32,7 +35,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
-public class AllProductController implements Initializable, AuctionUpdateListener, HandleCardClicked {
+public class AllProductController implements Initializable, AuctionUpdateListener, HandleCardClicked, Cleanable {
     private static final int PAGE_SIZE = 12;
 
     @FXML
@@ -66,11 +69,7 @@ public class AllProductController implements Initializable, AuctionUpdateListene
     @FXML
     private Label nextButton;
 
-    // ACTIVE auctions: từ RAM (server broadcast UPDATE_BID)
-    private List<AuctionDTO> activeAuctions = new ArrayList<>();
-    // ENDED/SOLD auctions: từ DB (phân trang)
-    private List<AuctionDTO> endedSaledAuctions = new ArrayList<>();
-    private int endedTotalCount = 0;
+    private ProductListManager listManager = new ProductListManager();
 
     // Trạng thái phân trang hiện tại
     private int endedPage = 0;
@@ -88,6 +87,7 @@ public class AllProductController implements Initializable, AuctionUpdateListene
         ClientService.getInstance().sendMessage(new NetworkMessage("GET_PRODUCTS", null));
     }
 
+    @Override
     public void cleanup() {
         ClientService.getInstance().removeListener(this);
     }
@@ -128,8 +128,8 @@ public class AllProductController implements Initializable, AuctionUpdateListene
     }
 
     private void displayActivePage() {
-        List<AuctionDTO> filtered = filterCategory(activeAuctions);
-        List<AuctionDTO> pageItems = paginate(filtered, 0, PAGE_SIZE);
+        List<AuctionDTO> filtered = listManager.filterCategory(listManager.getActiveAuctions(), currentCategoryFilter);
+        List<AuctionDTO> pageItems = listManager.paginate(filtered, 0, PAGE_SIZE);
 
         updateProductList(pageItems);
         updatePageInfo(1, 1);
@@ -147,7 +147,7 @@ public class AllProductController implements Initializable, AuctionUpdateListene
         if (!endedStatusRadio.isSelected())
             return;
 
-        int totalEndedPages = (int) Math.ceil((double) endedTotalCount / PAGE_SIZE);
+        int totalEndedPages = (int) Math.ceil((double) listManager.getEndedTotalCount() / PAGE_SIZE);
         if (endedPage + 1 < totalEndedPages) {
             endedPage++;
             requestEndedPage(endedPage);
@@ -170,39 +170,10 @@ public class AllProductController implements Initializable, AuctionUpdateListene
                         new EndedProductsRequest(currentCategoryFilter, page, PAGE_SIZE)));
     }
 
-    private List<AuctionDTO> filterCategory(List<AuctionDTO> auctions) {
-        return auctions.stream()
-                .filter(this::matchesCategory)
-                .sorted(Comparator.comparing(AuctionDTO::getEndTime))
-                .collect(Collectors.toList());
-    }
-
-    private boolean matchesCategory(AuctionDTO a) {
-        if (allCategoryRadio.isSelected())
-            return true;
-        if (artsCategoryRadio.isSelected())
-            return a.getItem().getType() == ItemType.ARTS;
-        if (electronicsCategoryRadio.isSelected())
-            return a.getItem().getType() == ItemType.ELECTRONICS;
-        if (vehiclesCategoryRadio.isSelected())
-            return a.getItem().getType() == ItemType.VEHICLES;
-        return true;
-    }
-
-    private List<AuctionDTO> paginate(List<AuctionDTO> list, int page, int pageSize) {
-        if (list == null || list.isEmpty())
-            return Collections.emptyList();
-        int from = page * pageSize;
-        if (from >= list.size())
-            return Collections.emptyList();
-        int to = Math.min(from + pageSize, list.size());
-        return list.subList(from, to);
-    }
-
     private int getTotalEndedPages() {
-        if (endedTotalCount == 0)
+        if (listManager.getEndedTotalCount() == 0)
             return 1;
-        return (int) Math.ceil((double) endedTotalCount / PAGE_SIZE);
+        return (int) Math.ceil((double) listManager.getEndedTotalCount() / PAGE_SIZE);
     }
 
     private void updatePageInfo(int current, int total) {
@@ -212,7 +183,7 @@ public class AllProductController implements Initializable, AuctionUpdateListene
     private void updateNavButtons(int current, int total) {
         prevButton.setDisable(true);
         nextButton.setDisable(true);
-        if (endedStatusRadio.isSelected() && endedTotalCount > 0) {
+        if (endedStatusRadio.isSelected() && listManager.getEndedTotalCount() > 0) {
             int totalPages = getTotalEndedPages();
             prevButton.setDisable(endedPage == 0);
             nextButton.setDisable(endedPage >= totalPages - 1);
@@ -257,7 +228,7 @@ public class AllProductController implements Initializable, AuctionUpdateListene
 
             stage.setScene(scene);
             stage.centerOnScreen();
-            stage.setOnCloseRequest(event -> controller.cleanUp());
+            stage.setOnCloseRequest(event -> controller.cleanup());
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
@@ -292,11 +263,11 @@ public class AllProductController implements Initializable, AuctionUpdateListene
             AuctionDTO removed = (AuctionDTO) msg.getData();
             Platform.runLater(() -> {
                 // Xóa khỏi cả 2 list khi bị banned
-                activeAuctions.removeIf(a -> a.getItem().getId().equals(removed.getItem().getId()));
-                boolean wasInEnded = endedSaledAuctions.removeIf(
+                listManager.getActiveAuctions().removeIf(a -> a.getItem().getId().equals(removed.getItem().getId()));
+                boolean wasInEnded = listManager.getEndedSaledAuctions().removeIf(
                         a -> a.getItem().getId().equals(removed.getItem().getId()));
                 if (wasInEnded) {
-                    endedTotalCount = Math.max(0, endedTotalCount - 1);
+                    listManager.setEndedTotalCount(listManager.getEndedTotalCount() - 1);
                 }
                 refreshCurrentView();
             });
@@ -304,25 +275,19 @@ public class AllProductController implements Initializable, AuctionUpdateListene
     }
 
     private void handleGetProductsResponse(ProductListResponse response) {
-        this.activeAuctions = response.getActiveAuctions() != null
-                ? new ArrayList<>(response.getActiveAuctions())
-                : new ArrayList<>();
-        this.endedSaledAuctions = response.getEndedSaledAuctions() != null
-                ? new ArrayList<>(response.getEndedSaledAuctions())
-                : new ArrayList<>();
-        this.endedTotalCount = response.getEndedTotalCount();
+        listManager.setActiveAuctions(response.getActiveAuctions());
+        listManager.setEndedSaledAuctions(response.getEndedSaledAuctions());
+        listManager.setEndedTotalCount(response.getEndedTotalCount());
 
         refreshCurrentView();
     }
 
     private void handleGetEndedProductsResponse(ProductListResponse response) {
-        this.endedSaledAuctions = response.getEndedSaledAuctions() != null
-                ? new ArrayList<>(response.getEndedSaledAuctions())
-                : new ArrayList<>();
-        this.endedTotalCount = response.getEndedTotalCount();
+        listManager.setEndedSaledAuctions(response.getEndedSaledAuctions());
+        listManager.setEndedTotalCount(response.getEndedTotalCount());
 
         // Hiển thị trang ENDED/SOLD hiện tại
-        updateProductList(endedSaledAuctions);
+        updateProductList(listManager.getEndedSaledAuctions());
         updatePageInfo(endedPage + 1, getTotalEndedPages());
         updateNavButtons(endedPage, getTotalEndedPages());
     }
@@ -330,9 +295,9 @@ public class AllProductController implements Initializable, AuctionUpdateListene
     private void handleUpdateBid(List<AuctionDTO> allDTOs) {
         // UPDATE_BID từ server chứa tất cả ACTIVE từ RAM
         // Cập nhật danh sách ACTIVE
-        this.activeAuctions = allDTOs.stream()
+        listManager.setActiveAuctions(allDTOs.stream()
                 .filter(a -> a.getStatus() == AuctionStatus.ACTIVE)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
 
         // Refresh view hiện tại
         refreshCurrentView();

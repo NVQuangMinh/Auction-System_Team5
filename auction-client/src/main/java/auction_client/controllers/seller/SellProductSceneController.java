@@ -1,4 +1,4 @@
-package auction_client.controllers;
+package auction_client.controllers.seller;
 
 import java.io.IOException;
 import java.net.URL;
@@ -9,7 +9,9 @@ import java.util.ResourceBundle;
 import auction_client.Network.ClientService;
 import auction_client.UserSession;
 import auction_client.interfaces.AuctionUpdateListener;
+import auction_client.interfaces.Cleanable;
 import auction_client.interfaces.HandleCardClicked;
+import auction_client.controllers.bidder.ProductCardController;
 import auction_shared.Network.NetworkMessage;
 import auction_shared.dto.AuctionDTO;
 import javafx.application.Platform;
@@ -26,7 +28,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-public class SellProductSceneController implements Initializable, AuctionUpdateListener, HandleCardClicked {
+public class SellProductSceneController implements Initializable, AuctionUpdateListener, HandleCardClicked, Cleanable {
     @FXML
     public AnchorPane overlayPane;
     @FXML
@@ -37,9 +39,11 @@ public class SellProductSceneController implements Initializable, AuctionUpdateL
 
     public void initialize(URL url, ResourceBundle resourceBundle) {
         ClientService.getInstance().addListener(this);
-        ClientService.getInstance().sendMessage(new NetworkMessage("GET_MY_LIST", UserSession.getInstance().getUsername()));
+        ClientService.getInstance()
+                .sendMessage(new NetworkMessage("GET_MY_LIST", UserSession.getInstance().getUsername()));
     }
 
+    @Override
     public void cleanup() {
         ClientService.getInstance().removeListener(this);
     }
@@ -114,7 +118,7 @@ public class SellProductSceneController implements Initializable, AuctionUpdateL
 
             sellProductInfoStage.setScene(scene);
             sellProductInfoStage.centerOnScreen();
-            sellProductInfoStage.setOnCloseRequest(event -> controller.cleanUp());
+            sellProductInfoStage.setOnCloseRequest(event -> controller.cleanup());
             sellProductInfoStage.show();
         } catch (IOException e) {
             e.printStackTrace();

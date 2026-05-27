@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<StackPane xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction_client.controllers.AdminControlPanelController">
+<StackPane xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction_client.controllers.admin.AdminControlPanelController">
     <fx:define>
         <ToggleGroup fx:id="statusGroup" />
     </fx:define>

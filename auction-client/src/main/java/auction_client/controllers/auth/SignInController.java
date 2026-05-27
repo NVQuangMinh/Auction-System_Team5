@@ -1,4 +1,4 @@
-package auction_client.controllers;
+package auction_client.controllers.auth;
 
 import auction_client.interfaces.AuctionUpdateListener;
 import auction_client.Network.ClientService;

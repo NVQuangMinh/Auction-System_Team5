@@ -1,4 +1,4 @@
-package auction_client.controllers;
+package auction_client.controllers.bidder;
 
 import java.net.URL;
 import java.text.DecimalFormat;
@@ -10,6 +10,7 @@ import java.util.ResourceBundle;
 import auction_client.Network.ClientService;
 import auction_client.UserSession;
 import auction_client.interfaces.AuctionUpdateListener;
+import auction_client.interfaces.Cleanable;
 import auction_shared.Network.NetworkMessage;
 import auction_shared.dto.*;
 import javafx.animation.Animation;
@@ -31,7 +32,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-public class BidProductInfoController implements Initializable, AuctionUpdateListener {
+public class BidProductInfoController implements Initializable, AuctionUpdateListener, Cleanable {
     @FXML
     Label error;
     @FXML
@@ -136,7 +137,7 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
                     }
                 }
                 if (!exist) {
-                    cleanUp();
+                    cleanup();
                     closeModal();
                 }
             });
@@ -215,7 +216,7 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
 
     @FXML
     private void closeModal() {
-        cleanUp();
+        cleanup();
         Stage stage = (Stage) tickRate.getScene().getWindow();
         stage.close();
     }
@@ -261,7 +262,8 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
 
     }
 
-    public void cleanUp() {
+    @Override
+    public void cleanup() {
         if (countdownTimeline != null) {
             countdownTimeline.stop();
         }

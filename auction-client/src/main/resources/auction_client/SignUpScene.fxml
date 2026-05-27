@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="600.0" prefWidth="1066.0" style="-fx-background-image: url('images/1378262.png'); -fx-background-size: cover; -fx-background-position: center; -fx-background-repeat: no-repeat;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction_client.controllers.SignUpController">
+<AnchorPane prefHeight="600.0" prefWidth="1066.0" style="-fx-background-image: url('images/1378262.png'); -fx-background-size: cover; -fx-background-position: center; -fx-background-repeat: no-repeat;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction_client.controllers.auth.SignUpController">
     <children>
       <HBox alignment="CENTER_LEFT" fillHeight="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>

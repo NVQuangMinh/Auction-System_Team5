@@ -1,4 +1,4 @@
-package auction_client.controllers;
+package auction_client.controllers.notification;
 
 import org.kordamp.ikonli.javafx.FontIcon;
 
@@ -8,7 +8,6 @@ import auction_shared.Network.NetworkMessage;
 import auction_shared.dto.UserDTO;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -26,6 +25,16 @@ import javafx.stage.Window;
 import javafx.util.Duration;
 
 public class UserPushUpNotificationController implements AuctionUpdateListener {
+    private static final java.util.List<Stage> activeNotifications = new java.util.ArrayList<>();
+
+    private static void recalculatePositions() {
+        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+        for (int i = 0; i < activeNotifications.size(); i++) {
+            Stage stage = activeNotifications.get(i);
+            double yPos = screenBounds.getMaxY() - 54 - 20 - (i * (54 + 10));
+            stage.setY(yPos);
+        }
+    }
     @FXML
     private StackPane iconContainer;
     @FXML
@@ -64,10 +73,9 @@ public class UserPushUpNotificationController implements AuctionUpdateListener {
                 controller.setNotification(notification, type);
                 Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
 
-                // Căn chỉnh góc phải dưới chính xác với margin 20px
-                // chiều cao thực tế của FXML là 54px
                 newNotificationStage.setX(screenBounds.getMaxX() - 437 - 20);
-                newNotificationStage.setY(screenBounds.getMaxY() - 54 - 20);
+                activeNotifications.add(newNotificationStage);
+                recalculatePositions();
 
                 newNotificationStage.show();
                 controller.playAnimation(); // Chạy animation sau khi Stage đã hiển thị
@@ -110,6 +118,8 @@ public class UserPushUpNotificationController implements AuctionUpdateListener {
                 timeline.stop();
                 if (notificationStage != null) {
                     notificationStage.close();
+                    activeNotifications.remove(notificationStage);
+                    recalculatePositions();
                 }
             }
             progressFill.setWidth(progress * progressBackground.getWidth());

@@ -13,7 +13,7 @@
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="TOP_CENTER" onMouseClicked="#handleCardClick" prefHeight="350.0" prefWidth="260.0" style="-fx-background-color: F5F5F0; -fx-background-radius: 15; -fx-border-color: #D1D5DB; -fx-border-width: 2; -fx-border-radius: 15;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction_client.controllers.ProductCardController">
+<VBox alignment="TOP_CENTER" onMouseClicked="#handleCardClick" prefHeight="350.0" prefWidth="260.0" style="-fx-background-color: F5F5F0; -fx-background-radius: 15; -fx-border-color: #D1D5DB; -fx-border-width: 2; -fx-border-radius: 15;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction_client.controllers.bidder.ProductCardController">
    <children>
       <HBox prefHeight="50.0" prefWidth="202.0">
          <children>

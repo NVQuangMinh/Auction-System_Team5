@@ -1695,7 +1695,7 @@ auction-client/
 package auction_client.launcher;
 
 import auction_client.Network.ClientService;
-import auction_client.controllers.UserPushUpNotificationController;
+import auction_client.controllers.notification.UserPushUpNotificationController;
 import javafx.application.Application;
 
 public class Launcher {

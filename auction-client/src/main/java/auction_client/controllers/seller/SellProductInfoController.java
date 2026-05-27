@@ -1,4 +1,4 @@
-package auction_client.controllers;
+package auction_client.controllers.seller;
 
 import java.net.URL;
 import java.time.LocalDateTime;
@@ -7,6 +7,7 @@ import java.util.ResourceBundle;
 
 import auction_client.Network.ClientService;
 import auction_client.interfaces.AuctionUpdateListener;
+import auction_client.interfaces.Cleanable;
 import auction_shared.Network.NetworkMessage;
 import auction_shared.dto.AuctionDTO;
 import auction_shared.dto.AuctionStatus;
@@ -25,7 +26,7 @@ import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-public class SellProductInfoController implements Initializable, AuctionUpdateListener {
+public class SellProductInfoController implements Initializable, AuctionUpdateListener, Cleanable {
     @FXML
     Label itemName;
     @FXML
@@ -125,7 +126,7 @@ public class SellProductInfoController implements Initializable, AuctionUpdateLi
                     timeLeft.setText(String.valueOf(auction.getStatus()));
                 }
                 if (!exist) {
-                    cleanUp();
+                    cleanup();
                     closeModal();
                 }
             });
@@ -142,12 +143,13 @@ public class SellProductInfoController implements Initializable, AuctionUpdateLi
 
     @FXML
     private void closeModal() {
-        cleanUp();
+        cleanup();
         Stage stage = (Stage) itemName.getScene().getWindow();
         stage.close();
     }
 
-    public void cleanUp() {
+    @Override
+    public void cleanup() {
         if (countdownTimeline != null) {
             countdownTimeline.stop();
         }

@@ -1,4 +1,4 @@
-package auction_client.controllers;
+package auction_client.controllers.notification;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;

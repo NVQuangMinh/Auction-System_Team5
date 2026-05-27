@@ -1,8 +1,10 @@
-package auction_client.controllers;
+package auction_client.controllers.main;
 
+import auction_client.controllers.bidder.AllProductController;
+import auction_client.interfaces.Cleanable;
 import javafx.fxml.FXML;
 
-public class AuctionMainController {
+public class AuctionMainController implements Cleanable {
     @FXML
     private WebMenuBarController menuBarController;
     @FXML
@@ -16,6 +18,7 @@ public class AuctionMainController {
         return allProductSceneController;
     }
 
+    @Override
     public void cleanup() {
         if (allProductSceneController != null) {
             allProductSceneController.cleanup();
