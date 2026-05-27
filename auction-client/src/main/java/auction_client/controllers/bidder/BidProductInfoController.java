@@ -36,11 +36,7 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
     @FXML
     Label error;
     @FXML
-    private CheckBox autoBidCheck;
-    @FXML
     private HBox bidContainer;
-    @FXML
-    private HBox autoBidContainer;
     @FXML
     Label itemName;
     @FXML
@@ -51,10 +47,6 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
     Label buyOut;
     @FXML
     Label tickRate;
-    @FXML
-    TextField maxPrice; // autoBid price
-    @FXML
-    Button autoPlaceBid; // button for autoBid
     @FXML
     Label timeLeft; // I still don't know what to do with this shit; TT TT
 
@@ -79,10 +71,6 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         ClientService.getInstance().addListener(this);
-        bidContainer.managedProperty().bind(bidContainer.visibleProperty());
-        autoBidContainer.managedProperty().bind(autoBidContainer.visibleProperty());
-        autoBidContainer.visibleProperty().bind(autoBidCheck.selectedProperty());
-        bidContainer.visibleProperty().bind(autoBidCheck.selectedProperty().not());
         /// make the error disappear
         error.setOpacity(0.0);
         error.setManaged(false);
@@ -223,7 +211,6 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
 
     @FXML
     public void placeBidRequest() {
-        /// missing the logic for auto-bidding.
         try {
             double amount = Double.parseDouble(bidAmount.getText());
             if (amount >= auction.getBuyOutPrice()) {
