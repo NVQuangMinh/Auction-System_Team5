@@ -83,7 +83,6 @@
                         --add-opens auction.server/auction_server.service=ALL-UNNAMED
                         -XX:+EnableDynamicAgentLoading
                         -Dnet.bytebuddy.experimental=true
-                        ${argLine}
                     </argLine>
                 </configuration>
             </plugin>
