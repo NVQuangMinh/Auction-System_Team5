@@ -55,7 +55,6 @@ public class MessageHandlerService {
     /**
      * Khởi tạo MessageHandlerService.
      *
-     * @param activities    Danh sách hoạt động của user
      * @param messageSender Callback để gửi message về client
      *
      */
