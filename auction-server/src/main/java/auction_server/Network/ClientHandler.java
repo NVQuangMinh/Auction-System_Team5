@@ -30,7 +30,6 @@ import auction_shared.Network.Notification;
 public class ClientHandler implements Runnable {
 
     private static final Logger log = LoggerFactory.getLogger(ClientHandler.class);
-    private List<Notification> activities = new ArrayList<>();
     private MessageHandlerService messageHandler;
 
     private Socket socket;
