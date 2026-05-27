@@ -83,13 +83,12 @@ public class WebMenuBarController implements Initializable {
         switchScene(event, "/auction_client/AdminControlPanel.fxml");
     }
 
-    /**
-     * Retrieves the controller of the current scene's root BorderPane
-     * and calls cleanup() if it implements the cleanup interface.
-     */
     private void cleanupCurrentScene(javafx.event.Event event) {
+        // Lấy ra nút giao diện (Node) đã kích hoạt sự kiện
         Node source = (Node) event.getSource();
+        // Lấy root - màn hình trước đó ==> màn hình hiện tại
         Parent root = source.getScene().getRoot();
+        // Lấy controller và xoá bớt
         Object controller = root.getProperties().get("fx_controller");
         if (controller instanceof Cleanable cleanable) {
             cleanable.cleanup();

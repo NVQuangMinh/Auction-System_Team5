@@ -191,7 +191,7 @@ class SellProductInfoControllerTest extends ApplicationTest {
         AuctionDTO auction = createTestAuction(AuctionStatus.ACTIVE);
         interact(() -> controller.initData(auction));
 
-        interact(() -> controller.cleanUp());
+        interact(() -> controller.cleanup());
 
         verify(mockClientService).removeListener(controller);
     }
