@@ -474,4 +474,13 @@ public class MessageHandlerService {
         activities.clear();
 
     }
+
+    /**
+     * Số lượng hoạt động - thông báo.
+     *
+     * @return số lượng activites
+     */
+    public int getActivitiesSize() {
+        return activities.size();
+    }
 }

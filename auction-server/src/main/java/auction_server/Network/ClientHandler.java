@@ -96,7 +96,7 @@ public class ClientHandler implements Runnable {
      */
     private void handleRequest(NetworkMessage msg) {
         String action = msg.getAction();
-        log.info("Handling request: {}, current activities size: {}", action, activities.size());
+        log.info("Handling request: {}, current activities size: {}", action, messageHandler.getActivitiesSize());
         
         switch (action) {
             case "PLACE_BID":
