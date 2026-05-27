@@ -49,6 +49,8 @@ public class ProductInfoSubmissionController implements Initializable {
     @FXML
     private TextField bidDurationField;
     @FXML
+    private TextField typeSpecificField;
+    @FXML
     Label error;
 
     /// item below
@@ -148,7 +150,8 @@ public class ProductInfoSubmissionController implements Initializable {
 
             UserDTO owner = UserSession.getInstance().getUser();
             String newId = UUID.randomUUID().toString();
-            ItemDTO item = new ItemDTO(newId, name, description, owner, type);
+            String specificAttr = typeSpecificField.getText().trim();
+            ItemDTO item = new ItemDTO(newId, name, description, owner, type, specificAttr);
             AuctionDTO auction = new AuctionDTO(
                     item,
                     AuctionStatus.ACTIVE,
