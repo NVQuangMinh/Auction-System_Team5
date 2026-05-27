@@ -1,4 +1,4 @@
-package auction_client.controllers;
+package auction_client.controllers.auth;
 
 import auction_client.Network.ClientService;
 import auction_client.UserSession;
@@ -131,7 +131,7 @@ class SignUpControllerTest extends ApplicationTest {
         interact(() -> controller.onSignUpClicked());
 
         NetworkMessage msg = new NetworkMessage("CREATE_ACCOUNT", true);
-        interact(() -> controller.onUpdateReceived(msg));
+        controller.onUpdateReceived(msg);
         WaitForAsyncUtils.waitForFxEvents();
 
         assertEquals(TEST_USERNAME, UserSession.getInstance().getUsername());
@@ -146,7 +146,7 @@ class SignUpControllerTest extends ApplicationTest {
         scheduleAlertDismissal();
 
         NetworkMessage msg = new NetworkMessage("CREATE_ACCOUNT", false);
-        interact(() -> controller.onUpdateReceived(msg));
+        controller.onUpdateReceived(msg);
         WaitForAsyncUtils.waitForFxEvents();
 
         assertNull(UserSession.getInstance().getUser());
@@ -160,7 +160,7 @@ class SignUpControllerTest extends ApplicationTest {
         UserDTO userBefore = UserSession.getInstance().getUser();
 
         NetworkMessage msg = new NetworkMessage("OTHER_ACTION", true);
-        interact(() -> controller.onUpdateReceived(msg));
+        controller.onUpdateReceived(msg);
         WaitForAsyncUtils.waitForFxEvents();
 
         assertEquals(userBefore, UserSession.getInstance().getUser());

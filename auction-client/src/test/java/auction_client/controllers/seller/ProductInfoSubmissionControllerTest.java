@@ -1,4 +1,4 @@
-package auction_client.controllers;
+package auction_client.controllers.seller;
 
 import auction_client.Network.ClientService;
 import auction_client.UserSession;

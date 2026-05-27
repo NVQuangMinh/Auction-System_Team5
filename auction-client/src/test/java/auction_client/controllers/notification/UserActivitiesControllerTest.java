@@ -1,4 +1,4 @@
-package auction_client.controllers;
+package auction_client.controllers.notification;
 
 import auction_client.Network.ClientService;
 import auction_shared.Network.NetworkMessage;
@@ -73,7 +73,8 @@ class UserActivitiesControllerTest extends ApplicationTest {
                 (Serializable) List.of(first, second)
         );
 
-        interact(() -> controller.onUpdateReceived(msg));
+        controller.onUpdateReceived(msg);
+        org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
 
         VBox container = lookup("#notificationContainer").queryAs(VBox.class);
         assertNotNull(container);
@@ -95,16 +96,18 @@ class UserActivitiesControllerTest extends ApplicationTest {
     @Test
     public void testOnUpdateReceived_GetActivities_EmptyList_ClearsContainer() {
         Notification notification = new Notification("Existing activity", LocalTime.of(8, 0));
-        interact(() -> controller.onUpdateReceived(
+        controller.onUpdateReceived(
                 new NetworkMessage("GET_ACTIVITIES", (Serializable) List.of(notification))
-        ));
+        );
+        org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
 
         VBox container = lookup("#notificationContainer").queryAs(VBox.class);
         assertEquals(1, container.getChildren().size());
 
-        interact(() -> controller.onUpdateReceived(
+        controller.onUpdateReceived(
                 new NetworkMessage("GET_ACTIVITIES", (Serializable) new ArrayList<Notification>())
-        ));
+        );
+        org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
 
         assertEquals(0, container.getChildren().size());
     }
@@ -117,7 +120,8 @@ class UserActivitiesControllerTest extends ApplicationTest {
                 (Serializable) List.of(notification)
         );
 
-        interact(() -> controller.onUpdateReceived(msg));
+        controller.onUpdateReceived(msg);
+        org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
 
         VBox container = lookup("#notificationContainer").queryAs(VBox.class);
         assertEquals(1, container.getChildren().size());
@@ -129,18 +133,20 @@ class UserActivitiesControllerTest extends ApplicationTest {
 
     @Test
     public void testOnUpdateReceived_OtherAction_DoesNotChangeContainer() {
-        interact(() -> controller.onUpdateReceived(
+        controller.onUpdateReceived(
                 new NetworkMessage("GET_ACTIVITIES", (Serializable) List.of(
                         new Notification("Activity", LocalTime.of(10, 0))
                 ))
-        ));
+        );
+        org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
 
         VBox container = lookup("#notificationContainer").queryAs(VBox.class);
         assertEquals(1, container.getChildren().size());
 
-        interact(() -> controller.onUpdateReceived(
+        controller.onUpdateReceived(
                 new NetworkMessage("BID_SUCCESS", null)
-        ));
+        );
+        org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
 
         assertEquals(1, container.getChildren().size());
     }
@@ -148,9 +154,10 @@ class UserActivitiesControllerTest extends ApplicationTest {
     @Test
     public void testLoadNotifications_RefreshesItems() {
         Notification notification = new Notification("Reloaded", LocalTime.of(16, 45));
-        interact(() -> controller.onUpdateReceived(
+        controller.onUpdateReceived(
                 new NetworkMessage("GET_ACTIVITIES", (Serializable) List.of(notification))
-        ));
+        );
+        org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
 
         VBox container = lookup("#notificationContainer").queryAs(VBox.class);
         assertEquals(1, container.getChildren().size());

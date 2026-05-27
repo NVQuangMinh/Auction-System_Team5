@@ -1,4 +1,4 @@
-package auction_client.controllers;
+package auction_client.controllers.notification;
 
 import auction_client.Network.ClientService;
 import auction_client.UserSession;
@@ -124,7 +124,8 @@ class UserPushUpNotificationControllerTest extends ApplicationTest {
     public void testOnUpdateReceived_BidSuccess() {
         try (MockedStatic<UserPushUpNotificationController> mocked =
                      mockStatic(UserPushUpNotificationController.class)) {
-            interact(() -> controller.onUpdateReceived(new NetworkMessage("BID_SUCCESS", null)));
+            controller.onUpdateReceived(new NetworkMessage("BID_SUCCESS", null));
+            org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
 
             mocked.verify(() -> UserPushUpNotificationController.showNotification(
                     "You have placed bid successfully", "SUCCESS"));
@@ -135,8 +136,9 @@ class UserPushUpNotificationControllerTest extends ApplicationTest {
     public void testOnUpdateReceived_BidFailed() {
         try (MockedStatic<UserPushUpNotificationController> mocked =
                      mockStatic(UserPushUpNotificationController.class)) {
-            interact(() -> controller.onUpdateReceived(
-                    new NetworkMessage("BID_FAILED", "Insufficient balance")));
+            controller.onUpdateReceived(
+                    new NetworkMessage("BID_FAILED", "Insufficient balance"));
+            org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
 
             mocked.verify(() -> UserPushUpNotificationController.showNotification(
                     "Insufficient balance", "FAILED"));
@@ -147,7 +149,8 @@ class UserPushUpNotificationControllerTest extends ApplicationTest {
     public void testOnUpdateReceived_SellSuccess() {
         try (MockedStatic<UserPushUpNotificationController> mocked =
                      mockStatic(UserPushUpNotificationController.class)) {
-            interact(() -> controller.onUpdateReceived(new NetworkMessage("SELL_SUCCESS", null)));
+            controller.onUpdateReceived(new NetworkMessage("SELL_SUCCESS", null));
+            org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
 
             mocked.verify(() -> UserPushUpNotificationController.showNotification(
                     "You have sold item successfully", "SUCCESS"));
@@ -158,8 +161,9 @@ class UserPushUpNotificationControllerTest extends ApplicationTest {
     public void testOnUpdateReceived_SellFailed() {
         try (MockedStatic<UserPushUpNotificationController> mocked =
                      mockStatic(UserPushUpNotificationController.class)) {
-            interact(() -> controller.onUpdateReceived(
-                    new NetworkMessage("SELL_FAILED", "Cannot list item")));
+            controller.onUpdateReceived(
+                    new NetworkMessage("SELL_FAILED", "Cannot list item"));
+            org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
 
             mocked.verify(() -> UserPushUpNotificationController.showNotification(
                     "Cannot list item", "FAILED"));
@@ -170,7 +174,8 @@ class UserPushUpNotificationControllerTest extends ApplicationTest {
     public void testOnUpdateReceived_BuyoutSuccess() {
         try (MockedStatic<UserPushUpNotificationController> mocked =
                      mockStatic(UserPushUpNotificationController.class)) {
-            interact(() -> controller.onUpdateReceived(new NetworkMessage("BUYOUT_SUCCESS", null)));
+            controller.onUpdateReceived(new NetworkMessage("BUYOUT_SUCCESS", null));
+            org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
 
             mocked.verify(() -> UserPushUpNotificationController.showNotification(
                     "You have buy out item successfully", "SUCCESS"));
@@ -181,8 +186,9 @@ class UserPushUpNotificationControllerTest extends ApplicationTest {
     public void testOnUpdateReceived_BuyoutFailed() {
         try (MockedStatic<UserPushUpNotificationController> mocked =
                      mockStatic(UserPushUpNotificationController.class)) {
-            interact(() -> controller.onUpdateReceived(
-                    new NetworkMessage("BUYOUT_FAILED", "Buyout not allowed")));
+            controller.onUpdateReceived(
+                    new NetworkMessage("BUYOUT_FAILED", "Buyout not allowed"));
+            org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
 
             mocked.verify(() -> UserPushUpNotificationController.showNotification(
                     "Buyout not allowed", "FAILED"));
@@ -193,7 +199,8 @@ class UserPushUpNotificationControllerTest extends ApplicationTest {
     @Order(998)
     public void testOnUpdateReceived_BanUser_OtherUsername() {
         UserDTO otherUser = new UserDTO("2", "otherUser", "USER");
-        interact(() -> controller.onUpdateReceived(new NetworkMessage("BAN_USER", otherUser)));
+        controller.onUpdateReceived(new NetworkMessage("BAN_USER", otherUser));
+        org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
 
         verify(mockClientService, never()).sendMessage(any());
     }
@@ -202,7 +209,8 @@ class UserPushUpNotificationControllerTest extends ApplicationTest {
     @Order(999)
     public void testOnUpdateReceived_BanUser_MatchingUsername() {
         UserDTO bannedUser = new UserDTO("1", TEST_USERNAME, "USER");
-        interact(() -> controller.onUpdateReceived(new NetworkMessage("BAN_USER", bannedUser)));
+        controller.onUpdateReceived(new NetworkMessage("BAN_USER", bannedUser));
+        org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
 
         verify(mockClientService).sendMessage(argThat(msg -> "LOGOUT".equals(msg.getAction())));
     }

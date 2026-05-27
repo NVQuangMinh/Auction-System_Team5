@@ -1,6 +1,7 @@
-package auction_client.controllers;
+package auction_client.controllers.admin;
 
 import auction_client.Network.ClientService;
+import auction_client.controllers.notification.UserPushUpNotificationController;
 import auction_shared.Network.NetworkMessage;
 import auction_shared.dto.UserDTO;
 import auction_shared.dto.ItemDTO;
@@ -24,6 +25,8 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+
+//fail sạch : )
 
 class AdminControlPanelControllerTest extends ApplicationTest {
     private AdminControlPanelController controller;
@@ -68,9 +71,8 @@ class AdminControlPanelControllerTest extends ApplicationTest {
         UserDTO user2 = new UserDTO("2", "nhan", "ADMIN");
         NetworkMessage msg = new NetworkMessage("GET_USERS", (Serializable) Arrays.asList(user1, user2));
 
-        interact(() -> {
-            controller.onUpdateReceived(msg);
-        });
+        controller.onUpdateReceived(msg);
+        org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
 
         TableView<UserDTO> userTable = lookup("#userTable").queryAs(TableView.class);
         assertEquals(2, userTable.getItems().size());
@@ -107,9 +109,8 @@ class AdminControlPanelControllerTest extends ApplicationTest {
 
             NetworkMessage msg = new NetworkMessage("AUCTION_ENDED", dto);
 
-            interact(() -> {
-                controller.onUpdateReceived(msg);
-            });
+            controller.onUpdateReceived(msg);
+            org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
 
             mockedNotification.verify(() -> UserPushUpNotificationController.showNotification(
                     "Phiên đấu giá kết thúc: Laptop", "INFO"), times(1));

@@ -1,4 +1,4 @@
-package auction_client.controllers;
+package auction_client.controllers.bidder;
 
 import auction_client.Network.ClientService;
 import auction_client.UserSession;
@@ -23,7 +23,6 @@ import org.testfx.matcher.base.NodeMatchers;
 import org.testfx.matcher.control.LabeledMatchers;
 
 import java.io.Serializable;
-import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -144,7 +143,8 @@ class BidProductInfoControllerTest extends ApplicationTest {
             //gia lap bid them 100
             100 + 100 );
         NetworkMessage msg = new NetworkMessage("BID_SUCCESS", updatedAuction);
-        interact(() -> controller.onUpdateReceived(msg));
+        controller.onUpdateReceived(msg);
+        org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
         FxAssert.verifyThat("#currentPrice", LabeledMatchers.hasText("$200"));
         ArgumentCaptor<NetworkMessage> captor = ArgumentCaptor.forClass(NetworkMessage.class);
         verify(mockClientService, times(2)).sendMessage(captor.capture());
@@ -157,7 +157,8 @@ class BidProductInfoControllerTest extends ApplicationTest {
         interact(() -> controller.initData(auction));
         AuctionDTO soldAuction = createTestAuction(AuctionStatus.SOLD);
         NetworkMessage msg = new NetworkMessage("BUYOUT_SUCCESS", soldAuction);
-        interact(() -> controller.onUpdateReceived(msg));
+        controller.onUpdateReceived(msg);
+        org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
 
         FxAssert.verifyThat("#timeLeft", LabeledMatchers.hasText("SOLD"));
         TextField bidAmountField = lookup("#bidAmount").queryAs(TextField.class);
@@ -176,7 +177,8 @@ class BidProductInfoControllerTest extends ApplicationTest {
         BidTransactionDTO t2 = new BidTransactionDTO(auction, testUser2, 120.0, LocalDateTime.now().plusHours(10));
         List<BidTransactionDTO> transactions = List.of(t1, t2);
         NetworkMessage msg = new NetworkMessage("GET_BID_HISTORY",(Serializable) transactions);
-        interact(() -> controller.onUpdateReceived(msg));
+        controller.onUpdateReceived(msg);
+        org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
 
         DateTimeFormatter formater = DateTimeFormatter.ofPattern("HH:mm");
         LineChart<String, Number> chart = lookup("#bidHistory").queryAs(LineChart.class);

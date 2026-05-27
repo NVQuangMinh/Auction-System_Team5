@@ -1,4 +1,4 @@
-package auction_client.controllers;
+package auction_client.controllers.seller;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -108,7 +108,8 @@ public class SellProductSceneControllerTest extends ApplicationTest {
         AuctionDTO ownedAuction = createAuction(testUser, "01", "May tinh");
         NetworkMessage msg = new NetworkMessage("GET_MY_LIST", (Serializable) List.of(ownedAuction));
 
-        interact(() -> controller.onUpdateReceived(msg));
+        controller.onUpdateReceived(msg);
+        org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
 
         FlowPane flowPane = lookup("#myListFlowPane").queryAs(FlowPane.class);
         assertNotNull(flowPane);
@@ -125,7 +126,8 @@ public class SellProductSceneControllerTest extends ApplicationTest {
                 (Serializable) List.of(ownedAuction, othersAuction)
         );
 
-        interact(() -> controller.onUpdateReceived(msg));
+        controller.onUpdateReceived(msg);
+        org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
 
         FlowPane flowPane = lookup("#myListFlowPane").queryAs(FlowPane.class);
         assertEquals(1, flowPane.getChildren().size());
@@ -134,16 +136,18 @@ public class SellProductSceneControllerTest extends ApplicationTest {
     @Test
     public void testOnUpdateReceived_GetMyList_EmptyList_ClearsFlowPane() {
         AuctionDTO ownedAuction = createAuction(testUser, "01", "May tinh");
-        interact(() -> controller.onUpdateReceived(
+        controller.onUpdateReceived(
                 new NetworkMessage("GET_MY_LIST", (Serializable) List.of(ownedAuction))
-        ));
+        );
+        org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
 
         FlowPane flowPane = lookup("#myListFlowPane").queryAs(FlowPane.class);
         assertEquals(1, flowPane.getChildren().size());
 
-        interact(() -> controller.onUpdateReceived(
+        controller.onUpdateReceived(
                 new NetworkMessage("GET_MY_LIST", (Serializable) new ArrayList<AuctionDTO>())
-        ));
+        );
+        org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
 
         assertEquals(0, flowPane.getChildren().size());
     }

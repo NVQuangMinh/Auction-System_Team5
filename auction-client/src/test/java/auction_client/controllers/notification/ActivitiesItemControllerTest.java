@@ -1,4 +1,4 @@
-package auction_client.controllers;
+package auction_client.controllers.notification;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -10,8 +10,6 @@ import org.testfx.framework.junit5.ApplicationTest;
 import org.testfx.matcher.control.LabeledMatchers;
 
 import java.io.IOException;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class ActivitiesItemControllerTest extends ApplicationTest{
     private ActivitiesItemController controller;

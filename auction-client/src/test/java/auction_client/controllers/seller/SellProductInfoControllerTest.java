@@ -1,4 +1,4 @@
-package auction_client.controllers;
+package auction_client.controllers.seller;
 
 import auction_client.Network.ClientService;
 import auction_shared.Network.NetworkMessage;
@@ -8,7 +8,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -132,7 +131,8 @@ class SellProductInfoControllerTest extends ApplicationTest {
         BidTransactionDTO t2 = new BidTransactionDTO(auction, testUser, 120.0, LocalDateTime.now().plusHours(10));
         List<BidTransactionDTO> transactions = List.of(t1, t2);
         NetworkMessage msg = new NetworkMessage("GET_BID_HISTORY", (Serializable) transactions);
-        interact(() -> controller.onUpdateReceived(msg));
+        controller.onUpdateReceived(msg);
+        org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
 
         LineChart<String, Number> chart = lookup("#bidHistory").queryAs(LineChart.class);
         XYChart.Series<String, Number> priceSeries = chart.getData().get(0);
@@ -161,7 +161,8 @@ class SellProductInfoControllerTest extends ApplicationTest {
                 200);
         List<AuctionDTO> allRooms = List.of(updatedAuction);
         NetworkMessage msg = new NetworkMessage("UPDATE_BID", (Serializable) allRooms);
-        interact(() -> controller.onUpdateReceived(msg));
+        controller.onUpdateReceived(msg);
+        org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
 
         FxAssert.verifyThat("#currentPrice", LabeledMatchers.hasText("200.0"));
 
@@ -179,7 +180,8 @@ class SellProductInfoControllerTest extends ApplicationTest {
         AuctionDTO soldAuction = createTestAuction(AuctionStatus.SOLD);
         List<AuctionDTO> allRooms = List.of(soldAuction);
         NetworkMessage msg = new NetworkMessage("UPDATE_BID", (Serializable) allRooms);
-        interact(() -> controller.onUpdateReceived(msg));
+        controller.onUpdateReceived(msg);
+        org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
 
         FxAssert.verifyThat("#timeLeft", LabeledMatchers.hasText("SOLD"));
     }

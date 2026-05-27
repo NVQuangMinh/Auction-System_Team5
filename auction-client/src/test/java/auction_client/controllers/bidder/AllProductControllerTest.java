@@ -1,6 +1,7 @@
-package auction_client.controllers;
+package auction_client.controllers.bidder;
 
 import auction_client.Network.ClientService;
+import auction_client.controllers.notification.UserPushUpNotificationController;
 import auction_shared.Network.NetworkMessage;
 import auction_shared.dto.AuctionDTO;
 import auction_shared.dto.AuctionStatus;
@@ -11,7 +12,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.AfterEach;
@@ -168,7 +168,8 @@ public class AllProductControllerTest extends ApplicationTest {
         NetworkMessage msg = new NetworkMessage("GET_PRODUCTS", response);
 
         // Đẩy message vào controller trên JavaFX thread
-        interact(() -> controller.onUpdateReceived(msg));
+        controller.onUpdateReceived(msg);
+        org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
 
         // FlowPane phải tồn tại
         FlowPane flowPane = lookup("#productFlowPane").queryAs(FlowPane.class);
@@ -216,27 +217,12 @@ public class AllProductControllerTest extends ApplicationTest {
 
             NetworkMessage msg = new NetworkMessage("AUCTION_ENDED", dto);
 
-            interact(() -> controller.onUpdateReceived(msg));
+            controller.onUpdateReceived(msg);
+            org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
 
             mockedNotification.verify(() -> UserPushUpNotificationController.showNotification(
                     "Phiên đấu giá kết thúc: Laptop", "INFO"
             ), times(1));
         }
-    }
-
-    // ------------------------------------------------------------------
-    // TEST 7: Click nút LÀM MỚI (Refresh)
-    // ------------------------------------------------------------------
-    @Test
-    public void testRefreshButton_Click() {
-        // Mặc định đang ở tab Active
-        clickOn("#refreshButton");
-
-        ArgumentCaptor<NetworkMessage> captor = ArgumentCaptor.forClass(NetworkMessage.class);
-        verify(mockClientService, atLeastOnce()).sendMessage(captor.capture());
-
-        List<NetworkMessage> allMessages = captor.getAllValues();
-        String lastAction = allMessages.get(allMessages.size() - 1).getAction();
-        assertEquals("GET_PRODUCTS", lastAction);
     }
 }

@@ -1,7 +1,9 @@
-package auction_client.controllers;
+package auction_client.controllers.main;
 
 import auction_client.Network.ClientService;
 import auction_client.UserSession;
+import auction_client.controllers.auth.SignInController;
+import auction_client.controllers.bidder.AllProductController;
 import auction_shared.Network.NetworkMessage;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;

@@ -1,4 +1,4 @@
-package auction_client.controllers;
+package auction_client.controllers.auth;
 
 import auction_client.Network.ClientService;
 import auction_client.UserSession;
@@ -115,7 +115,7 @@ class SignInControllerTest extends ApplicationTest {
     public void testOnUpdateReceived_LoginSuccess_User() {
         interact(() -> lookup("#username").queryAs(TextField.class).setText("nhan"));
 
-        interact(() -> controller.onUpdateReceived(new NetworkMessage("LOGIN", testUser)));
+        controller.onUpdateReceived(new NetworkMessage("LOGIN", testUser));
         WaitForAsyncUtils.waitForFxEvents();
 
         assertEquals("nhan", UserSession.getInstance().getUsername());
@@ -131,7 +131,7 @@ class SignInControllerTest extends ApplicationTest {
     public void testOnUpdateReceived_LoginSuccess_Admin() {
         interact(() -> lookup("#username").queryAs(TextField.class).setText("admin"));
 
-        interact(() -> controller.onUpdateReceived(new NetworkMessage("LOGIN", adminUser)));
+        controller.onUpdateReceived(new NetworkMessage("LOGIN", adminUser));
         WaitForAsyncUtils.waitForFxEvents();
 
         assertEquals("admin", UserSession.getInstance().getUsername());
@@ -143,7 +143,7 @@ class SignInControllerTest extends ApplicationTest {
     public void testOnUpdateReceived_LoginFailure() {
         scheduleAlertDismissal();
 
-        interact(() -> controller.onUpdateReceived(new NetworkMessage("LOGIN", null)));
+        controller.onUpdateReceived(new NetworkMessage("LOGIN", null));
         WaitForAsyncUtils.waitForFxEvents();
 
         assertNull(UserSession.getInstance().getUser());
@@ -152,7 +152,7 @@ class SignInControllerTest extends ApplicationTest {
 
     @Test
     public void testOnUpdateReceived_IgnoresOtherActions() {
-        interact(() -> controller.onUpdateReceived(new NetworkMessage("GET_ALL", testUser)));
+        controller.onUpdateReceived(new NetworkMessage("GET_ALL", testUser));
         WaitForAsyncUtils.waitForFxEvents();
 
         assertNull(UserSession.getInstance().getUser());
