@@ -53,7 +53,6 @@ public class BidService {
                 try {
                     bidDAO.insert(transaction, conn);
                     auctionDAO.updateHighestBid(auction, conn);
-                    conn.commit();
 
                     if (auction.isAntiSniping()) {
                         LocalDateTime oldEndTime = auction.getEndTime();
@@ -62,6 +61,7 @@ public class BidService {
                             auctionDAO.updateEndTime(auction, conn);
                         }
                     }
+                    conn.commit();
 
                     log.info("Bid thành công: Auction={}, Bidder={}, BidAmount={}",
                             auction.getAuctionId(), transaction.getBidder().getUsername(), transaction.getBidAmount());

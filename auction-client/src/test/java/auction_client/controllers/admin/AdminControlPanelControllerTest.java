@@ -31,23 +31,25 @@ import static org.mockito.Mockito.*;
 class AdminControlPanelControllerTest extends ApplicationTest {
     private AdminControlPanelController controller;
     private ClientService mockClientService;
-    private MockedStatic<ClientService> mockedStaticClientService;
-
-    @BeforeEach
-    public void setUp() {
-        mockClientService = mock(ClientService.class);
-
-        mockedStaticClientService = mockStatic(ClientService.class);
-        mockedStaticClientService.when(() -> ClientService.getInstance()).thenReturn(mockClientService);
-    }
 
     @AfterEach
     public void closeMock() {
-        mockedStaticClientService.close();
+        try {
+            java.lang.reflect.Field instanceField = ClientService.class.getDeclaredField("instance");
+            instanceField.setAccessible(true);
+            instanceField.set(null, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void start(Stage stage) throws Exception {
+        mockClientService = mock(ClientService.class);
+        java.lang.reflect.Field instanceField = ClientService.class.getDeclaredField("instance");
+        instanceField.setAccessible(true);
+        instanceField.set(null, mockClientService);
+
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/auction_client/AdminControlPanel.fxml"));
         Parent root = loader.load();
         controller = loader.getController();
@@ -62,7 +64,7 @@ class AdminControlPanelControllerTest extends ApplicationTest {
         Mockito.verify(mockClientService, times(2)).sendMessage(messageCaptor.capture());
         List<NetworkMessage> msg = messageCaptor.getAllValues();
         assertEquals("GET_USERS", msg.get(0).getAction());
-        assertEquals("GET_PRODUCTS", msg.get(1).getAction());
+        assertEquals("GET_ACTIVE_PRODUCTS", msg.get(1).getAction());
     }
 
     @Test

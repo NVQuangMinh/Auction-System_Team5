@@ -41,6 +41,7 @@ public class AuctionScheduler {
                 if (auction.isExpired() && auction.getStatus() == AuctionStatus.ACTIVE) {
                     auction.endAuction();
                     String winnerId = winnerService.determineWinner(auction.getBidHistory());
+                    auction.setWinnerId(winnerId);
                     auctionDAO.update(auction);
                     AuctionDTO auctionDTO = Mappers.toDTO(auction);
 

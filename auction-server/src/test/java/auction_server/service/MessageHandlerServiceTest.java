@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
  *   ✅ setLoggedInUser / getLoggedInUser — getter/setter đơn giản
  *
  * CÁC METHOD BỎ QUA (cần AuctionManager):
- *   ❌ handlePlaceBid, handleBuyOut, handleSell, handleGetProducts, ...
+ *   ❌ handlePlaceBid, handleBuyOut, handleSell, handleGetActiveProducts, ...
  */
 @DisplayName("MessageHandlerService Unit Tests")
 class MessageHandlerServiceTest {

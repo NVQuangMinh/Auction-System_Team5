@@ -33,7 +33,6 @@ import static org.mockito.Mockito.*;
 class BidProductInfoControllerTest extends ApplicationTest {
     private BidProductInfoController controller;
     private ClientService mockClientService;
-    private MockedStatic<ClientService> mockedStaticClientService;
 
     private UserDTO testUser1 = new UserDTO("67", "nhan", "USER");
     private UserDTO testUser2 = new UserDTO("82", "nam", "USER");
@@ -45,16 +44,21 @@ class BidProductInfoControllerTest extends ApplicationTest {
 
     @AfterEach
     public void closeMock() {
-        if (mockedStaticClientService != null) {
-            mockedStaticClientService.close();
+        try {
+            java.lang.reflect.Field instanceField = ClientService.class.getDeclaredField("instance");
+            instanceField.setAccessible(true);
+            instanceField.set(null, null);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     @Override
     public void start(Stage stage) throws Exception {
         mockClientService = mock(ClientService.class);
-        mockedStaticClientService = mockStatic(ClientService.class);
-        mockedStaticClientService.when(() -> ClientService.getInstance()).thenReturn(mockClientService);
+        java.lang.reflect.Field instanceField = ClientService.class.getDeclaredField("instance");
+        instanceField.setAccessible(true);
+        instanceField.set(null, mockClientService);
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/auction_client/BidProductInfo.fxml"));
         Parent root = loader.load();

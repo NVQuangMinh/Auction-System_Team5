@@ -24,9 +24,9 @@ import auction_shared.Network.Notification;
 import auction_shared.dto.AuctionDTO;
 import auction_shared.dto.AuctionStatus;
 import auction_shared.dto.BidTransactionDTO;
-import auction_shared.dto.EndedProductsRequest;
+
 import auction_shared.dto.ItemDTO;
-import auction_shared.dto.ProductListResponse;
+
 import auction_shared.dto.SignUpDTO;
 import auction_shared.dto.UserDTO;
 
@@ -36,7 +36,7 @@ import auction_shared.dto.UserDTO;
 public class MessageHandlerService {
 
     private static final Logger log = LoggerFactory.getLogger(MessageHandlerService.class);
-    private static final int PAGE_SIZE_ENDED = 12;
+    private static final int LIMIT_ENDED_PRODUCTS = 15;
 
     private final UserService userService;
     private final SellService sellService;
@@ -213,49 +213,33 @@ public class MessageHandlerService {
     }
 
     /**
-     * Xử lý lấy danh sách sản phẩm (hybrid).
-     * - ACTIVE: lấy từ RAM (AuctionManager)
-     * - ENDED/SOLD: lấy từ DB (phân trang, trang đầu)
-     * Áp dụng phân trang cho cả Admin và User để tránh OutOfMemory.
+     * Xử lý lấy danh sách sản phẩm Active.
+     * ACTIVE: lấy từ RAM (AuctionManager)
      *
      * @param msg NetworkMessage
      */
-    public void handleGetProducts(NetworkMessage msg) {
+    public void handleGetActiveProducts(NetworkMessage msg) {
         List<Auction> activeFromRam = AuctionManager.getInstance().getAllRooms().stream()
                 .filter(a -> a.getStatus() == AuctionStatus.ACTIVE)
                 .collect(Collectors.toList());
-        List<Auction> endedFromDb = daoProvider.auctionDAO()
-                .selectEndedSaledAuctions(null, 0, PAGE_SIZE_ENDED);
-        int endedCount = daoProvider.auctionDAO().countEndedSaledAuctions(null);
 
         List<AuctionDTO> activeDTOs = Mappers.toAuctionDTOList(activeFromRam);
-        List<AuctionDTO> endedDTOs = Mappers.toAuctionDTOList(endedFromDb);
 
-        ProductListResponse response = new ProductListResponse(activeDTOs, endedDTOs, endedCount, activeFromRam.size());
-        messageSender.sendMessage(new NetworkMessage("GET_PRODUCTS", response));
+        messageSender.sendMessage(new NetworkMessage("GET_ACTIVE_PRODUCTS", (Serializable) activeDTOs));
     }
 
     /**
      * Xử lý lấy thêm ENDED/SOLD auctions có phân trang từ DB.
      * Dùng khi client phân trang Ended tab.
      *
-     * @param msg NetworkMessage chứa EndedProductsRequest
      */
     public void handleGetEndedProducts(NetworkMessage msg) {
-        EndedProductsRequest req = (EndedProductsRequest) msg.getData();
-        String category = req.getCategoryFilter();
-        int page = req.getPage();
-        int pageSize = req.getPageSize();
+        String category = (String) msg.getData();
 
-        List<Auction> endedFromDb = daoProvider.auctionDAO().selectEndedSaledAuctions(category, page, pageSize);
-        int totalCount = daoProvider.auctionDAO().countEndedSaledAuctions(category);
+        List<Auction> endedFromDb = daoProvider.auctionDAO().selectEndedSaledAuctions(category, LIMIT_ENDED_PRODUCTS);
 
-        ProductListResponse response = new ProductListResponse(
-                java.util.Collections.emptyList(),
-                Mappers.toAuctionDTOList(endedFromDb),
-                totalCount,
-                0);
-        messageSender.sendMessage(new NetworkMessage("GET_ENDED_PRODUCTS", response));
+        messageSender.sendMessage(
+                new NetworkMessage("GET_ENDED_PRODUCTS", (Serializable) Mappers.toAuctionDTOList(endedFromDb)));
     }
 
     /**

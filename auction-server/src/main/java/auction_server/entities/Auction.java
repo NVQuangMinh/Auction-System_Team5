@@ -28,11 +28,11 @@ public class Auction implements Serializable {
     private AuctionStatus status;
 
     // BID HISTORY
-    private String winnerId;    
+    private String winnerId;
     private final List<BidTransaction> bidHistory = new ArrayList<>();
 
     private final ReentrantLock lock = new ReentrantLock();
-    // Transient: chỉ dùng tạm trong RAM để hỗ trợ revertBuyOut, không cần serialize (hơi thừa trong happy test case, có thời gian sau refractor sẽ hoàn thiện)
+    // Transient: chỉ dùng tạm trong RAM để hỗ trợ revertBuyOut, không cần serialize
     private transient User originalOwnerBeforeBuyOut;
 
     public Auction(Item item, double startingPrice, double buyOutPrice, double tickSize, LocalDateTime startTime,
@@ -50,12 +50,13 @@ public class Auction implements Serializable {
     }
 
     /**
-     * Constructor dùng để rebuild Auction entity từ database khi server khởi động lại.
+     * Constructor dùng để rebuild Auction entity từ database khi server khởi động
+     * lại.
      * currentHighestBid và status được truyền trực tiếp thay vì tính toán lại.
      */
     public Auction(Item item, double startingPrice, double buyOutPrice, double tickSize,
-                  LocalDateTime startTime, LocalDateTime endTime, boolean antiSniping,
-                  double currentHighestBid, AuctionStatus status) {
+            LocalDateTime startTime, LocalDateTime endTime, boolean antiSniping,
+            double currentHighestBid, AuctionStatus status) {
         this.auctionId = item.getId();
         this.item = item;
         this.startingPrice = startingPrice;
@@ -68,7 +69,7 @@ public class Auction implements Serializable {
         this.status = status;
         this.winnerId = null;
     }
-    
+
     public void setBidHistory(List<BidTransaction> history) {
         this.bidHistory.clear();
         this.bidHistory.addAll(history);
@@ -112,7 +113,8 @@ public class Auction implements Serializable {
     public void extendTime() {
         lock.lock();
         try {
-            if (status != AuctionStatus.ACTIVE) return;
+            if (status != AuctionStatus.ACTIVE)
+                return;
 
             long remaining = java.time.Duration.between(LocalDateTime.now(), endTime).getSeconds();
             if (remaining <= SNIPING_GRACE_SECONDS && remaining > 0) {
@@ -148,19 +150,19 @@ public class Auction implements Serializable {
         }
     }
 
-
     /**
-     * Bid lỗi: DB transaction thất bại 
+     * Bid lỗi: DB transaction thất bại
      * NHƯNG: in-memory state đã được cập nhật
      * => bidHistory và currentHighestBid trên RAM đồng bộ lại DB
      * /Cách hoạt động:
-     * 1. auction.placeBid(transaction)     → thêm transaction vào bidHistory
-                                            → set currentHighestBid = transaction.getBidAmount()
-        2. bidDAO.insert(transaction, conn)  → insert vào DB
-        3. auctionDAO.updateHighestBid(...)  → update current_highest_bid trong DB
-        4. conn.commit()                     → ❌ THẤT BẠI (VD: deadlock, constraint violation, timeout, blah bleh)
-        → conn.rollback()                 → DB rollback, nhưng RAM vẫn giữ bid mới!
-        → auction.revertLastBid(transaction)  → hoàn tác RAM
+     * 1. auction.placeBid(transaction) → thêm transaction vào bidHistory
+     * → set currentHighestBid = transaction.getBidAmount()
+     * 2. bidDAO.insert(transaction, conn) → insert vào DB
+     * 3. auctionDAO.updateHighestBid(...) → update current_highest_bid trong DB
+     * 4. conn.commit() → ❌ THẤT BẠI (VD: deadlock, constraint violation, timeout,
+     * blah bleh)
+     * → conn.rollback() → DB rollback, nhưng RAM vẫn giữ bid mới!
+     * → auction.revertLastBid(transaction) → hoàn tác RAM
      */
 
     public void revertLastBid(BidTransaction transaction) {
@@ -243,6 +245,10 @@ public class Auction implements Serializable {
         return winnerId;
     }
 
+    public void setWinnerId(String winnerId) {
+        this.winnerId = winnerId;
+    }
+
     public List<BidTransaction> getBidHistory() {
         return bidHistory;
     }
@@ -254,7 +260,8 @@ public class Auction implements Serializable {
     /**
      * Chuẩn bị bid trong RAM (validate + cập nhật state).
      * KHÔNG lock — caller phải acquire lock trước và giữ qua DB transaction.
-     * Dùng bởi BidService để giữ lock qua toàn bộ operation (validation + DB persist).
+     * Dùng bởi BidService để giữ lock qua toàn bộ operation (validation + DB
+     * persist).
      */
     public void prepareBidInMemory(BidTransaction transaction) throws BidException {
         ValidatorService.validateBid(this, transaction);

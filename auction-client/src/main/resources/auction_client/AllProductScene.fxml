@@ -63,30 +63,8 @@
                   <RadioButton fx:id="endedStatusRadio" mnemonicParsing="false" onAction="#onStatusSelected" style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #333;" text="Ended" toggleGroup="$statusGroup" />
                </children>
             </VBox>
-            <!-- PAGINATION -->
-            <Label alignment="CENTER" prefHeight="30.0" prefWidth="160.0" style="-fx-background-color: #138eff; -fx-background-radius: 10;" text="PAGE" textFill="WHITE">
-               <font>
-                  <Font name="System Bold" size="13.0" />
-               </font>
-               <VBox.margin>
-                  <Insets top="15.0" />
-               </VBox.margin>
-            </Label>
-            <HBox alignment="CENTER" prefWidth="160.0" spacing="5.0">
-               <children>
-                  <Label fx:id="prevButton" style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #138eff; -fx-cursor: hand;" text="&lt;" />
-                  <Label fx:id="pageInfoLabel" alignment="CENTER" prefWidth="80.0" style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #333;" text="1 / 1" />
-                  <Label fx:id="nextButton" style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #138eff; -fx-cursor: hand;" text="&gt;" />
-               </children>
-            </HBox>
-            <Button mnemonicParsing="false" onAction="#onRefreshClicked" prefHeight="35.0" prefWidth="160.0" style="-fx-background-color: #138eff; -fx-background-radius: 10; -fx-font-weight: bold; -fx-text-fill: white; -fx-cursor: hand; -fx-font-size: 14;" text=" LÀM MỚI">
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="fas-sync-alt" iconSize="14" />
-               </graphic>
-               <VBox.margin>
-                  <Insets top="15.0" />
-               </VBox.margin>
-            </Button>
+
+
          </children>
       </VBox>
    </left>

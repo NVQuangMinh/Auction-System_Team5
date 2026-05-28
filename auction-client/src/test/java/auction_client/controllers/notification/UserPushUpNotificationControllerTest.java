@@ -36,21 +36,25 @@ class UserPushUpNotificationControllerTest extends ApplicationTest {
 
     private UserPushUpNotificationController controller;
     private ClientService mockClientService;
-    private MockedStatic<ClientService> mockedStaticClientService;
 
     @AfterEach
     public void closeMock() throws Exception {
         resetUserSession();
-        if (mockedStaticClientService != null) {
-            mockedStaticClientService.close();
+        try {
+            java.lang.reflect.Field instanceField = ClientService.class.getDeclaredField("instance");
+            instanceField.setAccessible(true);
+            instanceField.set(null, null);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     @Override
     public void start(Stage stage) throws Exception {
         mockClientService = mock(ClientService.class);
-        mockedStaticClientService = mockStatic(ClientService.class);
-        mockedStaticClientService.when(ClientService::getInstance).thenReturn(mockClientService);
+        java.lang.reflect.Field instanceField = ClientService.class.getDeclaredField("instance");
+        instanceField.setAccessible(true);
+        instanceField.set(null, mockClientService);
 
         UserSession.getInstance().setUsername(TEST_USERNAME);
 

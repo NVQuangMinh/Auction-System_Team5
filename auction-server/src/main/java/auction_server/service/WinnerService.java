@@ -1,6 +1,7 @@
 package auction_server.service;
 
 import auction_server.dao.DAOProvider;
+import auction_server.dao.UserDAO;
 import auction_server.entities.BidTransaction;
 import auction_server.entities.User;
 
@@ -8,7 +9,13 @@ import java.util.List;
 
 public class WinnerService {
 
+    private final UserDAO userDAO;
+
     public WinnerService(DAOProvider daoProvider) {
+        if (daoProvider == null) {
+            throw new IllegalArgumentException("DAOProvider cannot be null");
+        }
+        this.userDAO = daoProvider.userDAO();
     }
 
     public String determineWinner(List<BidTransaction> bidHistory) {
@@ -21,7 +28,8 @@ public class WinnerService {
             if (bidder == null) {
                 continue;
             }
-            if (bidder.getUserStatus() != null && !"BANNED".equals(bidder.getUserStatus())) {
+            User latestUser = userDAO.getUserByUsername(bidder.getUsername());
+            if (latestUser != null && !"BANNED".equals(latestUser.getUserStatus())) {
                 return bidder.getId();
             }
         }

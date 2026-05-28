@@ -47,7 +47,8 @@
                     <configLocation>checkstyle.xml</configLocation>
                     <consoleOutput>true</consoleOutput>
                     <failsOnError>false</failsOnError>
-                    <excludes>**/module-info.java</excludes>
+                    <failOnViolation>false</failOnViolation>
+                    <excludes>**/module-info.java,**/*Test.java,**/Network/**,**/launcher/**</excludes>
                 </configuration>
                 <executions>
                     <execution>

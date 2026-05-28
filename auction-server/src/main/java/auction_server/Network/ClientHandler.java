@@ -46,8 +46,7 @@ public class ClientHandler implements Runnable {
         this.socket = socket;
         this.messageHandler = new MessageHandlerService(
                 this::sendMessage,
-                daoProvider
-        );
+                daoProvider);
     }
 
     public User getLoggedInUser() {
@@ -107,8 +106,8 @@ public class ClientHandler implements Runnable {
             case "LOGIN":
                 messageHandler.handleLogin(msg);
                 break;
-            case "GET_PRODUCTS":
-                messageHandler.handleGetProducts(msg);
+            case "GET_ACTIVE_PRODUCTS":
+                messageHandler.handleGetActiveProducts(msg);
                 break;
             case "BUY_OUT":
                 messageHandler.handleBuyOut(msg);

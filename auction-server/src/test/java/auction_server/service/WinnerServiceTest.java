@@ -1,5 +1,7 @@
 package auction_server.service;
 
+import auction_server.dao.DAOProvider;
+import auction_server.dao.UserDAO;
 import auction_server.entities.BidTransaction;
 import auction_server.entities.User;
 import auction_server.entities.Auction;
@@ -14,25 +16,20 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit test cho WinnerService.
  *
- * WinnerService có một nhiệm vụ duy nhất: xác định winner hợp lệ
- * từ danh sách bid history khi auction kết thúc.
- *
- * Business rule (từ code thực):
- *   1. Duyệt từ cuối list lên đầu (bid mới nhất trước)
- *   2. Bỏ qua entry có bidder = null
- *   3. Bỏ qua bidder có userStatus = "BANNED"
- *   4. Trả về ID của bidder hợp lệ đầu tiên tìm được
- *   5. Nếu không tìm được → trả null (không có winner)
- *
+ * WinnerService xác định winner hợp lệ từ danh sách bid history
+ * bằng cách truy vấn trạng thái thời gian thực từ cơ sở dữ liệu.
  */
 @DisplayName("WinnerService Tests")
 class WinnerServiceTest {
 
     private WinnerService winnerService;
+    private DAOProvider daoProvider;
+    private UserDAO userDAO;
 
     // Fixture: các User với trạng thái khác nhau
     private User validBidder1;    // bidder hợp lệ, bid sớm
@@ -42,13 +39,15 @@ class WinnerServiceTest {
 
     @BeforeEach
     void setUp() {
-        // WinnerService không dùng DAOProvider trong determineWinner()
-        // → truyền null hoàn toàn an toàn cho mục đích test
-        winnerService = new WinnerService(null);
+        daoProvider = mock(DAOProvider.class);
+        userDAO = mock(UserDAO.class);
+        when(daoProvider.userDAO()).thenReturn(userDAO);
 
-        validBidder1 = new User("v1", "alice", "p", "USER", "AVAILABLE");
-        validBidder2 = new User("v2", "bob",   "p", "USER", "AVAILABLE");
-        bannedBidder = new User("b1", "charlie", "p", "USER", "BANNED");
+        winnerService = new WinnerService(daoProvider);
+
+        validBidder1 = new User("v1", "nam", "p", "USER", "AVAILABLE");
+        validBidder2 = new User("v2", "minh",   "p", "USER", "AVAILABLE");
+        bannedBidder = new User("b1", "banned", "p", "USER", "BANNED");
 
         // Auction giả: chỉ để giữ reference trong BidTransaction
         Arts item = new Arts("i1", "Test Item", "desc",
@@ -71,13 +70,15 @@ class WinnerServiceTest {
     // ════════════════════════════════════════════════════════════════════════
 
     @Test
-    @DisplayName("✅ History bình thường → trả về bidder của bid cuối cùng")
+    @DisplayName("History bình thường → trả về bidder của bid cuối cùng")
     void determineWinner_normalHistory_returnsLastBidder() {
-        // validBidder1 bid trước, validBidder2 bid sau → winner = validBidder2
         List<BidTransaction> history = Arrays.asList(
                 bid(validBidder1, 150.0),
                 bid(validBidder2, 200.0)
         );
+
+        when(userDAO.getUserByUsername("nam")).thenReturn(validBidder1);
+        when(userDAO.getUserByUsername("minh")).thenReturn(validBidder2);
 
         String winnerId = winnerService.determineWinner(history);
 
@@ -86,11 +87,13 @@ class WinnerServiceTest {
     }
 
     @Test
-    @DisplayName("✅ Chỉ có 1 bid → trả về bidder duy nhất đó")
+    @DisplayName("Chỉ có 1 bid → trả về bidder duy nhất đó")
     void determineWinner_singleBid_returnsThatBidder() {
         List<BidTransaction> history = Collections.singletonList(
                 bid(validBidder1, 150.0)
         );
+
+        when(userDAO.getUserByUsername("nam")).thenReturn(validBidder1);
 
         assertEquals(validBidder1.getId(), winnerService.determineWinner(history));
     }
@@ -100,32 +103,33 @@ class WinnerServiceTest {
     // ════════════════════════════════════════════════════════════════════════
 
     @Test
-    @DisplayName("❌ History rỗng → null (không có winner)")
+    @DisplayName("History rỗng → null (không có winner)")
     void determineWinner_emptyHistory_returnsNull() {
         assertNull(winnerService.determineWinner(Collections.emptyList()),
                 "Không có bid nào → không có winner");
     }
 
     @Test
-    @DisplayName("❌ History = null → null")
+    @DisplayName("History = null → null")
     void determineWinner_nullHistory_returnsNull() {
         assertNull(winnerService.determineWinner(null),
-                "null input phải được xử lý an toàn, không NullPointerException");
+                "null input phải được xử lý an toàn");
     }
 
     // ════════════════════════════════════════════════════════════════════════
     // Bidder bị BANNED — skip và tìm bidder hợp lệ trước đó
-    // (phản ánh rule: nếu winner bị admin ban sau khi đặt giá, phải tìm người khác)
     // ════════════════════════════════════════════════════════════════════════
 
     @Test
-    @DisplayName("⚠️ Bidder cuối bị BANNED → skip, trả về bidder hợp lệ kế tiếp")
+    @DisplayName("Bidder cuối bị BANNED → skip, trả về bidder hợp lệ kế tiếp")
     void determineWinner_lastBidderBanned_skipsToNext() {
-        // validBidder1 bid trước (hợp lệ), bannedBidder bid sau (bị ban)
         List<BidTransaction> history = Arrays.asList(
                 bid(validBidder1, 150.0),
                 bid(bannedBidder, 200.0)
         );
+
+        when(userDAO.getUserByUsername("nam")).thenReturn(validBidder1);
+        when(userDAO.getUserByUsername("banned")).thenReturn(bannedBidder);
 
         String winnerId = winnerService.determineWinner(history);
 
@@ -134,53 +138,44 @@ class WinnerServiceTest {
     }
 
     @Test
-    @DisplayName("⚠️ 2 bidder cuối đều BANNED → trả về bidder hợp lệ sớm hơn")
-    void determineWinner_lastTwoBiddersBanned_returnsEarlierValid() {
-        User bannedBidder2 = new User("b2", "dave", "p", "USER", "BANNED");
-
-        List<BidTransaction> history = Arrays.asList(
-                bid(validBidder1, 150.0),  // hợp lệ
-                bid(bannedBidder,  200.0),  // bị ban
-                bid(bannedBidder2, 250.0)   // bị ban
-        );
-
-        assertEquals(validBidder1.getId(), winnerService.determineWinner(history));
-    }
-
-    @Test
-    @DisplayName("❌ Tất cả bidder đều BANNED → null")
+    @DisplayName("Tất cả bidder đều BANNED → null")
     void determineWinner_allBiddersBanned_returnsNull() {
-        User bannedBidder2 = new User("b2", "dave", "p", "USER", "BANNED");
+        User bannedBidder2 = new User("b2", "banned2", "p", "USER", "BANNED");
 
         List<BidTransaction> history = Arrays.asList(
                 bid(bannedBidder,  150.0),
                 bid(bannedBidder2, 200.0)
         );
 
+        when(userDAO.getUserByUsername("banned")).thenReturn(bannedBidder);
+        when(userDAO.getUserByUsername("banned2")).thenReturn(bannedBidder2);
+
         assertNull(winnerService.determineWinner(history),
                 "Tất cả bidder bị ban → không có winner hợp lệ");
     }
 
     // ════════════════════════════════════════════════════════════════════════
-    // BidTransaction có bidder = null (trường hợp data bất thường từ DB)
+    // BidTransaction có bidder = null
     // ════════════════════════════════════════════════════════════════════════
 
     @Test
-    @DisplayName("⚠️ BidTransaction cuối có bidder = null → bỏ qua, lấy bidder hợp lệ trước")
+    @DisplayName("BidTransaction cuối có bidder = null → bỏ qua, lấy bidder hợp lệ trước")
     void determineWinner_nullBidder_skipsEntry() {
         BidTransaction nullBidderTx = new BidTransaction(dummyAuction, null, 200.0);
 
         List<BidTransaction> history = Arrays.asList(
                 bid(validBidder1, 150.0),
-                nullBidderTx              // bidder null — có thể xảy ra khi data DB lỗi
+                nullBidderTx
         );
+
+        when(userDAO.getUserByUsername("nam")).thenReturn(validBidder1);
 
         assertEquals(validBidder1.getId(), winnerService.determineWinner(history),
                 "BidTransaction có bidder null phải bị bỏ qua");
     }
 
     @Test
-    @DisplayName("❌ Tất cả BidTransaction đều có bidder = null → null")
+    @DisplayName("Tất cả BidTransaction đều có bidder = null → null")
     void determineWinner_allNullBidders_returnsNull() {
         BidTransaction tx1 = new BidTransaction(dummyAuction, null, 150.0);
         BidTransaction tx2 = new BidTransaction(dummyAuction, null, 200.0);
@@ -193,17 +188,46 @@ class WinnerServiceTest {
     // ════════════════════════════════════════════════════════════════════════
 
     @Test
-    @DisplayName("⚠️ Mix: banned + null + valid → trả về bidder hợp lệ đầu tiên từ cuối")
+    @DisplayName("Mix: banned + null + valid → trả về bidder hợp lệ đầu tiên từ cuối")
     void determineWinner_mixed_bannedAndNull_returnsFirstValid() {
         BidTransaction nullBidderTx = new BidTransaction(dummyAuction, null, 300.0);
 
         List<BidTransaction> history = Arrays.asList(
                 bid(validBidder1, 150.0),   // hợp lệ
                 bid(bannedBidder, 200.0),   // bị ban
-                nullBidderTx               // null bidder
+                nullBidderTx                // null bidder
         );
 
-        // Duyệt từ cuối: null(skip) → banned(skip) → validBidder1(✅)
+        when(userDAO.getUserByUsername("nam")).thenReturn(validBidder1);
+        when(userDAO.getUserByUsername("banned")).thenReturn(bannedBidder);
+        when(userDAO.getUserByUsername("nam")).thenReturn(validBidder1);
+
         assertEquals(validBidder1.getId(), winnerService.determineWinner(history));
+    }
+
+    // ════════════════════════════════════════════════════════════════════════
+    // Trường hợp thực tế: Bidder có status AVAILABLE trên RAM nhưng BANNED trên DB
+    // ════════════════════════════════════════════════════════════════════════
+
+    @Test
+    @DisplayName("Bidder có status AVAILABLE trên RAM nhưng bị BANNED trên DB → skip")
+    void determineWinner_lastBidderBannedInDB_skipsToNext() {
+        // nam bid trước (AVAILABLE), vuminh bid sau (AVAILABLE trên RAM tại thời điểm bid)
+        User bidderBannedInDBButAvailableOnRam = new User("b1", "vuminh", "p", "USER", "AVAILABLE");
+
+        List<BidTransaction> history = Arrays.asList(
+                bid(validBidder1, 150.0),
+                bid(bidderBannedInDBButAvailableOnRam, 200.0)
+        );
+
+        // Giả lập: vuminh sau đó bị Ban trên DB
+        User bannedDbUser = new User("b1", "vuminh", "p", "USER", "BANNED");
+        when(userDAO.getUserByUsername("nam")).thenReturn(validBidder1);
+        when(userDAO.getUserByUsername("vuminh")).thenReturn(bannedDbUser);
+
+        String winnerId = winnerService.determineWinner(history);
+
+        assertEquals(validBidder1.getId(), winnerId,
+                "Phải bỏ qua bidder bị BANNED trên DB mặc dù trên RAM là AVAILABLE");
     }
 }

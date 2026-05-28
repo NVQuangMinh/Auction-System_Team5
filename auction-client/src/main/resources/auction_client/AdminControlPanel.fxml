@@ -87,11 +87,7 @@
                                                         <RadioButton fx:id="endedStatusRadio" mnemonicParsing="false" onAction="#onStatusSelected" style="-fx-font-size: 13; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" text="Ended / Sold" toggleGroup="$statusGroup" />
                                                     </children>
                                                 </HBox>
-                                                <Button mnemonicParsing="false" onAction="#onRefreshClicked" style="-fx-background-color: #138eff; -fx-background-radius: 15; -fx-font-weight: bold; -fx-text-fill: white; -fx-cursor: hand; -fx-padding: 6 15 6 15;" text="Refresh">
-                                                    <graphic>
-                                                        <FontIcon iconColor="WHITE" iconLiteral="fas-sync-alt" iconSize="13" />
-                                                    </graphic>
-                                                </Button>
+
                                             </children>
                                         </HBox>
                                         <!-- Bảng Item -->
@@ -110,14 +106,7 @@
                                                 <String fx:value="table-view" />
                                             </styleClass>
                                         </TableView>
-                                        <!-- Pagination controls (chỉ hiển thị khi ở tab Ended) -->
-                                        <HBox fx:id="paginationBox" alignment="CENTER" spacing="15.0">
-                                            <children>
-                                                <Label fx:id="prevButton" style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: #138eff; -fx-cursor: hand;" text="&lt;" />
-                                                <Label fx:id="pageInfoLabel" alignment="CENTER" prefWidth="80.0" style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #333;" text="1 / 1" />
-                                                <Label fx:id="nextButton" style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: #138eff; -fx-cursor: hand;" text="&gt;" />
-                                            </children>
-                                        </HBox>
+
                                     </children>
                                 </VBox>
                             </children>

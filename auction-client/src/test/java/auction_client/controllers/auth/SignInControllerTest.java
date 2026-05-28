@@ -29,15 +29,18 @@ class SignInControllerTest extends ApplicationTest {
 
     private SignInController controller;
     private ClientService mockClientService;
-    private MockedStatic<ClientService> mockedStaticClientService;
 
     private final UserDTO testUser = new UserDTO("67", "nhan", "USER");
     private final UserDTO adminUser = new UserDTO("1", "admin", "ADMIN");
 
     @AfterEach
     public void closeMock() {
-        if (mockedStaticClientService != null) {
-            mockedStaticClientService.close();
+        try {
+            java.lang.reflect.Field instanceField = ClientService.class.getDeclaredField("instance");
+            instanceField.setAccessible(true);
+            instanceField.set(null, null);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -55,8 +58,9 @@ class SignInControllerTest extends ApplicationTest {
     @Override
     public void start(Stage stage) throws Exception {
         mockClientService = mock(ClientService.class);
-        mockedStaticClientService = mockStatic(ClientService.class);
-        mockedStaticClientService.when(ClientService::getInstance).thenReturn(mockClientService);
+        java.lang.reflect.Field instanceField = ClientService.class.getDeclaredField("instance");
+        instanceField.setAccessible(true);
+        instanceField.set(null, mockClientService);
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/auction_client/SignInScene.fxml"));
         Parent root = loader.load();

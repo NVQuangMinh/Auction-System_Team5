@@ -35,6 +35,7 @@ public class UserPushUpNotificationController implements AuctionUpdateListener {
             stage.setY(yPos);
         }
     }
+
     @FXML
     private StackPane iconContainer;
     @FXML
@@ -164,9 +165,8 @@ public class UserPushUpNotificationController implements AuctionUpdateListener {
                                 ((Stage) window).close();
                             }
                         }
-
-                        UserSession.getInstance().closeApp();
                     }
+                    UserSession.getInstance().closeApp();
                 } catch (Exception exception) {
                     exception.printStackTrace();
                 }

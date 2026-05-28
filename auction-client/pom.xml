@@ -103,10 +103,21 @@
                 <version>3.2.5</version>
                 <configuration>
                     <argLine>
-                        --add-opens auction.client/auction_client.controllers=ALL-UNNAMED
-                        --add-opens auction.client/auction_client.Network=ALL-UNNAMED
-                        --add-opens auction.client/auction_client.launcher=ALL-UNNAMED
+                        --add-exports javafx.graphics/com.sun.javafx.application=ALL-UNNAMED
+                        --add-exports javafx.graphics/com.sun.glass.ui=ALL-UNNAMED
+                        --add-opens javafx.graphics/com.sun.javafx.application=ALL-UNNAMED
+                        --add-opens javafx.graphics/com.sun.glass.ui=ALL-UNNAMED
+                        --add-reads org.kordamp.ikonli.core=ALL-UNNAMED
                         --add-opens auction.client/auction_client=ALL-UNNAMED
+                        --add-opens auction.client/auction_client.launcher=ALL-UNNAMED
+                        --add-opens auction.client/auction_client.Network=ALL-UNNAMED
+                        --add-opens auction.client/auction_client.controllers=ALL-UNNAMED
+                        --add-opens auction.client/auction_client.controllers.admin=ALL-UNNAMED
+                        --add-opens auction.client/auction_client.controllers.auth=ALL-UNNAMED
+                        --add-opens auction.client/auction_client.controllers.bidder=ALL-UNNAMED
+                        --add-opens auction.client/auction_client.controllers.seller=ALL-UNNAMED
+                        --add-opens auction.client/auction_client.controllers.main=ALL-UNNAMED
+                        --add-opens auction.client/auction_client.controllers.notification=ALL-UNNAMED
                         -XX:+EnableDynamicAgentLoading
                         -Dnet.bytebuddy.experimental=true
                     </argLine>

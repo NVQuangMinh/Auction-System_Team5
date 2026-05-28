@@ -3,16 +3,17 @@ package auction_server.service;
 import auction_server.dao.AuctionDAO;
 import auction_server.dao.BidTransactionDAO;
 import auction_server.dao.DAOProvider;
+import auction_server.dao.DatabaseConnection;
 import auction_server.entities.Auction;
 import auction_server.entities.BidTransaction;
 import auction_server.entities.User;
-import auction_server.exception.BidException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.MockedStatic;
+
+import java.sql.Connection;
+import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -26,52 +27,41 @@ import static org.mockito.Mockito.*;
  * CÁC KHÁI NIỆM QUAN TRỌNG:
  * =========================
  * 1. @Mock: Tạo object giả (fake) để thay thế dependency thật
- *    - Ví dụ: Thay vì dùng database thật, ta dùng mock DAO
+ * - Ví dụ: Thay vì dùng database thật, ta dùng mock DAO
  * 
  * 2. @BeforeEach: Method chạy TRƯỚC MỖI test case
- *    - Dùng để setup dữ liệu test
+ * - Dùng để setup dữ liệu test
  * 
  * 3. @Test: Đánh dấu method là một test case
  * 
  * 4. Assertions: Kiểm tra kết quả
- *    - assertEquals(expected, actual): Kiểm tra 2 giá trị bằng nhau
- *    - assertNotNull(value): Kiểm tra không null
- *    - assertThrows(Exception.class, () -> code): Kiểm tra có throw exception
+ * - assertEquals(expected, actual): Kiểm tra 2 giá trị bằng nhau
+ * - assertNotNull(value): Kiểm tra không null
+ * - assertThrows(Exception.class, () -> code): Kiểm tra có throw exception
  * 
  * 5. Mockito:
- *    - when(...).thenReturn(...): Giả lập kết quả trả về
- *    - verify(...): Kiểm tra method đã được gọi chưa
+ * - when(...).thenReturn(...): Giả lập kết quả trả về
+ * - verify(...): Kiểm tra method đã được gọi chưa
  */
 @DisplayName("BidService Unit Tests")
 public class BidServiceTest {
 
-    // ============================================
-    // PHẦN 1: KHAI BÁO DEPENDENCIES (Mock objects)
-    // ============================================
-    // 
-    // LƯU Ý: Không dùng @Mock vì Java Module System gây conflict
-    // Thay vào đó, tạo mock thủ công trong setUp()
-    
-    private DAOProvider daoProvider; // Giả lập DAOProvider
-    private AuctionDAO auctionDAO; // Giả lập AuctionDAO
-    private BidTransactionDAO bidTransactionDAO; // Giả lập BidTransactionDAO
-    private BidService bidService; // Object thật mà ta muốn test
+    private DAOProvider daoProvider;
+    private AuctionDAO auctionDAO;
+    private BidTransactionDAO bidTransactionDAO;
+    private BidService bidService;
 
-    // ============================================
-    // PHẦN 2: SETUP - Chạy trước mỗi test
-    // ============================================
-    
     @BeforeEach
     void setUp() {
         // Tạo mock objects thủ công (không dùng @Mock annotation)
         daoProvider = mock(DAOProvider.class);
         auctionDAO = mock(AuctionDAO.class);
         bidTransactionDAO = mock(BidTransactionDAO.class);
-        
+
         // Giả lập: Khi gọi daoProvider.auctionDAO() thì trả về mock auctionDAO
         when(daoProvider.auctionDAO()).thenReturn(auctionDAO);
         when(daoProvider.bidTransactionDAO()).thenReturn(bidTransactionDAO);
-        
+
         // Tạo BidService thật với mock dependencies
         bidService = new BidService(daoProvider);
     }
@@ -94,24 +84,24 @@ public class BidServiceTest {
         // ARRANGE (Chuẩn bị dữ liệu test)
         String auctionId = "auction-001";
         String expectedWinnerId = "user-123";
-        
+
         // Tạo mock User
         User mockBidder = mock(User.class);
         when(mockBidder.getId()).thenReturn(expectedWinnerId);
-        
+
         // Tạo mock BidTransaction
         BidTransaction mockTransaction = mock(BidTransaction.class);
         when(mockTransaction.getBidder()).thenReturn(mockBidder);
-        
+
         // Giả lập: Khi gọi findTopBidderByAuction thì trả về mockTransaction
         when(bidTransactionDAO.findTopBidderByAuction(auctionId)).thenReturn(mockTransaction);
-        
+
         // ACT (Thực hiện hành động cần test)
         String actualWinnerId = bidService.findWinnerId(auctionId);
-        
+
         // ASSERT (Kiểm tra kết quả)
         assertEquals(expectedWinnerId, actualWinnerId, "Winner ID phải khớp với bidder ID");
-        
+
         // Verify: Đảm bảo method findTopBidderByAuction đã được gọi đúng 1 lần
         verify(bidTransactionDAO, times(1)).findTopBidderByAuction(auctionId);
     }
@@ -129,13 +119,13 @@ public class BidServiceTest {
     void testFindWinnerId_NoBidTransaction() {
         // ARRANGE
         String auctionId = "auction-002";
-        
+
         // Giả lập: Không có transaction nào -> trả về null
         when(bidTransactionDAO.findTopBidderByAuction(auctionId)).thenReturn(null);
-        
+
         // ACT
         String actualWinnerId = bidService.findWinnerId(auctionId);
-        
+
         // ASSERT
         assertNull(actualWinnerId, "Winner ID phải là null khi không có bid");
         verify(bidTransactionDAO, times(1)).findTopBidderByAuction(auctionId);
@@ -154,15 +144,15 @@ public class BidServiceTest {
     void testFindWinnerId_BidderIsNull() {
         // ARRANGE
         String auctionId = "auction-003";
-        
+
         BidTransaction mockTransaction = mock(BidTransaction.class);
         when(mockTransaction.getBidder()).thenReturn(null); // Bidder = null
-        
+
         when(bidTransactionDAO.findTopBidderByAuction(auctionId)).thenReturn(mockTransaction);
-        
+
         // ACT
         String actualWinnerId = bidService.findWinnerId(auctionId);
-        
+
         // ASSERT
         assertNull(actualWinnerId, "Winner ID phải là null khi bidder null");
     }
@@ -182,7 +172,8 @@ public class BidServiceTest {
      * 
      * VÍ DỤ HƯỚNG DẪN:
      * - Tạo interface ConnectionProvider
-     * - Inject vào BidService thay vì gọi DatabaseConnection.getConnection() trực tiếp
+     * - Inject vào BidService thay vì gọi DatabaseConnection.getConnection() trực
+     * tiếp
      * - Trong test, mock ConnectionProvider
      * 
      * ĐÂY LÀ KIẾN THỨC NÂNG CAO, KHÔNG BẮT BUỘC CHO NGƯỜI MỚI BẮT ĐẦU.

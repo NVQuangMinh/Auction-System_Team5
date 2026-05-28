@@ -131,14 +131,15 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
             });
         } else if (action.equals("GET_BID_HISTORY")) {
             List<BidTransactionDTO> allTransactions = (List<BidTransactionDTO>) msg.getData();
-            priceSeries.getData().clear();
-            DateTimeFormatter formater = DateTimeFormatter.ofPattern("HH:mm");
-            for (BidTransactionDTO transaction : allTransactions) {
-                priceSeries.getData().add(new XYChart.Data<>(
-                        transaction.getBidTime().format(formater),
-                        transaction.getBidAmount()
-                ));
-            }
+            Platform.runLater(() -> {
+                priceSeries.getData().clear();
+                DateTimeFormatter formater = DateTimeFormatter.ofPattern("HH:mm");
+                for (BidTransactionDTO transaction : allTransactions) {
+                    priceSeries.getData().add(new XYChart.Data<>(
+                            transaction.getBidTime().format(formater),
+                            transaction.getBidAmount()));
+                }
+            });
 
         } else if (action.equals("AUCTION_ENDED") || action.equals("AUCTION_SOLD")) {
             // Auction kết thúc hết giờ hoặc được mua ngay: chuyển modal sang read-only
@@ -147,7 +148,8 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
                     && incoming.getAuctionId().equals(this.auction.getAuctionId())) {
                 this.auction = incoming;
                 Platform.runLater(() -> {
-                    if (countdownTimeline != null) countdownTimeline.stop();
+                    if (countdownTimeline != null)
+                        countdownTimeline.stop();
                     timeLeft.setText(String.valueOf(incoming.getStatus()));
                     bidAmount.setEditable(false);
                 });
@@ -159,7 +161,8 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
             if (this.auction != null
                     && removed.getAuctionId().equals(this.auction.getAuctionId())) {
                 Platform.runLater(() -> {
-                    if (countdownTimeline != null) countdownTimeline.stop();
+                    if (countdownTimeline != null)
+                        countdownTimeline.stop();
                     timeLeft.setText("CANCELLED");
                     bidAmount.setEditable(false);
                     error.setVisible(true);
@@ -173,14 +176,12 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
 
     }
 
-
     public void initData(AuctionDTO auction) {
         this.auction = auction;
         updateData();
         if (auction.getStatus().equals(AuctionStatus.ACTIVE)) {
             startCountdown();
-        }
-        else {
+        } else {
             timeLeft.setText(String.valueOf(auction.getStatus()));
         }
         ClientService.getInstance().sendMessage(new NetworkMessage("GET_BID_HISTORY", auction));
@@ -213,6 +214,11 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
     public void placeBidRequest() {
         try {
             double amount = Double.parseDouble(bidAmount.getText());
+            double increment = amount - auction.getCurrentHighestBid();
+            long ticks = Math.round(increment / auction.getTickSize());
+            // hàm kiểm tra logic, sử dụng Math.abs để tránh sai số 0.0001
+            boolean isValidTick = ticks > 0 && Math.abs(increment - ticks * auction.getTickSize()) <= 0.001;
+
             if (amount >= auction.getBuyOutPrice()) {
                 BidTransactionDTO transaction = new BidTransactionDTO(
                         auction, UserSession.getInstance().getUser(),
@@ -222,7 +228,7 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
                 error.setOpacity(0.0);
                 error.setManaged(false);
                 error.setVisible(false);
-            } else if ((amount - auction.getCurrentHighestBid()) % auction.getTickSize() == 0) {
+            } else if (isValidTick) {
                 BidTransactionDTO transaction = new BidTransactionDTO(
                         auction, UserSession.getInstance().getUser(),
                         amount, LocalDateTime.now());

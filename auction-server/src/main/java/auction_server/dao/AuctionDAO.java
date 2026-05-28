@@ -153,7 +153,7 @@ public class AuctionDAO implements WritableDAO<Auction> {
      * @param pageSize       số item mỗi trang
      * @return danh sách Auction
      */
-    public List<Auction> selectEndedSaledAuctions(String categoryFilter, int page, int pageSize) {
+    public List<Auction> selectEndedSaledAuctions(String categoryFilter, int limit) {
         String statusCondition = "(a.auction_status = 'ENDED' OR a.auction_status = 'SOLD')";
         String categoryCondition = "";
         if (categoryFilter != null && !categoryFilter.isEmpty() && !"ALL".equals(categoryFilter)) {
@@ -168,7 +168,7 @@ public class AuctionDAO implements WritableDAO<Auction> {
                 "JOIN users u ON i.owner_id = u.id " +
                 "WHERE " + statusCondition + categoryCondition +
                 " ORDER BY a.end_time DESC " +
-                "LIMIT ? OFFSET ?";
+                "LIMIT ?";
 
         List<Auction> auctions = new ArrayList<>();
         try (Connection conn = DatabaseConnection.getConnection();
@@ -177,8 +177,7 @@ public class AuctionDAO implements WritableDAO<Auction> {
             if (categoryFilter != null && !categoryFilter.isEmpty() && !"ALL".equals(categoryFilter)) {
                 ps.setString(paramIdx++, categoryFilter);
             }
-            ps.setInt(paramIdx++, pageSize);
-            ps.setInt(paramIdx, page * pageSize);
+            ps.setInt(paramIdx, limit);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     User owner = new User(
@@ -213,41 +212,7 @@ public class AuctionDAO implements WritableDAO<Auction> {
         return auctions;
     }
 
-    /**
-     * Đếm tổng số auction ENDED/SOLD theo category filter.
-     * Dùng để tính tổng số trang.
-     */
-    public int countEndedSaledAuctions(String categoryFilter) {
-        String statusCondition = "(a.auction_status = 'ENDED' OR a.auction_status = 'SOLD')";
-        String categoryCondition = "";
-        if (categoryFilter != null && !categoryFilter.isEmpty() && !"ALL".equals(categoryFilter)) {
-            categoryCondition = " AND i.item_type = ? ";
-        }
-        String baseSql = "SELECT COUNT(*) FROM auctions a " +
-                "JOIN items i ON a.item_id = i.id " +
-                "WHERE " + statusCondition + categoryCondition;
 
-        try (Connection conn = DatabaseConnection.getConnection();
-                PreparedStatement ps = conn.prepareStatement(baseSql)) {
-            if (categoryFilter != null && !categoryFilter.isEmpty() && !"ALL".equals(categoryFilter)) {
-                ps.setString(1, categoryFilter);
-                try (ResultSet rs = ps.executeQuery()) {
-                    if (rs.next()) {
-                        return rs.getInt(1);
-                    }
-                }
-            } else {
-                try (ResultSet rs = ps.executeQuery()) {
-                    if (rs.next()) {
-                        return rs.getInt(1);
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            log.error("Database error while counting ended/sold auctions", e);
-        }
-        return 0;
-    }
 
     /**
      * Helper: map một dòng ResultSet thành Item entity.
