@@ -3,9 +3,11 @@ package auctionclient.controllers.admin;
 import auctionclient.Network.ClientService;
 import auctionclient.controllers.notification.UserPushUpNotificationController;
 import auctionshared.Network.NetworkMessage;
+import auctionshared.dto.AuctionStatus;
 import auctionshared.dto.UserDTO;
 import auctionshared.dto.ItemDTO;
 import auctionshared.dto.AuctionDTO;
+import auctionshared.dto.ItemType;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -87,7 +89,44 @@ class AdminControlPanelControllerTest extends ApplicationTest {
 
     @Test
     public void testOnUpdateReceived_ProductTable() {
-        // Prepare some items
+        ItemDTO item1 = new ItemDTO("item-1", "Laptop", "desc", null, ItemType.ELECTRONICS);
+        ItemDTO item2 = new ItemDTO("item-2", "Painting", "desc", null, ItemType.ARTS);
+        AuctionDTO auction1 = new AuctionDTO(
+                item1,
+                AuctionStatus.ACTIVE,
+                100.0,
+                500.0,
+                10.0,
+                java.time.LocalDateTime.now(),
+                java.time.LocalDateTime.now().plusHours(1),
+                false,
+                null,
+                150.0);
+        AuctionDTO auction2 = new AuctionDTO(
+                item2,
+                AuctionStatus.ACTIVE,
+                200.0,
+                800.0,
+                20.0,
+                java.time.LocalDateTime.now(),
+                java.time.LocalDateTime.now().plusHours(2),
+                false,
+                null,
+                250.0);
+        NetworkMessage msg = new NetworkMessage(
+                "GET_ACTIVE_PRODUCTS", (Serializable) Arrays.asList(auction1, auction2));
+
+        controller.onUpdateReceived(msg);
+        org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
+
+        TableView<AuctionDTO> itemTable = lookup("#itemTable").queryAs(TableView.class);
+        assertEquals(2, itemTable.getItems().size());
+        assertEquals("Laptop", itemTable.getItems().get(0).getItem().getName());
+        assertEquals("Painting", itemTable.getItems().get(1).getItem().getName());
+        assertEquals(150.0, itemTable.getItems().get(0).getCurrentHighestBid());
+        assertEquals(250.0, itemTable.getItems().get(1).getCurrentHighestBid());
+        assertEquals(AuctionStatus.ACTIVE, itemTable.getItems().get(0).getStatus());
+        assertEquals(AuctionStatus.ACTIVE, itemTable.getItems().get(1).getStatus());
     }
 
     @Test
@@ -118,11 +157,4 @@ class AdminControlPanelControllerTest extends ApplicationTest {
         }
     }
 
-    @Test
-    void handleBanUser() {
-    }
-
-    @Test
-    void handleRemoveAuction() {
-    }
 }

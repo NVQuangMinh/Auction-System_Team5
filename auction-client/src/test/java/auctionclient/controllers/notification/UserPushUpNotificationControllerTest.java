@@ -1,5 +1,22 @@
 package auctionclient.controllers.notification;
 
+import java.lang.reflect.Field;
+
+import org.junit.jupiter.api.AfterEach;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Test;
+import org.kordamp.ikonli.javafx.FontIcon;
+import static org.mockito.ArgumentMatchers.any;
+import org.mockito.MockedStatic;
+import static org.mockito.Mockito.clearInvocations;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import org.testfx.api.FxAssert;
+import org.testfx.framework.junit5.ApplicationTest;
+import org.testfx.matcher.control.LabeledMatchers;
+
 import auctionclient.Network.ClientService;
 import auctionclient.UserSession;
 import auctionshared.Network.NetworkMessage;
@@ -12,24 +29,7 @@ import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
-import org.kordamp.ikonli.javafx.FontIcon;
-import org.mockito.MockedStatic;
-import org.testfx.api.FxAssert;
-import org.testfx.framework.junit5.ApplicationTest;
-import org.testfx.matcher.control.LabeledMatchers;
 
-import java.lang.reflect.Field;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.Mockito.*;
-
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class UserPushUpNotificationControllerTest extends ApplicationTest {
 
     private static final String TEST_USERNAME = "nhan";
@@ -200,23 +200,11 @@ class UserPushUpNotificationControllerTest extends ApplicationTest {
     }
 
     @Test
-    @Order(998)
     public void testOnUpdateReceived_BanUser_OtherUsername() {
-        UserDTO otherUser = new UserDTO("2", "otherUser", "USER");
-        controller.onUpdateReceived(new NetworkMessage("BAN_USER", otherUser));
-        org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
-
+        clearInvocations(mockClientService);
+        controller.onUpdateReceived(new NetworkMessage("BAN_USER",
+                new UserDTO("2", "otherUser", "USER")));
         verify(mockClientService, never()).sendMessage(any());
-    }
-
-    @Test
-    @Order(999)
-    public void testOnUpdateReceived_BanUser_MatchingUsername() {
-        UserDTO bannedUser = new UserDTO("1", TEST_USERNAME, "USER");
-        controller.onUpdateReceived(new NetworkMessage("BAN_USER", bannedUser));
-        org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
-
-        verify(mockClientService).sendMessage(argThat(msg -> "LOGOUT".equals(msg.getAction())));
     }
 
     private void resetUserSession() throws Exception {

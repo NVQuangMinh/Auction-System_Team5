@@ -106,8 +106,8 @@ class ProductCardControllerTest extends ApplicationTest {
         FxAssert.verifyThat("#itemName", LabeledMatchers.hasText("Laptop Gaming"));
         FxAssert.verifyThat("#itemState", LabeledMatchers.hasText("ACTIVE"));
         FxAssert.verifyThat("#description", LabeledMatchers.hasText("Mot chiec laptop gaming cao cap"));
-        FxAssert.verifyThat("#currentPrice", LabeledMatchers.hasText("500"));
-        FxAssert.verifyThat("#buyOutPrice", LabeledMatchers.hasText("2,000"));
+        FxAssert.verifyThat("#currentPrice", LabeledMatchers.hasText("$500"));
+        FxAssert.verifyThat("#buyOutPrice", LabeledMatchers.hasText("$2,000"));
     }
 
     /**
@@ -320,8 +320,8 @@ class ProductCardControllerTest extends ApplicationTest {
 
         interact(() -> controller.setData(auction, mockListener));
 
-        FxAssert.verifyThat("#currentPrice", LabeledMatchers.hasText("1,000"));
-        FxAssert.verifyThat("#buyOutPrice", LabeledMatchers.hasText("5,000"));
+        FxAssert.verifyThat("#currentPrice", LabeledMatchers.hasText("$1,000"));
+        FxAssert.verifyThat("#buyOutPrice", LabeledMatchers.hasText("$5,000"));
     }
 
     /**
@@ -336,7 +336,7 @@ class ProductCardControllerTest extends ApplicationTest {
 
         interact(() -> controller.setData(auction, mockListener));
 
-        FxAssert.verifyThat("#currentPrice", LabeledMatchers.hasText("1,234.50"));
-        FxAssert.verifyThat("#buyOutPrice", LabeledMatchers.hasText("9,999.99"));
+        FxAssert.verifyThat("#currentPrice", LabeledMatchers.hasText("$1,234.50"));
+        FxAssert.verifyThat("#buyOutPrice", LabeledMatchers.hasText("$9,999.99"));
     }
 }

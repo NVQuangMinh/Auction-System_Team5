@@ -75,9 +75,9 @@ class SellProductInfoControllerTest extends ApplicationTest {
 
         FxAssert.verifyThat("#itemName", LabeledMatchers.hasText("May tinh"));
         FxAssert.verifyThat("#description", LabeledMatchers.hasText("Mot cai may tinh"));
-        FxAssert.verifyThat("#currentPrice", LabeledMatchers.hasText("100.0"));
-        FxAssert.verifyThat("#buyOut", LabeledMatchers.hasText("9999.0"));
-        FxAssert.verifyThat("#tickRate", LabeledMatchers.hasText("10.0"));
+        FxAssert.verifyThat("#currentPrice", LabeledMatchers.hasText("$100"));
+        FxAssert.verifyThat("#buyOut", LabeledMatchers.hasText("$9,999"));
+        FxAssert.verifyThat("#tickRate", LabeledMatchers.hasText("$10"));
 
         ArgumentCaptor<NetworkMessage> captor = ArgumentCaptor.forClass(NetworkMessage.class);
         verify(mockClientService).sendMessage(captor.capture());
@@ -164,7 +164,7 @@ class SellProductInfoControllerTest extends ApplicationTest {
         controller.onUpdateReceived(msg);
         org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
 
-        FxAssert.verifyThat("#currentPrice", LabeledMatchers.hasText("200.0"));
+        FxAssert.verifyThat("#currentPrice", LabeledMatchers.hasText("$200"));
 
         ArgumentCaptor<NetworkMessage> captor = ArgumentCaptor.forClass(NetworkMessage.class);
         verify(mockClientService, times(2)).sendMessage(captor.capture());
