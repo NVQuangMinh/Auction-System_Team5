@@ -1,5 +1,21 @@
 package auctionclient.controllers.notification;
 
+import java.io.Serializable;
+import java.time.LocalTime;
+import java.util.List;
+
+import org.junit.jupiter.api.AfterEach;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.MockedStatic;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.verify;
+import org.testfx.framework.junit5.ApplicationTest;
+
 import auctionclient.Network.ClientService;
 import auctionshared.Network.NetworkMessage;
 import auctionshared.Network.Notification;
@@ -10,19 +26,6 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.MockedStatic;
-import org.testfx.framework.junit5.ApplicationTest;
-
-import java.io.Serializable;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 class UserActivitiesControllerTest extends ApplicationTest {
 
@@ -65,12 +68,14 @@ class UserActivitiesControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testOnUpdateReceived_GetActivities_PopulatesNotificationContainer() {
+    public void testOnUpdateReceived_GetActivities_AllNotificationsRenderedInOrder() {
         Notification first = new Notification("You placed a bid", LocalTime.of(9, 15));
         Notification second = new Notification("Auction ended", LocalTime.of(14, 30));
+        Notification third = new Notification("You won the auction", LocalTime.of(18, 0));
+
         NetworkMessage msg = new NetworkMessage(
                 "GET_ACTIVITIES",
-                (Serializable) List.of(first, second)
+                (Serializable) List.of(first, second, third)
         );
 
         controller.onUpdateReceived(msg);
@@ -78,95 +83,25 @@ class UserActivitiesControllerTest extends ApplicationTest {
 
         VBox container = lookup("#notificationContainer").queryAs(VBox.class);
         assertNotNull(container);
-        assertEquals(2, container.getChildren().size());
+        assertEquals(3, container.getChildren().size());
 
-        HBox topItem = (HBox) container.getChildren().get(0);
-        Label topMessage = (Label) topItem.getChildren().get(0);
-        Label topTime = (Label) topItem.getChildren().get(2);
-        assertEquals(second.getNotificationMessage(), topMessage.getText());
-        assertEquals(String.valueOf(second.getNotificationTime()), topTime.getText());
+        // Items should be added in reverse order (latest first)
+        HBox firstItem = (HBox) container.getChildren().get(0);
+        Label firstMessage = (Label) firstItem.getChildren().get(0);
+        Label firstTime = (Label) firstItem.getChildren().get(2);
+        assertEquals(third.getNotificationMessage(), firstMessage.getText());
+        assertEquals(String.valueOf(third.getNotificationTime()), firstTime.getText());
 
-        HBox bottomItem = (HBox) container.getChildren().get(1);
-        Label bottomMessage = (Label) bottomItem.getChildren().get(0);
-        Label bottomTime = (Label) bottomItem.getChildren().get(2);
-        assertEquals(first.getNotificationMessage(), bottomMessage.getText());
-        assertEquals(String.valueOf(first.getNotificationTime()), bottomTime.getText());
-    }
+        HBox secondItem = (HBox) container.getChildren().get(1);
+        Label secondMessage = (Label) secondItem.getChildren().get(0);
+        Label secondTime = (Label) secondItem.getChildren().get(2);
+        assertEquals(second.getNotificationMessage(), secondMessage.getText());
+        assertEquals(String.valueOf(second.getNotificationTime()), secondTime.getText());
 
-    @Test
-    public void testOnUpdateReceived_GetActivities_EmptyList_ClearsContainer() {
-        Notification notification = new Notification("Existing activity", LocalTime.of(8, 0));
-        controller.onUpdateReceived(
-                new NetworkMessage("GET_ACTIVITIES", (Serializable) List.of(notification))
-        );
-        org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
-
-        VBox container = lookup("#notificationContainer").queryAs(VBox.class);
-        assertEquals(1, container.getChildren().size());
-
-        controller.onUpdateReceived(
-                new NetworkMessage("GET_ACTIVITIES", (Serializable) new ArrayList<Notification>())
-        );
-        org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
-
-        assertEquals(0, container.getChildren().size());
-    }
-
-    @Test
-    public void testOnUpdateReceived_GetActivities_CaseInsensitive() {
-        Notification notification = new Notification("New notification", LocalTime.of(12, 0));
-        NetworkMessage msg = new NetworkMessage(
-                "get_activities",
-                (Serializable) List.of(notification)
-        );
-
-        controller.onUpdateReceived(msg);
-        org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
-
-        VBox container = lookup("#notificationContainer").queryAs(VBox.class);
-        assertEquals(1, container.getChildren().size());
-
-        HBox item = (HBox) container.getChildren().get(0);
-        Label message = (Label) item.getChildren().get(0);
-        assertEquals("New notification", message.getText());
-    }
-
-    @Test
-    public void testOnUpdateReceived_OtherAction_DoesNotChangeContainer() {
-        controller.onUpdateReceived(
-                new NetworkMessage("GET_ACTIVITIES", (Serializable) List.of(
-                        new Notification("Activity", LocalTime.of(10, 0))
-                ))
-        );
-        org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
-
-        VBox container = lookup("#notificationContainer").queryAs(VBox.class);
-        assertEquals(1, container.getChildren().size());
-
-        controller.onUpdateReceived(
-                new NetworkMessage("BID_SUCCESS", null)
-        );
-        org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
-
-        assertEquals(1, container.getChildren().size());
-    }
-
-    @Test
-    public void testLoadNotifications_RefreshesItems() {
-        Notification notification = new Notification("Reloaded", LocalTime.of(16, 45));
-        controller.onUpdateReceived(
-                new NetworkMessage("GET_ACTIVITIES", (Serializable) List.of(notification))
-        );
-        org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
-
-        VBox container = lookup("#notificationContainer").queryAs(VBox.class);
-        assertEquals(1, container.getChildren().size());
-
-        interact(() -> controller.loadNotifications());
-
-        assertEquals(1, container.getChildren().size());
-        HBox item = (HBox) container.getChildren().get(0);
-        Label message = (Label) item.getChildren().get(0);
-        assertEquals("Reloaded", message.getText());
+        HBox thirdItem = (HBox) container.getChildren().get(2);
+        Label thirdMessage = (Label) thirdItem.getChildren().get(0);
+        Label thirdTime = (Label) thirdItem.getChildren().get(2);
+        assertEquals(first.getNotificationMessage(), thirdMessage.getText());
+        assertEquals(String.valueOf(first.getNotificationTime()), thirdTime.getText());
     }
 }

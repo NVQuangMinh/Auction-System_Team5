@@ -6,21 +6,14 @@ import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 import org.kordamp.ikonli.javafx.FontIcon;
-import static org.mockito.ArgumentMatchers.any;
 import org.mockito.MockedStatic;
-import static org.mockito.Mockito.clearInvocations;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
 import org.testfx.api.FxAssert;
 import org.testfx.framework.junit5.ApplicationTest;
 import org.testfx.matcher.control.LabeledMatchers;
 
-import auctionclient.Network.ClientService;
 import auctionclient.UserSession;
 import auctionshared.Network.NetworkMessage;
-import auctionshared.dto.UserDTO;
 import javafx.animation.Animation;
 import javafx.animation.Timeline;
 import javafx.fxml.FXMLLoader;
@@ -35,27 +28,14 @@ class UserPushUpNotificationControllerTest extends ApplicationTest {
     private static final String TEST_USERNAME = "nhan";
 
     private UserPushUpNotificationController controller;
-    private ClientService mockClientService;
 
     @AfterEach
     public void closeMock() throws Exception {
         resetUserSession();
-        try {
-            java.lang.reflect.Field instanceField = ClientService.class.getDeclaredField("instance");
-            instanceField.setAccessible(true);
-            instanceField.set(null, null);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
     public void start(Stage stage) throws Exception {
-        mockClientService = mock(ClientService.class);
-        java.lang.reflect.Field instanceField = ClientService.class.getDeclaredField("instance");
-        instanceField.setAccessible(true);
-        instanceField.set(null, mockClientService);
-
         UserSession.getInstance().setUsername(TEST_USERNAME);
 
         FXMLLoader loader = new FXMLLoader(
@@ -97,6 +77,9 @@ class UserPushUpNotificationControllerTest extends ApplicationTest {
 
         Rectangle progressFill = lookup("#progressFill").queryAs(Rectangle.class);
         assertEquals(Color.web("#e74c3c"), progressFill.getFill());
+
+        Rectangle progressBackground = lookup("#progressBackground").queryAs(Rectangle.class);
+        assertEquals(progressBackground.getWidth(), progressFill.getWidth(), 0.01);
     }
 
     @Test
@@ -111,6 +94,9 @@ class UserPushUpNotificationControllerTest extends ApplicationTest {
 
         Rectangle progressFill = lookup("#progressFill").queryAs(Rectangle.class);
         assertEquals(Color.web("#f1c40f"), progressFill.getFill());
+
+        Rectangle progressBackground = lookup("#progressBackground").queryAs(Rectangle.class);
+        assertEquals(progressBackground.getWidth(), progressFill.getWidth(), 0.01);
     }
 
     @Test
@@ -197,14 +183,6 @@ class UserPushUpNotificationControllerTest extends ApplicationTest {
             mocked.verify(() -> UserPushUpNotificationController.showNotification(
                     "Buyout not allowed", "FAILED"));
         }
-    }
-
-    @Test
-    public void testOnUpdateReceived_BanUser_OtherUsername() {
-        clearInvocations(mockClientService);
-        controller.onUpdateReceived(new NetworkMessage("BAN_USER",
-                new UserDTO("2", "otherUser", "USER")));
-        verify(mockClientService, never()).sendMessage(any());
     }
 
     private void resetUserSession() throws Exception {

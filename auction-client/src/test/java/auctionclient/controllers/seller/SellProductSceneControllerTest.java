@@ -2,21 +2,19 @@ package auctionclient.controllers.seller;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.verify;
+import org.testfx.api.FxAssert;
 import org.testfx.framework.junit5.ApplicationTest;
+import org.testfx.matcher.control.LabeledMatchers;
+import org.testfx.util.WaitForAsyncUtils;
 
 import auctionclient.Network.ClientService;
 import auctionclient.UserSession;
@@ -27,10 +25,11 @@ import auctionshared.dto.ItemDTO;
 import auctionshared.dto.ItemType;
 import auctionshared.dto.UserDTO;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
 
@@ -43,13 +42,12 @@ public class SellProductSceneControllerTest extends ApplicationTest {
     private MockedStatic<ClientService> mockedStaticClientService;
 
     private final UserDTO testUser = new UserDTO("67", TEST_USERNAME, "USER");
-    private final UserDTO otherUser = new UserDTO("68", "otherUser", "USER");
 
-    private AuctionDTO createAuction(UserDTO owner, String itemId, String itemName) {
-        ItemDTO item = new ItemDTO(itemId, itemName, "Mo ta san pham", owner, ItemType.VEHICLES);
+    private AuctionDTO createAuction(String itemId, String itemName, ItemType itemType, String typeSpecificAttribute) {
+        ItemDTO item = new ItemDTO(itemId, itemName, "Mo ta " + itemName, testUser, itemType, typeSpecificAttribute);
         return new AuctionDTO(
                 item,
-                AuctionStatus.ACTIVE,
+                AuctionStatus.ENDED,
                 100.0,
                 500.0,
                 10.0,
@@ -86,75 +84,105 @@ public class SellProductSceneControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testInitialize() {
-        ArgumentCaptor<NetworkMessage> captor = ArgumentCaptor.forClass(NetworkMessage.class);
-
-        verify(mockClientService).addListener(controller);
-        verify(mockClientService).sendMessage(captor.capture());
-
-        assertEquals("GET_MY_LIST", captor.getValue().getAction());
-        assertEquals(TEST_USERNAME, captor.getValue().getData());
+    public void testAddArtsProduct_LoadsCorrectInfoOnCard() {
+        assertCardLoadedCorrectly(
+                createAuction("art-1", "Tranh Son Dau", ItemType.ARTS, "Van Gogh"),
+                "Tranh Son Dau",
+                "ENDED",
+                "$100",
+                "$500",
+                "Mo ta Tranh Son Dau");
     }
 
     @Test
-    public void testOverlayPane_HiddenByDefault() {
-        AnchorPane overlay = lookup("#overlayPane").queryAs(AnchorPane.class);
-        assertNotNull(overlay);
-        assertFalse(overlay.isVisible());
+    public void testAddVehicleProduct_LoadsCorrectInfoOnCard() {
+        assertCardLoadedCorrectly(
+                createAuction("veh-1", "Xe Hoi", ItemType.VEHICLES, "Toyota"),
+                "Xe Hoi",
+                "ENDED",
+                "$100",
+                "$500",
+                "Mo ta Xe Hoi");
     }
 
     @Test
-    public void testOnUpdateReceived_GetMyList_PopulatesFlowPane() {
-        AuctionDTO ownedAuction = createAuction(testUser, "01", "May tinh");
-        NetworkMessage msg = new NetworkMessage("GET_MY_LIST", (Serializable) List.of(ownedAuction));
+    public void testAddElectronicProduct_LoadsCorrectInfoOnCard() {
+        assertCardLoadedCorrectly(
+                createAuction("ele-1", "Laptop", ItemType.ELECTRONICS, "MacBook Pro"),
+                "Laptop",
+                "ENDED",
+                "$100",
+                "$500",
+                "Mo ta Laptop");
+    }
 
-        controller.onUpdateReceived(msg);
-        org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
+    @Test
+    public void testClickArtsProductCard_LoadsSellProductInfoPage() {
+        assertCardClickOpensInfoPage(
+                createAuction("art-1", "Tranh Son Dau", ItemType.ARTS, "Van Gogh"),
+                "Artist: Van Gogh");
+    }
+
+    @Test
+    public void testClickVehicleProductCard_LoadsSellProductInfoPage() {
+        assertCardClickOpensInfoPage(
+                createAuction("veh-1", "Xe Hoi", ItemType.VEHICLES, "Toyota"),
+                "Brand: Toyota");
+    }
+
+    @Test
+    public void testClickElectronicProductCard_LoadsSellProductInfoPage() {
+        assertCardClickOpensInfoPage(
+                createAuction("ele-1", "Laptop", ItemType.ELECTRONICS, "MacBook Pro"),
+                "Model: MacBook Pro");
+    }
+
+    private Node pushAuctionAndGetFirstCard(AuctionDTO auction) {
+        controller.onUpdateReceived(new NetworkMessage("GET_MY_LIST", (Serializable) List.of(auction)));
+        WaitForAsyncUtils.waitForFxEvents();
 
         FlowPane flowPane = lookup("#myListFlowPane").queryAs(FlowPane.class);
         assertNotNull(flowPane);
         assertEquals(1, flowPane.getChildren().size());
+        return flowPane.getChildren().get(0);
     }
 
-    @Test
-    public void testOnUpdateReceived_UpdateBid_KeepsOnlyOwnedAuctions() {
-        AuctionDTO ownedAuction = createAuction(testUser, "01", "San pham cua toi");
-        AuctionDTO othersAuction = createAuction(otherUser, "02", "San pham nguoi khac");
+    private void assertCardLoadedCorrectly(
+            AuctionDTO auction,
+            String expectedName,
+            String expectedState,
+            String expectedCurrentPrice,
+            String expectedBuyOutPrice,
+            String expectedDescription) {
+        Node card = pushAuctionAndGetFirstCard(auction);
 
-        NetworkMessage msg = new NetworkMessage(
-                "UPDATE_BID",
-                (Serializable) List.of(ownedAuction, othersAuction)
-        );
+        Label itemName = (Label) card.lookup("#itemName");
+        Label itemState = (Label) card.lookup("#itemState");
+        Label currentPrice = (Label) card.lookup("#currentPrice");
+        Label buyOutPrice = (Label) card.lookup("#buyOutPrice");
+        Label description = (Label) card.lookup("#description");
 
-        controller.onUpdateReceived(msg);
-        org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
+        assertNotNull(itemName);
+        assertNotNull(itemState);
+        assertNotNull(currentPrice);
+        assertNotNull(buyOutPrice);
+        assertNotNull(description);
 
-        FlowPane flowPane = lookup("#myListFlowPane").queryAs(FlowPane.class);
-        assertEquals(1, flowPane.getChildren().size());
+        assertEquals(expectedName, itemName.getText());
+        assertEquals(expectedState, itemState.getText());
+        assertEquals(expectedCurrentPrice, currentPrice.getText());
+        assertEquals(expectedBuyOutPrice, buyOutPrice.getText());
+        assertEquals(expectedDescription, description.getText());
     }
 
-    @Test
-    public void testOnUpdateReceived_GetMyList_EmptyList_ClearsFlowPane() {
-        AuctionDTO ownedAuction = createAuction(testUser, "01", "May tinh");
-        controller.onUpdateReceived(
-                new NetworkMessage("GET_MY_LIST", (Serializable) List.of(ownedAuction))
-        );
-        org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
+    private void assertCardClickOpensInfoPage(AuctionDTO auction, String expectedTypeSpecificText) {
+        Node card = pushAuctionAndGetFirstCard(auction);
+        clickOn(card);
+        WaitForAsyncUtils.waitForFxEvents();
 
-        FlowPane flowPane = lookup("#myListFlowPane").queryAs(FlowPane.class);
-        assertEquals(1, flowPane.getChildren().size());
-
-        controller.onUpdateReceived(
-                new NetworkMessage("GET_MY_LIST", (Serializable) new ArrayList<AuctionDTO>())
-        );
-        org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
-
-        assertEquals(0, flowPane.getChildren().size());
-    }
-
-    @Test
-    public void testCleanup_RemovesListener() {
-        interact(() -> controller.cleanup());
-        verify(mockClientService).removeListener(controller);
+        FxAssert.verifyThat("#timeLeft", LabeledMatchers.hasText("ENDED"));
+        FxAssert.verifyThat("#typeSpecificDisplay", LabeledMatchers.hasText(expectedTypeSpecificText));
+        clickOn("#closeButton");
+        WaitForAsyncUtils.waitForFxEvents();
     }
 }

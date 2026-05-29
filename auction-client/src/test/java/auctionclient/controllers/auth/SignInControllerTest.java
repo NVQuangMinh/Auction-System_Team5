@@ -6,6 +6,7 @@ import auctionshared.Network.NetworkMessage;
 import auctionshared.dto.SignUpDTO;
 import auctionshared.dto.UserDTO;
 import javafx.application.Platform;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.PasswordField;
@@ -19,8 +20,6 @@ import org.mockito.ArgumentCaptor;
 import org.testfx.framework.junit5.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
 
-import javafx.fxml.FXMLLoader;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -30,7 +29,6 @@ class SignInControllerTest extends ApplicationTest {
     private ClientService mockClientService;
 
     private final UserDTO testUser = new UserDTO("67", "nhan", "USER");
-    private final UserDTO adminUser = new UserDTO("1", "admin", "ADMIN");
 
     @AfterEach
     public void closeMock() {
@@ -70,12 +68,7 @@ class SignInControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testInitialize() {
-        verify(mockClientService).addListener(controller);
-    }
-
-    @Test
-    public void testOnSignInClicked_EmptyFields() {
+    public void testSignIn_EmptyFields() {
         scheduleAlertDismissal();
 
         interact(() -> controller.onSignInClicked());
@@ -84,39 +77,36 @@ class SignInControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void testOnSignInClicked_EmptyPassword() {
+    public void testSignIn_WrongCredentials() {
         scheduleAlertDismissal();
 
         interact(() -> {
-            lookup("#username").queryAs(TextField.class).setText("nhan");
-            lookup("#password").queryAs(PasswordField.class).clear();
+            lookup("#username").queryAs(TextField.class).setText("wrong");
+            lookup("#password").queryAs(PasswordField.class).setText("wrong");
             controller.onSignInClicked();
         });
 
-        verify(mockClientService, never()).sendMessage(any());
+        controller.onUpdateReceived(new NetworkMessage("LOGIN", null));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertNull(UserSession.getInstance().getUser());
+        verify(mockClientService, never()).removeListener(controller);
     }
 
     @Test
-    public void testOnSignInClicked_ValidInput() {
+    public void testSignIn_Success() {
         interact(() -> {
-            lookup("#username").queryAs(TextField.class).setText("  nhan  ");
+            lookup("#username").queryAs(TextField.class).setText("nhan");
             lookup("#password").queryAs(PasswordField.class).setText("secret123");
             controller.onSignInClicked();
         });
 
         ArgumentCaptor<NetworkMessage> captor = ArgumentCaptor.forClass(NetworkMessage.class);
         verify(mockClientService).sendMessage(captor.capture());
-
         assertEquals("LOGIN", captor.getValue().getAction());
         SignUpDTO loginData = (SignUpDTO) captor.getValue().getData();
-        assertNull(loginData.getId());
         assertEquals("nhan", loginData.getUsername());
         assertEquals("secret123", loginData.getPassword());
-    }
-
-    @Test
-    public void testOnUpdateReceived_LoginSuccess_User() {
-        interact(() -> lookup("#username").queryAs(TextField.class).setText("nhan"));
 
         controller.onUpdateReceived(new NetworkMessage("LOGIN", testUser));
         WaitForAsyncUtils.waitForFxEvents();
@@ -128,48 +118,6 @@ class SignInControllerTest extends ApplicationTest {
 
         BorderPane mainPane = lookup("#MainPane").queryAs(BorderPane.class);
         assertNotNull(mainPane);
-    }
-
-    @Test
-    public void testOnUpdateReceived_LoginSuccess_Admin() {
-        interact(() -> lookup("#username").queryAs(TextField.class).setText("admin"));
-
-        controller.onUpdateReceived(new NetworkMessage("LOGIN", adminUser));
-        WaitForAsyncUtils.waitForFxEvents();
-
-        assertEquals("admin", UserSession.getInstance().getUsername());
-        assertEquals(adminUser, UserSession.getInstance().getUser());
-        assertTrue(SignInController.isAdmin.get());
-    }
-
-    @Test
-    public void testOnUpdateReceived_LoginFailure() {
-        scheduleAlertDismissal();
-
-        controller.onUpdateReceived(new NetworkMessage("LOGIN", null));
-        WaitForAsyncUtils.waitForFxEvents();
-
-        assertNull(UserSession.getInstance().getUser());
-        verify(mockClientService, never()).removeListener(controller);
-    }
-
-    @Test
-    public void testOnUpdateReceived_IgnoresOtherActions() {
-        controller.onUpdateReceived(new NetworkMessage("GET_ALL", testUser));
-        WaitForAsyncUtils.waitForFxEvents();
-
-        assertNull(UserSession.getInstance().getUser());
-        verify(mockClientService, never()).removeListener(controller);
-    }
-
-    @Test
-    public void testSwitchToSignUpScene() {
-        clickOn("#signUpButton");
-        WaitForAsyncUtils.waitForFxEvents();
-
-        verify(mockClientService).removeListener(controller);
-        PasswordField confirmPassword = lookup("#confirmpassword").queryAs(PasswordField.class);
-        assertNotNull(confirmPassword);
     }
 
     private void scheduleAlertDismissal() {

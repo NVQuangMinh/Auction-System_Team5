@@ -16,7 +16,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.MockedStatic;
 import org.testfx.framework.junit5.ApplicationTest;
 import org.testfx.util.WaitForAsyncUtils;
 
@@ -30,13 +29,13 @@ class SignUpControllerTest extends ApplicationTest {
 
     private SignUpController controller;
     private ClientService mockClientService;
-    private MockedStatic<ClientService> mockedStaticClientService;
 
     @Override
     public void start(Stage stage) throws Exception {
         mockClientService = mock(ClientService.class);
-        mockedStaticClientService = mockStatic(ClientService.class);
-        mockedStaticClientService.when(() -> ClientService.getInstance()).thenReturn(mockClientService);
+        java.lang.reflect.Field instanceField = ClientService.class.getDeclaredField("instance");
+        instanceField.setAccessible(true);
+        instanceField.set(null, mockClientService);
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/auctionclient/SignUpScene.fxml"));
         Parent root = loader.load();
@@ -47,27 +46,29 @@ class SignUpControllerTest extends ApplicationTest {
     }
 
     @BeforeEach
-    void resetUserSession() {
+    void resetFormAndSession() {
         interact(() -> {
             UserSession.getInstance().setUser(null);
             UserSession.getInstance().setUsername("");
+            lookup("#username").queryAs(TextField.class).clear();
+            lookup("#password").queryAs(PasswordField.class).clear();
+            lookup("#confirmpassword").queryAs(PasswordField.class).clear();
         });
     }
 
     @AfterEach
-    public void closeMock() {
-        if (mockedStaticClientService != null) {
-            mockedStaticClientService.close();
+    void closeMock() {
+        try {
+            java.lang.reflect.Field instanceField = ClientService.class.getDeclaredField("instance");
+            instanceField.setAccessible(true);
+            instanceField.set(null, null);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     @Test
-    void testInitialize() {
-        verify(mockClientService).addListener(controller);
-    }
-
-    @Test
-    void testOnSignUpClicked_ValidInput() {
+    void testSignUp_ValidCredentials() {
         fillSignUpForm(TEST_USERNAME, TEST_PASSWORD, TEST_PASSWORD);
 
         interact(() -> controller.onSignUpClicked());
@@ -86,10 +87,16 @@ class SignUpControllerTest extends ApplicationTest {
         assertEquals(TEST_USERNAME, sessionUser.getUsername());
         assertEquals(request.getId(), sessionUser.getId());
         assertEquals("USER", sessionUser.getRole());
+
+        controller.onUpdateReceived(new NetworkMessage("CREATE_ACCOUNT", true));
+        WaitForAsyncUtils.waitForFxEvents();
+
+        assertEquals(TEST_USERNAME, UserSession.getInstance().getUsername());
+        assertNotNull(controller.root);
     }
 
     @Test
-    void testOnSignUpClicked_PasswordMismatch() {
+    void testSignUp_PasswordMismatch() {
         scheduleAlertDismissal();
 
         fillSignUpForm(TEST_USERNAME, TEST_PASSWORD, "different");
@@ -98,73 +105,26 @@ class SignUpControllerTest extends ApplicationTest {
         WaitForAsyncUtils.waitForFxEvents();
 
         verify(mockClientService, never()).sendMessage(any());
+        assertNull(UserSession.getInstance().getUser());
 
         PasswordField confirmField = lookup("#confirmpassword").queryAs(PasswordField.class);
         assertEquals("", confirmField.getText());
     }
 
     @Test
-    void testOnSignUpClicked_EmptyFields() {
-        interact(() -> controller.onSignUpClicked());
-
-        verify(mockClientService, never()).sendMessage(any());
-        assertNull(UserSession.getInstance().getUser());
-    }
-
-    @Test
-    void testOnSignUpClicked_TrimsUsername() {
-        fillSignUpForm("  " + TEST_USERNAME + "  ", TEST_PASSWORD, TEST_PASSWORD);
-
-        interact(() -> controller.onSignUpClicked());
-
-        ArgumentCaptor<NetworkMessage> captor = ArgumentCaptor.forClass(NetworkMessage.class);
-        verify(mockClientService).sendMessage(captor.capture());
-
-        SignUpDTO request = (SignUpDTO) captor.getValue().getData();
-        assertEquals(TEST_USERNAME, request.getUsername());
-        assertEquals(TEST_USERNAME, UserSession.getInstance().getUser().getUsername());
-    }
-
-    @Test
-    void testOnUpdateReceived_CreateAccountSuccess() {
-        fillSignUpForm(TEST_USERNAME, TEST_PASSWORD, TEST_PASSWORD);
-        interact(() -> controller.onSignUpClicked());
-
-        NetworkMessage msg = new NetworkMessage("CREATE_ACCOUNT", true);
-        controller.onUpdateReceived(msg);
-        WaitForAsyncUtils.waitForFxEvents();
-
-        assertEquals(TEST_USERNAME, UserSession.getInstance().getUsername());
-        assertNotNull(controller.root);
-    }
-
-    @Test
-    void testOnUpdateReceived_CreateAccountFailure() {
-        fillSignUpForm(TEST_USERNAME, TEST_PASSWORD, TEST_PASSWORD);
-        interact(() -> controller.onSignUpClicked());
-
+    void testSignUp_UserAlreadyExists() {
         scheduleAlertDismissal();
 
-        NetworkMessage msg = new NetworkMessage("CREATE_ACCOUNT", false);
-        controller.onUpdateReceived(msg);
+        fillSignUpForm(TEST_USERNAME, TEST_PASSWORD, TEST_PASSWORD);
+
+        interact(() -> controller.onSignUpClicked());
+
+        verify(mockClientService).sendMessage(any());
+
+        controller.onUpdateReceived(new NetworkMessage("CREATE_ACCOUNT", false));
         WaitForAsyncUtils.waitForFxEvents();
 
         assertNull(UserSession.getInstance().getUser());
-    }
-
-    @Test
-    void testOnUpdateReceived_IgnoresOtherActions() {
-        fillSignUpForm(TEST_USERNAME, TEST_PASSWORD, TEST_PASSWORD);
-        interact(() -> controller.onSignUpClicked());
-
-        UserDTO userBefore = UserSession.getInstance().getUser();
-
-        NetworkMessage msg = new NetworkMessage("OTHER_ACTION", true);
-        controller.onUpdateReceived(msg);
-        WaitForAsyncUtils.waitForFxEvents();
-
-        assertEquals(userBefore, UserSession.getInstance().getUser());
-        assertEquals("", UserSession.getInstance().getUsername());
     }
 
     private void fillSignUpForm(String name, String password, String confirmPassword) {

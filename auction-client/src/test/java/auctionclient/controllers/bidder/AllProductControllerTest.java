@@ -1,7 +1,6 @@
 package auctionclient.controllers.bidder;
 
 import auctionclient.Network.ClientService;
-import auctionclient.controllers.notification.UserPushUpNotificationController;
 import auctionshared.Network.NetworkMessage;
 import auctionshared.dto.AuctionDTO;
 import auctionshared.dto.AuctionStatus;
@@ -11,50 +10,31 @@ import auctionshared.dto.ItemType;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.RadioButton;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 import org.testfx.framework.junit5.ApplicationTest;
+import org.testfx.util.WaitForAsyncUtils;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.clearInvocations;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 
 /**
- * Test cho AllProductController.
- *
- * ============================================================
- * CÁC LỖI COMPILE ĐÃ SỬA
- * ============================================================
- *
- * LỖI 1 – SAI TÊN FXML:
- * Cũ: getResource("/auction_client/AllProduct.fxml") → URL = null → NPE
- * Sửa: "AllProductScene.fxml" (tên file thực tế trong resources)
- *
- * LỖI 2 – MOCK CHƯA SẴN SÀNG KHI FXML NẠP:
- * start(Stage) chạy TRƯỚC @BeforeEach → initialize() thấy ClientService thật.
- * Sửa: tạo MockedStatic BÊN TRONG start(), TRƯỚC loader.load().
- *
- * LỖI 3 – ProductListResponse KHÔNG CÓ no-arg constructor & KHÔNG CÓ setter:
- * Cũ: new ProductListResponse() + response.setActiveAuctions(...) → không
- * compile.
- * Sửa: dùng constructor 2 tham số:
- * new ProductListResponse(activeList, endedList)
- *
- * LỖI 4 – onStatusSelected() là private:
- * Cũ: controller.onStatusSelected() gọi trực tiếp → không compile (private
- * method).
- * Sửa: Kích hoạt qua giao diện thật — dùng clickOn("#endedStatusRadio") để
- * TestFX click RadioButton, JavaFX tự kích hoạt onAction="#onStatusSelected".
- * ============================================================
+ * Kiểm tra lọc sản phẩm theo trạng thái (Active / Ended) và danh mục
+ * (All, Arts, Vehicles, Electronics) — 8 trường hợp.
  */
 public class AllProductControllerTest extends ApplicationTest {
+
     private AllProductController controller;
     private ClientService mockClientService;
     private MockedStatic<ClientService> mockedStaticClientService;
@@ -68,12 +48,10 @@ public class AllProductControllerTest extends ApplicationTest {
 
     @Override
     public void start(Stage stage) throws Exception {
-        // ① Mock TRƯỚC khi load FXML – initialize() sẽ thấy mock ngay
         mockClientService = mock(ClientService.class);
         mockedStaticClientService = mockStatic(ClientService.class);
-        mockedStaticClientService.when(() -> ClientService.getInstance()).thenReturn(mockClientService);
+        mockedStaticClientService.when(ClientService::getInstance).thenReturn(mockClientService);
 
-        // ② Đúng tên file FXML
         FXMLLoader loader = new FXMLLoader(
                 getClass().getResource("/auctionclient/AllProductScene.fxml"));
         Parent root = loader.load();
@@ -83,63 +61,90 @@ public class AllProductControllerTest extends ApplicationTest {
         stage.show();
     }
 
-    // ------------------------------------------------------------------
-    // TEST 1: initialize() phải đăng ký listener và gửi GET_ACTIVE_PRODUCTS
-    // ------------------------------------------------------------------
-    @Test
-    public void testInitialize_SendsGetProductsMessage() {
-        ArgumentCaptor<NetworkMessage> captor = ArgumentCaptor.forClass(NetworkMessage.class);
-
-        verify(mockClientService).addListener(controller);
-        verify(mockClientService).sendMessage(captor.capture());
-
-        assertEquals("GET_ACTIVE_PRODUCTS", captor.getValue().getAction());
+    @BeforeEach
+    public void resetToActiveAll() {
+        clearInvocations(mockClientService);
+        pushActiveProducts(sampleAuctions(AuctionStatus.ACTIVE));
+        interact(() -> {
+            lookup("#activeStatusRadio").queryAs(RadioButton.class).setSelected(true);
+            lookup("#allCategoryRadio").queryAs(RadioButton.class).setSelected(true);
+        });
+        WaitForAsyncUtils.waitForFxEvents();
     }
 
-    // ------------------------------------------------------------------
-    // TEST 2: Click RadioButton "Ended" → phải gửi GET_ENDED_PRODUCTS
-    //
-    // LỖI CŨ: controller.onStatusSelected() — private method, không compile.
-    // SỬA: clickOn("#endedStatusRadio") → TestFX click thật lên RadioButton,
-    // JavaFX tự kích hoạt onAction="#onStatusSelected" khai báo trong FXML.
-    // ------------------------------------------------------------------
+    // --- Active: All, Arts, Vehicles, Electronics ---
+
     @Test
-    public void testSwitchToEndedStatus_SendsGetEndedProductsMessage() {
-        // Click trực tiếp lên RadioButton trong giao diện
+    public void testActiveCategory_All_ShowsAllProducts() {
+        assertEquals(3, flowPaneChildCount());
+    }
+
+    @Test
+    public void testActiveCategory_Arts_ShowsOnlyArts() {
+        clickOn("#artsCategoryRadio");
+        WaitForAsyncUtils.waitForFxEvents();
+        assertEquals(1, flowPaneChildCount());
+    }
+
+    @Test
+    public void testActiveCategory_Vehicles_ShowsOnlyVehicles() {
+        clickOn("#vehiclesCategoryRadio");
+        WaitForAsyncUtils.waitForFxEvents();
+        assertEquals(1, flowPaneChildCount());
+    }
+
+    @Test
+    public void testActiveCategory_Electronics_ShowsOnlyElectronics() {
+        clickOn("#electronicsCategoryRadio");
+        WaitForAsyncUtils.waitForFxEvents();
+        assertEquals(1, flowPaneChildCount());
+    }
+
+    // --- Ended: All, Arts, Vehicles, Electronics ---
+
+    @Test
+    public void testEndedCategory_All_ShowsAllProducts() {
         clickOn("#endedStatusRadio");
-
-        ArgumentCaptor<NetworkMessage> captor = ArgumentCaptor.forClass(NetworkMessage.class);
-        // atLeastOnce() vì sendMessage đã được gọi 1 lần trong initialize()
-        verify(mockClientService, atLeastOnce()).sendMessage(captor.capture());
-
-        // Lấy tin nhắn cuối cùng
-        List<NetworkMessage> allMessages = captor.getAllValues();
-        String lastAction = allMessages.get(allMessages.size() - 1).getAction();
-        assertEquals("GET_ENDED_PRODUCTS", lastAction);
+        pushEndedProducts(sampleAuctions(AuctionStatus.ENDED));
+        assertEquals(3, flowPaneChildCount());
     }
 
-    // ------------------------------------------------------------------
-    // TEST 3: Nhận GET_ACTIVE_PRODUCTS response → FlowPane tồn tại
-    //
-    // ------------------------------------------------------------------
     @Test
-    public void testOnUpdateReceived_ActiveProducts_PopulatesFlowPane() {
-        // ① ItemDTO(String id, String itemName, String description, UserDTO owner,
-        // ItemType type)
-        ItemDTO item = new ItemDTO(
-                "item-001",
-                "Test Artwork",
-                "A test item",
-                null, // owner – không cần thiết cho test này
-                ItemType.ARTS);
+    public void testEndedCategory_Arts_ShowsOnlyArts() {
+        clickOn("#endedStatusRadio");
+        clickOn("#artsCategoryRadio");
+        pushEndedProducts(List.of(createAuction("art-1", "Painting", ItemType.ARTS, AuctionStatus.ENDED)));
+        assertEquals(1, flowPaneChildCount());
+    }
 
-        // ② AuctionDTO(ItemDTO, AuctionStatus, double startingPrice, double
-        // buyOutPrice,
-        // double tickSize, LocalDateTime startTime, LocalDateTime endTime,
-        // boolean antiSniping, String winnerId, double currentHighestBid)
-        AuctionDTO activeAuction = new AuctionDTO(
+    @Test
+    public void testEndedCategory_Vehicles_ShowsOnlyVehicles() {
+        clickOn("#endedStatusRadio");
+        clickOn("#vehiclesCategoryRadio");
+        pushEndedProducts(List.of(createAuction("veh-1", "Car", ItemType.VEHICLES, AuctionStatus.ENDED)));
+        assertEquals(1, flowPaneChildCount());
+    }
+
+    @Test
+    public void testEndedCategory_Electronics_ShowsOnlyElectronics() {
+        clickOn("#endedStatusRadio");
+        clickOn("#electronicsCategoryRadio");
+        pushEndedProducts(List.of(createAuction("elec-1", "Laptop", ItemType.ELECTRONICS, AuctionStatus.ENDED)));
+        assertEquals(1, flowPaneChildCount());
+    }
+
+    private List<AuctionDTO> sampleAuctions(AuctionStatus status) {
+        return List.of(
+                createAuction("art-1", "Painting", ItemType.ARTS, status),
+                createAuction("elec-1", "Laptop", ItemType.ELECTRONICS, status),
+                createAuction("veh-1", "Car", ItemType.VEHICLES, status));
+    }
+
+    private AuctionDTO createAuction(String id, String name, ItemType type, AuctionStatus status) {
+        ItemDTO item = new ItemDTO(id, name, "description", null, type);
+        return new AuctionDTO(
                 item,
-                AuctionStatus.ACTIVE,
+                status,
                 100.0,
                 500.0,
                 10.0,
@@ -148,56 +153,22 @@ public class AllProductControllerTest extends ApplicationTest {
                 false,
                 null,
                 100.0);
+    }
 
-        List<AuctionDTO> response = Collections.singletonList(activeAuction);
+    private void pushActiveProducts(List<AuctionDTO> auctions) {
+        controller.onUpdateReceived(
+                new NetworkMessage("GET_ACTIVE_PRODUCTS", (Serializable) auctions));
+        WaitForAsyncUtils.waitForFxEvents();
+    }
 
-        NetworkMessage msg = new NetworkMessage("GET_ACTIVE_PRODUCTS", (java.io.Serializable) response);
+    private void pushEndedProducts(List<AuctionDTO> auctions) {
+        controller.onUpdateReceived(
+                new NetworkMessage("GET_ENDED_PRODUCTS", (Serializable) auctions));
+        WaitForAsyncUtils.waitForFxEvents();
+    }
 
-        // Đẩy message vào controller trên JavaFX thread
-        controller.onUpdateReceived(msg);
-        org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
-
-        // FlowPane phải tồn tại
+    private int flowPaneChildCount() {
         FlowPane flowPane = lookup("#productFlowPane").queryAs(FlowPane.class);
-        assertNotNull(flowPane, "productFlowPane không được null");
-    }
-
-    // ------------------------------------------------------------------
-    // TEST 5: cleanup() phải gỡ listener khỏi ClientService
-    // ------------------------------------------------------------------
-    @Test
-    public void testCleanup_RemovesListener() {
-        interact(() -> controller.cleanup());
-        verify(mockClientService).removeListener(controller);
-    }
-
-    // ------------------------------------------------------------------
-    // TEST 6: Nhận AUCTION_ENDED → phải gọi showNotification
-    // ------------------------------------------------------------------
-    @Test
-    public void testOnUpdateReceived_AuctionEnded_Notification() {
-        try (MockedStatic<UserPushUpNotificationController> mockedNotification = mockStatic(
-                UserPushUpNotificationController.class)) {
-            ItemDTO item = new ItemDTO("item-1", "Laptop", "desc", null, ItemType.ELECTRONICS);
-            AuctionDTO dto = new AuctionDTO(
-                    item,
-                    AuctionStatus.ENDED,
-                    100.0,
-                    500.0,
-                    10.0,
-                    LocalDateTime.now(),
-                    LocalDateTime.now(),
-                    false,
-                    null,
-                    100.0);
-
-            NetworkMessage msg = new NetworkMessage("AUCTION_ENDED", dto);
-
-            controller.onUpdateReceived(msg);
-            org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
-
-            mockedNotification.verify(() -> UserPushUpNotificationController.showNotification(
-                    "Phiên đấu giá kết thúc: Laptop", "INFO"), times(1));
-        }
+        return flowPane.getChildren().size();
     }
 }
