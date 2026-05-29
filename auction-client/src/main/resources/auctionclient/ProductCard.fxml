@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+
+<VBox alignment="TOP_CENTER" onMouseClicked="#handleCardClick" prefHeight="350.0" prefWidth="260.0" style="-fx-background-color: F5F5F0; -fx-background-radius: 15; -fx-border-color: #D1D5DB; -fx-border-width: 2; -fx-border-radius: 15;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auctionclient.controllers.bidder.ProductCardController">
+   <children>
+      <HBox prefHeight="50.0" prefWidth="202.0">
+         <children>
+            <Label fx:id="itemName" prefHeight="152.0" prefWidth="345.0" style="-fx-font-size: 16; -fx-font-weight: bold;" text=" Item Name" textFill="#fe5721cc" HBox.hgrow="ALWAYS">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Label>
+            <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+            <Label fx:id="itemState" alignment="CENTER_RIGHT" prefHeight="117.0" prefWidth="253.0" style="-fx-font-size: 16; -fx-font-weight: Bold;" text="STATE" textAlignment="CENTER" textFill="#fe5721" HBox.hgrow="ALWAYS">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+         </children>
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+      </HBox>
+      <StackPane prefHeight="140.0" prefWidth="226.0" style="-fx-background-color: #e9e4de; -fx-background-radius: 15;">
+         <children>
+            <ImageView fx:id="itemIMage" fitHeight="140.0" fitWidth="226.0" pickOnBounds="true" preserveRatio="true" />
+         </children>
+         <VBox.margin>
+            <Insets bottom="15.0" />
+         </VBox.margin>
+      </StackPane>
+      <HBox prefHeight="65.0" prefWidth="244.0">
+         <children>
+            <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <Label alignment="CENTER" prefHeight="20.0" prefWidth="152.0" style="-fx-font-size: 14;" text="Current Price" textAlignment="CENTER" textFill="#9ca3af" />
+                  <HBox spacing="1.0">
+                     <children>
+                        <Label fx:id="currentPrice" alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="149.0" style="-fx-font-size: 20; -fx-font-weight: bold;" text="00" textAlignment="CENTER" wrapText="true" HBox.hgrow="ALWAYS" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+            <Separator depthTest="DISABLE" orientation="VERTICAL" prefHeight="200.0">
+               <HBox.margin>
+                  <Insets left="13.0" right="7.0" />
+               </HBox.margin>
+            </Separator>
+            <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <Label alignment="CENTER" prefHeight="17.0" prefWidth="233.0" style="-fx-font-size: 14;" text="Buy Out" textFill="#9ca3af" />
+                  <HBox prefHeight="65.0" prefWidth="47.0" spacing="1.0">
+                     <children>
+                        <Label fx:id="buyOutPrice" alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="149.0" style="-fx-font-size: 20; -fx-font-weight: bold;" text="00" textAlignment="CENTER" wrapText="true" HBox.hgrow="ALWAYS" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </children>
+         <VBox.margin>
+            <Insets bottom="10.0" />
+         </VBox.margin>
+      </HBox>
+      <Label fx:id="description" alignment="TOP_LEFT" prefHeight="62.0" prefWidth="202.0" text="Description" />
+      <Label fx:id="typeSpecificLabel" alignment="TOP_LEFT" managed="false" prefHeight="30.0" prefWidth="202.0" style="-fx-font-size: 12; -fx-text-fill: #888;" text="" visible="false" />
+   </children>
+   <padding>
+      <Insets left="17.0" right="17.0" top="5.0" />
+   </padding>
+   <effect>
+      <DropShadow offsetY="2.0">
+         <color>
+            <Color opacity="0.05000000074505806" />
+         </color>
+      </DropShadow>
+   </effect>
+   <cursor>
+      <Cursor fx:constant="HAND" />
+   </cursor>
+</VBox>

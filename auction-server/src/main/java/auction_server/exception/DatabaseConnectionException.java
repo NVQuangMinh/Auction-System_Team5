@@ -1,7 +1,0 @@
-package auction_server.exception;
-
-public class DatabaseConnectionException extends DatabaseException {
-    public DatabaseConnectionException(String message, Throwable cause) {
-        super(message, cause);
-    }
-}

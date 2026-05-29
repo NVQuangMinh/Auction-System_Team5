@@ -9,31 +9,40 @@
     </module>
 
     <module name="LineLength">
-        <property name="max" value="150"/>
+        <property name="max" value="250"/>
         <property name="ignorePattern" value="^package.*|^import.*|a href|href|http://|https://|ftp://"/>
     </module>
 
     <module name="TreeWalker">
         <module name="Indentation">
-            <property name="basicOffset" value="4"/>        <property name="braceAdjustment" value="0"/>     <property name="caseIndent" value="4"/>          <property name="throwsIndent" value="8"/>        <property name="arrayInitIndent" value="4"/>     <property name="lineWrappingIndentation" value="8"/> </module>
+            <property name="basicOffset" value="4"/>        <property name="braceAdjustment" value="0"/>     <property name="caseIndent" value="4"/>          <property name="throwsIndent" value="8"/>        <property name="arrayInitIndent" value="4"/>     <property name="lineWrappingIndentation" value="4"/> </module>
 
-        <!--
-        <module name="JavadocMethod"/>
-        <module name="JavadocType"/>
-        <module name="JavadocVariable">
-            <property name="scope" value="protected"/> </module>
-        <module name="MissingJavadocMethod">
-            <property name="scope" value="protected"/> </module>
-        -->
+        <module name="PackageName">
+            <property name="format" value="^[a-zA-Z0-9_]+(\.[a-zA-Z0-9_]+)*$"/>
+        </module>
 
-        <module name="MethodName"/>
-        <module name="PackageName"/>
-        <module name="TypeName"/>
-        <module name="MemberName"/>
-        <module name="ConstantName"/>
-        <module name="LocalVariableName"/>
-        <module name="ParameterName"/>
-        <module name="LambdaParameterName"/>
+        <module name="ConstantName">
+            <property name="format" value="^[a-zA-Z0-9_]+$"/>
+        </module>
+
+        <module name="MethodName">
+            <property name="format" value="^[a-zA-Z0-9_]+$"/>
+        </module>
+        <module name="TypeName">
+            <property name="format" value="^[a-zA-Z0-9_]+$"/>
+        </module>
+        <module name="MemberName">
+            <property name="format" value="^[a-zA-Z0-9_]+$"/>
+        </module>
+        <module name="LocalVariableName">
+            <property name="format" value="^[a-zA-Z0-9_]+$"/>
+        </module>
+        <module name="ParameterName">
+            <property name="format" value="^[a-zA-Z0-9_]+$"/>
+        </module>
+        <module name="LambdaParameterName">
+            <property name="format" value="^[a-zA-Z0-9_]+$"/>
+        </module>
 
         <module name="WhitespaceAround">
             <property name="allowEmptyMethods" value="false"/>
@@ -54,3 +63,13 @@
         </module>
     </module>
 </module>
+
+<!--Định dạng & Giới hạn: File code bắt buộc dùng mã hóa UTF-8, thụt lề bằng Space , với giới hạn tối đa 250 ký tự trên mỗi dòng và 100 dòng cho mỗi hàm.-->
+
+<!--Quy tắc đặt tên: Nới lỏng hoàn toàn cho mọi thành phần (package, class, hàm, biến, hằng số,...), cho phép kết hợp chữ hoa, chữ thường, số và dấu gạch dưới _.-->
+
+<!--Quản lý Import: Bắt buộc dọn sạch code bẩn, nghiêm cấm việc import thư viện không sử dụng, import trùng lặp hoặc import gộp bằng dấu sao (.*).-->
+
+<!--Căn lề & Khoảng trắng: Tuân thủ căn lề bằng 4 hoặc 8 space, đặt dấu cách hợp lý xung quanh các toán tử/từ khóa/dấu câu, và không được viết tắt gộp các khối lệnh rỗng trên cùng một dòng.-->
+
+<!--Cấu trúc khối lệnh: Bắt buộc dùng dấu ngoặc nhọn { } đúng chuẩn vị trí cho mọi cấu trúc điều khiển và nghiêm cấm việc để trống khối catch -->

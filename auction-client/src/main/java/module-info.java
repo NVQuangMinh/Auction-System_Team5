@@ -10,23 +10,23 @@ module auction.client {
   requires org.kordamp.ikonli.fontawesome5;
   uses org.kordamp.ikonli.IkonHandler;
 
-  exports auction_client.launcher;
+  exports auctionclient.launcher;
 
-  opens auction_client.launcher to javafx.graphics, javafx.fxml;
-  opens auction_client.Network;
-  opens auction_client to javafx.fxml;
-  opens auction_client.interfaces to javafx.fxml;
-    exports auction_client.controllers.admin;
-    opens auction_client.controllers.admin;
-  exports auction_client.controllers.auth;
-  opens auction_client.controllers.auth;
-  exports auction_client.controllers.bidder;
-  opens auction_client.controllers.bidder;
-  exports auction_client.controllers.seller;
-  opens auction_client.controllers.seller;
-  exports auction_client.controllers.main;
-  opens auction_client.controllers.main;
-  exports auction_client.controllers.notification;
-  opens auction_client.controllers.notification;
+  opens auctionclient.launcher to javafx.graphics, javafx.fxml;
+  opens auctionclient.Network;
+  opens auctionclient to javafx.fxml;
+  opens auctionclient.interfaces to javafx.fxml;
+    exports auctionclient.controllers.admin;
+    opens auctionclient.controllers.admin;
+  exports auctionclient.controllers.auth;
+  opens auctionclient.controllers.auth;
+  exports auctionclient.controllers.bidder;
+  opens auctionclient.controllers.bidder;
+  exports auctionclient.controllers.seller;
+  opens auctionclient.controllers.seller;
+  exports auctionclient.controllers.main;
+  opens auctionclient.controllers.main;
+  exports auctionclient.controllers.notification;
+  opens auctionclient.controllers.notification;
 
 }

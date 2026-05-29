@@ -109,7 +109,7 @@
 
 ### 2.1 Presentation Layer (Client)
 
-**Vị trí**: `auction-client/src/main/java/auction_client/`
+**Vị trí**: `auction-client/src/main/java/auctionclient/`
 
 **Trách nhiệm**:
 - Hiển thị giao diện người dùng (UI)
@@ -144,7 +144,7 @@
 
 ### 2.2 Business Logic / Service Layer (Server)
 
-**Vị trí**: `auction-server/src/main/java/auction_server/service/`
+**Vị trí**: `auction-server/src/main/java/auctionserver/service/`
 
 **Trách nhiệm**:
 - Xử lý logic nghiệp vụ chính
@@ -163,7 +163,7 @@
 
 ### 2.3 Data Access Layer (Server)
 
-**Vị trí**: `auction-server/src/main/java/auction_server/dao/`
+**Vị trí**: `auction-server/src/main/java/auctionserver/dao/`
 
 **Trách nhiệm**:
 - Giao tiếp trực tiếp với database
@@ -181,7 +181,7 @@
 
 ### 2.4 Entity Layer
 
-**Vị trí**: `auction-server/src/main/java/auction_server/entities/`
+**Vị trí**: `auction-server/src/main/java/auctionserver/entities/`
 
 **Các Entity chính**:
 
@@ -194,7 +194,7 @@
 
 ### 2.5 Data Transfer Object (DTO) Layer
 
-**Vị trí**: `auction-shared/src/main/java/auction_shared/dto/`
+**Vị trí**: `auction-shared/src/main/java/auctionshared/dto/`
 
 **Mục đích**: Chuyển dữ liệu giữa Server và Client mà không chia sẻ Entity trực tiếp (đảm bảo tính đóng gói).
 
@@ -215,20 +215,24 @@
 ### 3.1 Khởi Động Server - Main.java
 
 ```java
-1:  package auction_server;
-2:  import java.util.List;
-3:  import auction_server.Network.SocketServer;
-4:  import auction_server.core.AuctionManager;
-5:  import auction_server.core.AuctionScheduler;
-6:  import auction_server.dao.AuctionDAO;
-7:  import auction_server.dao.BidTransactionDAO;
-8:  import auction_server.dao.DAOProvider;
-9:  import auction_server.dao.DefaultDAOProvider;
-10: import auction_server.entities.Auction;
-11: import auction_server.entities.BidTransaction;
+1:package auctionserver;
+        2:
+        3:import auctionserver.Network.SocketServer;
+4:import auctionserver.core.AuctionManager;
+5:import auctionserver.core.AuctionScheduler;
+6:import auctionserver.dao.AuctionDAO;
+7:import auctionserver.dao.BidTransactionDAO;
+8:import auctionserver.dao.DAOProvider;
+9:import auctionserver.dao.DefaultDAOProvider;
+10:import auctionserver.entities.Auction;
+11:import auctionserver.entities.BidTransaction;
 12:
-13: public class Main {
-14:     public static void main(String[] args) {
+        13:
+
+public class Main {
+14:
+
+   public static void main(String[] args) {
 ```
 
 **Phân tích chi tiết `main()`**:
@@ -291,21 +295,25 @@
 ### 3.2 Network Layer - SocketServer.java
 
 ```java
-1:  package auction_server.Network;
-2:  import java.io.IOException;
-3:  import java.net.ServerSocket;
-4:  import java.net.Socket;
-5:  import java.util.concurrent.ExecutorService;
-6:  import java.util.concurrent.Executors;
-7:  import org.slf4j.Logger;
-8:  import org.slf4j.LoggerFactory;
-9:  import auction_server.core.AuctionManager;
-10: import auction_server.dao.DAOProvider;
-11: import auction_server.dao.DefaultDAOProvider;
+1:package auctionserver.Network;
+        2:
+        3:
+        4:
+        5:
+        6:
+        7:import org.slf4j.Logger;
+8:import org.slf4j.LoggerFactory;
+9:import auctionserver.core.AuctionManager;
+10:import auctionserver.dao.DAOProvider;
+11:import auctionserver.dao.DefaultDAOProvider;
 12:
-13: public class SocketServer {
-14:     private static final Logger log = LoggerFactory.getLogger(SocketServer.class);
-15:     private final DAOProvider daoProvider = new DefaultDAOProvider();
+        13:
+
+public class SocketServer {
+14:
+   private static final Logger log = LoggerFactory.getLogger(SocketServer.class);
+15:
+   private final DAOProvider daoProvider = new DefaultDAOProvider();
 ```
 
 **Giải thích các thành phần**:
@@ -359,29 +367,37 @@
 ### 3.3 Network Layer - ClientHandler.java
 
 ```java
-1:  package auction_server.Network;
-2:  import java.io.IOException;
-3:  import java.io.ObjectInputStream;
-4:  import java.io.ObjectOutputStream;
-5:  import java.net.Socket;
-6:  import java.util.ArrayList;
-7:  import java.util.List;
-8:  import org.slf4j.Logger;
-9:  import org.slf4j.LoggerFactory;
-10: import auction_server.core.AuctionManager;
-11: import auction_server.dao.DAOProvider;
-12: import auction_server.entities.User;
-13: import auction_server.service.MessageHandlerService;
-14: import auction_shared.Network.NetworkMessage;
-15: import auction_shared.Network.Notification;
+1:package auctionserver.Network;
+        2:
+        3:import java.io.ObjectInputStream;
+4:import java.io.ObjectOutputStream;
+5:import java.net.Socket;
+6:import java.util.ArrayList;
+7:import java.util.List;
+8:import org.slf4j.Logger;
+9:import org.slf4j.LoggerFactory;
+10:import auctionserver.core.AuctionManager;
+11:import auctionserver.dao.DAOProvider;
+12:import auctionserver.entities.User;
+13:import auctionserver.service.MessageHandlerService;
+14:import auctionshared.Network.NetworkMessage;
+15:import auctionshared.Network.Notification;
 16:
-17: public class ClientHandler implements Runnable {
-18:     private static final Logger log = LoggerFactory.getLogger(ClientHandler.class);
-19:     private List<Notification> activities = new ArrayList<>();
-20:     private MessageHandlerService messageHandler;
-21:     private Socket socket;
-22:     private ObjectOutputStream out;
-23:     private ObjectInputStream in;
+        17:
+
+public class ClientHandler implements Runnable {
+18:
+   private static final Logger log = LoggerFactory.getLogger(ClientHandler.class);
+19:
+   private List<Notification> activities = new ArrayList<>();
+20:
+   private MessageHandlerService messageHandler;
+21:
+   private Socket socket;
+22:
+   private ObjectOutputStream out;
+23:
+   private ObjectInputStream in;
 ```
 
 **Các thuộc tính của ClientHandler**:
@@ -538,20 +554,25 @@
 ### 3.4 Core Layer - AuctionManager.java
 
 ```java
-1:  package auction_server.core;
-2:  import auction_server.Network.ClientHandler;
-3:  import auction_server.entities.Auction;
-4:  import auction_shared.Network.NetworkMessage;
-5:  import java.util.ArrayList;
-6:  import java.util.List;
-7:  import java.util.Map;
-8:  import java.util.concurrent.ConcurrentHashMap;
-9:  import java.util.concurrent.CopyOnWriteArrayList;
+1:package auctionserver.core;
+        2:import auctionserver.Network.ClientHandler;
+3:import auctionserver.entities.Auction;
+4:import auctionshared.Network.NetworkMessage;
+5:
+        6:import java.util.List;
+7:import java.util.Map;
+8:import java.util.concurrent.ConcurrentHashMap;
+9:import java.util.concurrent.CopyOnWriteArrayList;
 10:
-11: public class AuctionManager {
-12:     private static volatile AuctionManager manager = null;
-13:     private final Map<String, Auction> activeRooms = new ConcurrentHashMap<>();
-14:     private final List<ClientHandler> activeClients = new CopyOnWriteArrayList<>();
+        11:
+
+public class AuctionManager {
+12:
+   private static volatile AuctionManager manager = null;
+13:
+   private final Map<String, Auction> activeRooms = new ConcurrentHashMap<>();
+14:
+   private final List<ClientHandler> activeClients = new CopyOnWriteArrayList<>();
 ```
 
 **Cấu trúc dữ liệu Thread-Safe**:
@@ -642,27 +663,34 @@
 ### 3.5 Core Layer - AuctionScheduler.java
 
 ```java
-1:  package auction_server.core;
-2:  import java.io.Serializable;
-3:  import java.util.List;
-4:  import java.util.concurrent.Executors;
-5:  import java.util.concurrent.ScheduledExecutorService;
-6:  import java.util.concurrent.TimeUnit;
-7:  import auction_server.Network.ClientHandler;
-8:  import auction_server.dao.AuctionDAO;
-9:  import auction_server.dao.DAOProvider;
-10: import auction_server.entities.Auction;
-11: import auction_server.entities.User;
-12: import import auction_server.mapper.Mappers;
-13: import auction_server.service.WinnerService;
-14: import auction_shared.Network.NetworkMessage;
-15: import auction_shared.dto.AuctionDTO;
+1:package auctionserver.core;
+        2:
+        3:
+        4:import java.util.concurrent.Executors;
+5:import java.util.concurrent.ScheduledExecutorService;
+6:
+        7:import auctionserver.Network.ClientHandler;
+8:import auctionserver.dao.AuctionDAO;
+9:import auctionserver.dao.DAOProvider;
+10:import auctionserver.entities.Auction;
+11:import auctionserver.entities.User;
+12:import
+import auctionserver.mapper.Mappers;
+13:import auctionserver.service.WinnerService;
+14:import auctionshared.Network.NetworkMessage;
+15:import auctionshared.dto.AuctionDTO;
 16:
-17: public class AuctionScheduler {
-18:     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-19:     private final AuctionManager auctionManager;
-20:     private final AuctionDAO auctionDAO;
-21:     private final WinnerService winnerService;
+        17:
+
+public class AuctionScheduler {
+18:
+   private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+19:
+   private final AuctionManager auctionManager;
+20:
+   private final AuctionDAO auctionDAO;
+21:
+   private final WinnerService winnerService;
 ```
 
 **Giải thích các thuộc tính**:
@@ -756,47 +784,71 @@
 **Cấu trúc** (dòng 1-55):
 
 ```java
-1:  package auction_server.service;
-2:  import java.io.Serializable;
-3:  import java.time.LocalTime;
-4:  import java.util.ArrayList;
-5:  import java.util.List;
-6:  import org.slf4j.Logger;
-7:  import org.slf4j.LoggerFactory;
-8:  import auction_server.Network.ClientHandler;
-9:  import auction_server.core.AuctionManager;
-10: import auction_server.dao.DAOProvider;
-11: import auction_server.entities.Auction;
-12: import auction_server.entities.BidTransaction;
-13: import auction_server.entities.Item;
-14: import auction_server.entities.User;
-15: import auction_server.factory.ItemFactory;
-16: import auction_server.mapper.Mappers;
-17: import auction_shared.Network.NetworkMessage;
-18: import import auction_shared.Network.Notification;
-19: import auction_shared.dto.AuctionDTO;
-20: import auction_shared.dto.BidTransactionDTO;
-21: import import auction_shared.dto.ItemDTO;
-22: import import auction_shared.dto.SignUpDTO;
-23: import import auction_shared.dto.UserDTO;
+1:package auctionserver.service;
+        2:
+        3:
+        4:
+        5:import java.util.List;
+6:import org.slf4j.Logger;
+7:import org.slf4j.LoggerFactory;
+8:import auctionserver.Network.ClientHandler;
+9:import auctionserver.core.AuctionManager;
+10:import auctionserver.dao.DAOProvider;
+11:import auctionserver.entities.Auction;
+12:import auctionserver.entities.BidTransaction;
+13:import auctionserver.entities.Item;
+14:import auctionserver.entities.User;
+15:import auctionserver.factory.ItemFactory;
+16:import auctionserver.mapper.Mappers;
+17:import auctionshared.Network.NetworkMessage;
+18:import
+import auctionshared.Network.Notification;
+19:import auctionshared.dto.AuctionDTO;
+20:import auctionshared.dto.BidTransactionDTO;
+21:import
+import auctionshared.dto.ItemDTO;
+22:import
+import auctionshared.dto.SignUpDTO;
+23:import
+import auctionshared.dto.UserDTO;
 24:
-25: public class MessageHandlerService {
-26:     private static final Logger log = LoggerFactory.getLogger(MessageHandlerService.class);
-27:     private final UserService userService;
-28:     private final SellService sellService;
-29:     private final DAOProvider daoProvider;
-30:     private final List<Notification> activities;
-31:     private User loggedInUser;
-32:     private final MessageSender messageSender;
-33:     private final LogoutHandler logoutHandler;
+        25:
+
+public class MessageHandlerService {
+26:
+   private static final Logger log = LoggerFactory.getLogger(MessageHandlerService.class);
+27:
+   private final UserService userService;
+28:
+   private final SellService sellService;
+29:
+   private final DAOProvider daoProvider;
+30:
+   private final List<Notification> activities;
+31:
+   private User loggedInUser;
+32:
+   private final MessageSender messageSender;
+33:
+   private final LogoutHandler logoutHandler;
 34:
-35:     public interface MessageSender {
-36:         void sendMessage(NetworkMessage msg);
-37:     }
+        35:
+
+   public interface MessageSender {
+36:
+
+      void sendMessage(NetworkMessage msg);
+37:
+   }
 38:
-39:     public interface LogoutHandler {
-40:         void onLogout();
-41:     }
+        39:
+
+   public interface LogoutHandler {
+40:
+
+      void onLogout();
+41:
+   }
 ```
 
 **Callback Interfaces**:
@@ -1004,28 +1056,35 @@
 ### 3.7 Service Layer - BidService.java
 
 ```java
-1:  package auction_server.service;
-2:  import java.sql.Connection;
-3:  import java.sql.SQLException;
-4:  import java.time.LocalDateTime;
-5:  import org.slf4j.Logger;
-6:  import org.slf4j.LoggerFactory;
-7:  import auction_server.dao.AuctionDAO;
-8:  import auction_server.dao.BidTransactionDAO;
-9:  import auction_server.dao.DAOProvider;
-10: import auction_server.dao.DatabaseConnection;
-11: import auction_server.entities.Auction;
-12: import auction_server.entities.BidTransaction;
+1:package auctionserver.service;
+        2:
+        3:
+        4:
+        5:import org.slf4j.Logger;
+6:import org.slf4j.LoggerFactory;
+7:import auctionserver.dao.AuctionDAO;
+8:import auctionserver.dao.BidTransactionDAO;
+9:import auctionserver.dao.DAOProvider;
+10:import auctionserver.dao.DatabaseConnection;
+11:import auctionserver.entities.Auction;
+12:import auctionserver.entities.BidTransaction;
 13:
-14: public class BidService {
-15:     private static final Logger log = LoggerFactory.getLogger(BidService.class);
-16:     private final AuctionDAO auctionDAO;
-17:     private final BidTransactionDAO bidDAO;
+        14:
+
+public class BidService {
+15:
+   private static final Logger log = LoggerFactory.getLogger(BidService.class);
+16:
+   private final AuctionDAO auctionDAO;
+17:
+   private final BidTransactionDAO bidDAO;
 18:
-19:     public BidService(DAOProvider daoProvider) {
-20:         this.auctionDAO = daoProvider.auctionDAO();
-21:         this.bidDAO = daoProvider.bidTransactionDAO();
-22:     }
+        19:
+
+   public BidService(DAOProvider daoProvider) {
+      20:this.auctionDAO = daoProvider.auctionDAO();
+      21:this.bidDAO = daoProvider.bidTransactionDAO();
+      22:}
 ```
 
 **Constructor**: Nhận DAOProvider, lấy các DAO cần thiết
@@ -1163,31 +1222,41 @@
 ### 3.8 Service Layer - UserService.java
 
 ```java
-1:  package auction_server.service;
-2:  import auction_server.dao.DAOProvider;
-3:  import auction_server.dao.UserDAO;
-4:  import auction_server.entities.User;
+1:package auctionserver.service;
+        2:import auctionserver.dao.DAOProvider;
+3:import auctionserver.dao.UserDAO;
+4:import auctionserver.entities.User;
 5:
-6:  public class UserService {
-7:     private final UserDAO userDAO;
+        6:
+
+public class UserService {
+7:
+   private final UserDAO userDAO;
 8:
-9:     public UserService(DAOProvider daoProvider) {
-10:         this.userDAO = daoProvider.userDAO();
-11:     }
+        9:
+
+   public UserService(DAOProvider daoProvider) {
+      10:this.userDAO = daoProvider.userDAO();
+      11:}
 12:
-13:     public boolean register(User user) {
-14:         if (userDAO.getUserByUsername(user.getUsername()) != null) return false;
-15:         return userDAO.insertUser(user);
-16:     }
+        13:
+
+   public boolean register(User user) {
+      14:if (userDAO.getUserByUsername(user.getUsername()) != null) return false;
+      15:return userDAO.insertUser(user);
+      16:}
 17:
-18:     public User login(String username, String password) {
-19:         User user = userDAO.getUserByUsername(username);
-20:         if (user != null && user.getPassword().equals(password) && !user.getUserStatus().equals("BANNED")) {
-21:             return user;
-22:         }
-23:         return null;
-24:     }
-25: }
+        18:
+
+   public User login(String username, String password) {
+      19:User user = userDAO.getUserByUsername(username);
+      20:if (user != null && user.getPassword().equals(password) && !user.getUserStatus().equals("BANNED")) {
+         21:return user;
+         22:}
+      23:return null;
+      24:}
+25:
+}
 ```
 
 **Luồng register**:
@@ -1203,27 +1272,36 @@
 ### 3.9 Service Layer - SellService.java
 
 ```java
-1:  package auction_server.service;
-2:  import auction_server.dao.DAOProvider;
-3:  import auction_server.dao.ItemDAO;
-4:  import auction_server.entities.Auction;
-5:  import auction_server.entities.Item;
+1:package auctionserver.service;
+        2:import auctionserver.dao.DAOProvider;
+3:import auctionserver.dao.ItemDAO;
+4:import auctionserver.entities.Auction;
+5:import auctionserver.entities.Item;
 6:
-7:  public class SellService {
-8:     private final ItemDAO itemDAO;
-9:     private final auction_server.dao.AuctionDAO auctionDAO;
+        7:
+
+public class SellService {
+8:
+   private final ItemDAO itemDAO;
+9:
+   private final auctionserver.dao.AuctionDAO auctionDAO;
 10:
-11:     public SellService(DAOProvider daoProvider) {
-12:         this.itemDAO = daoProvider.itemDAO();
-13:         this.auctionDAO = daoProvider.auctionDAO();
-14:     }
+        11:
+
+   public SellService(DAOProvider daoProvider) {
+      12:this.itemDAO = daoProvider.itemDAO();
+      13:this.auctionDAO = daoProvider.auctionDAO();
+      14:}
 15:
-16:     public boolean publishItemAndAuction(Item item, Auction auction) {
-17:         int itemResult = itemDAO.insert(item);
-18:         int auctionResult = auctionDAO.insert(auction);
-19:         return itemResult > 0 && auctionResult > 0;
-20:     }
-21: }
+        16:
+
+   public boolean publishItemAndAuction(Item item, Auction auction) {
+      17:int itemResult = itemDAO.insert(item);
+      18:int auctionResult = auctionDAO.insert(auction);
+      19:return itemResult > 0 && auctionResult > 0;
+      20:}
+21:
+}
 ```
 
 **Lưu ý**: Không có transaction ở đây - nếu item insert thành công nhưng auction insert thất bại, sẽ có inconsistency (item tồn tại không có auction)
@@ -1231,34 +1309,42 @@
 ### 3.10 Service Layer - WinnerService.java
 
 ```java
-1:  package auction_server.service;
-2:  import auction_server.dao.DAOProvider;
-3:  import auction_server.dao.UserDAO;
-4:  import auction_server.entities.BidTransaction;
-5:  import auction_server.entities.User;
-6:  import java.util.List;
+1:package auctionserver.service;
+        2:import auctionserver.dao.DAOProvider;
+3:import auctionserver.dao.UserDAO;
+4:import auctionserver.entities.BidTransaction;
+5:import auctionserver.entities.User;
+6:import java.util.List;
 7:
-8:  public class WinnerService {
-9:     private final UserDAO userDAO;
+        8:
+
+public class WinnerService {
+9:
+   private final UserDAO userDAO;
 10:
-11:     public WinnerService(DAOProvider daoProvider) {
-12:         this.userDAO = daoProvider.userDAO();
-13:     }
+        11:
+
+   public WinnerService(DAOProvider daoProvider) {
+      12:this.userDAO = daoProvider.userDAO();
+      13:}
 14:
-15:     public String determineWinner(List<BidTransaction> bidHistory) {
-16:         if (bidHistory == null || bidHistory.isEmpty()) return null;
-17:         for (int i = bidHistory.size() - 1; i > 0; i--) {
-18:             BidTransaction tx = bidHistory.get(i);
-19:             User bidder = tx.getBidder();
-20:             if (bidder == null) continue;
-21:             User user = userDAO.getUserByUsername(bidder.getUsername());
-22:             if (user != null && !"BANNED".equals(user.getUserStatus())) {
-23:                 return bidder.getId();
-24:             }
-25:         }
-26:         return null;
-27:     }
-28: }
+        15:
+
+   public String determineWinner(List<BidTransaction> bidHistory) {
+      16:if (bidHistory == null || bidHistory.isEmpty()) return null;
+      17:for (int i = bidHistory.size() - 1; i > 0; i--) {
+         18:BidTransaction tx = bidHistory.get(i);
+         19:User bidder = tx.getBidder();
+         20:if (bidder == null) continue;
+         21:User user = userDAO.getUserByUsername(bidder.getUsername());
+         22:if (user != null && !"BANNED".equals(user.getUserStatus())) {
+            23:return bidder.getId();
+            24:}
+         25:}
+      26:return null;
+      27:}
+28:
+}
 ```
 
 **Luồng xác định người thắng**:
@@ -1472,12 +1558,16 @@ Constructor 2: Dùng khi rebuild từ database (server restart)
 #### 3.12.1 DAOProvider Interface
 
 ```java
-package auction_server.dao;
+package auctionserver.dao;
+
 public interface DAOProvider {
-    AuctionDAO auctionDAO();
-    BidTransactionDAO bidTransactionDAO();
-    ItemDAO itemDAO();
-    UserDAO userDAO();
+   AuctionDAO auctionDAO();
+
+   BidTransactionDAO bidTransactionDAO();
+
+   ItemDAO itemDAO();
+
+   UserDAO userDAO();
 }
 ```
 
@@ -1486,15 +1576,19 @@ public interface DAOProvider {
 #### 3.12.2 DefaultDAOProvider
 
 ```java
-package auction_server.dao;
-public class DefaultDAOProvider implements DAOProvider {
-    private final AuctionDAO auctionDAO = new AuctionDAO();
-    private final BidTransactionDAO bidTransactionDAO = new BidTransactionDAO();
-    private final ItemDAO itemDAO = new ItemDAO();
-    private final UserDAO userDAO = new UserDAO();
+package auctionserver.dao;
 
-    @Override public AuctionDAO auctionDAO() { return auctionDAO; }
-    // ... các method khác tương tự
+public class DefaultDAOProvider implements DAOProvider {
+   private final AuctionDAO auctionDAO = new AuctionDAO();
+   private final BidTransactionDAO bidTransactionDAO = new BidTransactionDAO();
+   private final ItemDAO itemDAO = new ItemDAO();
+   private final UserDAO userDAO = new UserDAO();
+
+   @Override
+   public AuctionDAO auctionDAO() {
+      return auctionDAO;
+   }
+   // ... các method khác tương tự
 }
 ```
 
@@ -1503,24 +1597,25 @@ public class DefaultDAOProvider implements DAOProvider {
 #### 3.12.3 DatabaseConnection (HikariCP)
 
 ```java
-package auction_server.dao;
+package auctionserver.dao;
+
 public class DatabaseConnection {
-    private static HikariDataSource dataSource = null;
+   private static HikariDataSource dataSource = null;
 
-    private static synchronized void init() {
-        if (dataSource != null) return;
-        HikariConfig config = new HikariConfig();
-        config.setJdbcUrl(System.getenv("DB_URL"));
-        config.setUsername(System.getenv("DB_USER"));
-        config.setPassword(System.getenv("DB_PASSWORD"));
-        config.setMaximumPoolSize(10);
-        dataSource = new HikariDataSource(config);
-    }
+   private static synchronized void init() {
+      if (dataSource != null) return;
+      HikariConfig config = new HikariConfig();
+      config.setJdbcUrl(System.getenv("DB_URL"));
+      config.setUsername(System.getenv("DB_USER"));
+      config.setPassword(System.getenv("DB_PASSWORD"));
+      config.setMaximumPoolSize(10);
+      dataSource = new HikariDataSource(config);
+   }
 
-    public static Connection getConnection() throws SQLException {
-        if (dataSource == null) init();
-        return dataSource.getConnection();
-    }
+   public static Connection getConnection() throws SQLException {
+      if (dataSource == null) init();
+      return dataSource.getConnection();
+   }
 }
 ```
 
@@ -1667,7 +1762,7 @@ public static UserDTO toDTO(User user) {
 
 ```
 auction-client/
-├── src/main/java/auction_client/
+├── src/main/java/auctionclient/
 │   ├── launcher/
 │   │   ├── Launcher.java          # Entry point
 │   │   └── ClientLauncher.java    # JavaFX Application
@@ -1682,7 +1777,7 @@ auction-client/
 │   │   └── ... (các controller khác)
 │   └── interfaces/
 │       └── AuctionUpdateListener.java
-├── src/main/resources/auction_client/
+├── src/main/resources/auctionclient/
 │   ├── SignInScene.fxml
 │   ├── SignUpScene.fxml
 │   ├── AuctionMain.fxml
@@ -1692,29 +1787,29 @@ auction-client/
 ### 4.2 Launcher - Điểm Khởi Đầu
 
 ```java
-package auction_client.launcher;
+package auctionclient.launcher;
 
-import auction_client.Network.ClientService;
-import auction_client.controllers.notification.UserPushUpNotificationController;
+import auctionclient.Network.ClientService;
+import auctionclient.controllers.notification.UserPushUpNotificationController;
 import javafx.application.Application;
 
 public class Launcher {
-    public static void main(String[] args) {
-        try {
-            ClientService clientService = ClientService.getInstance();
-            String host = "localhost";
-            int port = 8080;
-            clientService.connect(host, port);
-            System.out.println("Connected to server successfully!");
+   public static void main(String[] args) {
+      try {
+         ClientService clientService = ClientService.getInstance();
+         String host = "localhost";
+         int port = 8080;
+         clientService.connect(host, port);
+         System.out.println("Connected to server successfully!");
 
-            // Đăng ký global notification listener
-            clientService.addListener(new UserPushUpNotificationController());
-        } catch (Exception e) {
-            System.err.println("Could not connect to server: " + e.getMessage());
-        }
+         // Đăng ký global notification listener
+         clientService.addListener(new UserPushUpNotificationController());
+      } catch (Exception e) {
+         System.err.println("Could not connect to server: " + e.getMessage());
+      }
 
-        Application.launch(ClientLauncher.class, args);
-    }
+      Application.launch(ClientLauncher.class, args);
+   }
 }
 ```
 
@@ -1727,15 +1822,15 @@ public class Launcher {
 ### 4.3 ClientService - Singleton Socket Client
 
 ```java
-package auction_client.Network;
+package auctionclient.Network;
 
 public class ClientService {
-    private static ClientService instance;
-    private Socket socket;
-    private ObjectOutputStream out;
-    private ObjectInputStream in;
-    private boolean isRunning = false;
-    private final List<AuctionUpdateListener> listeners = new CopyOnWriteArrayList<>();
+   private static ClientService instance;
+   private Socket socket;
+   private ObjectOutputStream out;
+   private ObjectInputStream in;
+   private boolean isRunning = false;
+   private final List<AuctionUpdateListener> listeners = new CopyOnWriteArrayList<>();
 }
 ```
 
@@ -1827,12 +1922,12 @@ private void handleServerResponse(NetworkMessage response) {
 ### 4.4 AuctionUpdateListener Interface
 
 ```java
-package auction_client.interfaces;
+package auctionclient.interfaces;
 
-import auction_shared.Network.NetworkMessage;
+import auctionshared.Network.NetworkMessage;
 
 public interface AuctionUpdateListener {
-    void onUpdateReceived(NetworkMessage msg);
+   void onUpdateReceived(NetworkMessage msg);
 }
 ```
 
@@ -1844,26 +1939,27 @@ public interface AuctionUpdateListener {
 ### 4.5 UserSession - Quản Lý Trạng Thái User
 
 ```java
-package auction_client;
+package auctionclient;
 
 public class UserSession {
-    private static UserSession self = null;
-    private UserDTO user;
-    private String username = "";
+   private static UserSession self = null;
+   private UserDTO user;
+   private String username = "";
 
-    private UserSession(){}
+   private UserSession() {
+   }
 
-    public synchronized static UserSession getInstance(){
-        if (self == null){
-            self = new UserSession();
-        }
-        return self;
-    }
+   public synchronized static UserSession getInstance() {
+      if (self == null) {
+         self = new UserSession();
+      }
+      return self;
+   }
 
-    public void closeApp(){
-        ClientService.getInstance().sendMessage(new NetworkMessage("LOGOUT", null));
-        self = null;
-    }
+   public void closeApp() {
+      ClientService.getInstance().sendMessage(new NetworkMessage("LOGOUT", null));
+      self = null;
+   }
 }
 ```
 
@@ -1975,14 +2071,14 @@ public class WebMenuBarController implements Initializable {
 
     @FXML
     public void switchToMainScene(MouseEvent event) throws IOException {
-        switchScene(event, "/auction_client/AuctionMain.fxml");
+        switchScene(event, "/auctionclient/AuctionMain.fxml");
     }
 
     @FXML
     public void switchToUserProductListScene(ActionEvent event) throws IOException {
         ClientService.getInstance().sendMessage(
             new NetworkMessage("GET_MY_LIST", UserSession.getInstance().getUsername()));
-        switchScene(event, "/auction_client/SellProductScene.fxml");
+        switchScene(event, "/auctionclient/SellProductScene.fxml");
     }
 
     @FXML
@@ -1993,7 +2089,7 @@ public class WebMenuBarController implements Initializable {
 
         if (logOutAlert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
             UserSession.getInstance().closeApp();
-            switchScene(event, "/auction_client/SignInScene.fxml");
+            switchScene(event, "/auctionclient/SignInScene.fxml");
         }
     }
 
@@ -2050,21 +2146,26 @@ public class WebMenuBarController implements Initializable {
 ### 5.1 NetworkMessage
 
 ```java
-package auction_shared.Network;
+package auctionshared.Network;
 
 import java.io.Serializable;
 
 public class NetworkMessage implements Serializable {
-    private String action;          // Action type (LOGIN, BID, BUY_OUT, ...)
-    private Serializable data;     // Payload (DTO subclass)
+   private String action;          // Action type (LOGIN, BID, BUY_OUT, ...)
+   private Serializable data;     // Payload (DTO subclass)
 
-    public NetworkMessage(String action, Serializable data) {
-        this.action = action;
-        this.data = data;
-    }
+   public NetworkMessage(String action, Serializable data) {
+      this.action = action;
+      this.data = data;
+   }
 
-    public String getAction() { return this.action; }
-    public Serializable getData() { return data; }
+   public String getAction() {
+      return this.action;
+   }
+
+   public Serializable getData() {
+      return data;
+   }
 }
 ```
 
@@ -2077,19 +2178,19 @@ public class NetworkMessage implements Serializable {
 ### 5.2 Notification
 
 ```java
-package auction_shared.Network;
+package auctionshared.Network;
 
 import java.io.Serializable;
 import java.time.LocalTime;
 
 public class Notification implements Serializable {
-    private String notificationMSG;    // Nội dung thông báo
-    private LocalTime notificationTime; // Thời gian tạo
+   private String notificationMSG;    // Nội dung thông báo
+   private LocalTime notificationTime; // Thời gian tạo
 
-    public Notification(String notificationMSG, LocalTime notificationTime) {
-        this.notificationMSG = notificationMSG;
-        this.notificationTime = notificationTime;
-    }
+   public Notification(String notificationMSG, LocalTime notificationTime) {
+      this.notificationMSG = notificationMSG;
+      this.notificationTime = notificationTime;
+   }
 }
 ```
 
@@ -2098,77 +2199,77 @@ public class Notification implements Serializable {
 ### 5.3 AuctionDTO
 
 ```java
-package auction_shared.dto;
+package auctionshared.dto;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
 public class AuctionDTO implements Serializable {
-    private String auctionId;
-    private AuctionStatus status;
-    private ItemDTO item;
-    private ItemType type;
-    private double startingPrice;
-    private double buyOutPrice;
-    private double tickSize;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
-    private boolean antiSniping;
-    private String winnerId;
-    private double currentHighestBid;
+   private String auctionId;
+   private AuctionStatus status;
+   private ItemDTO item;
+   private ItemType type;
+   private double startingPrice;
+   private double buyOutPrice;
+   private double tickSize;
+   private LocalDateTime startTime;
+   private LocalDateTime endTime;
+   private boolean antiSniping;
+   private String winnerId;
+   private double currentHighestBid;
 
-    public AuctionDTO(ItemDTO item, ItemType type, AuctionStatus status,
+   public AuctionDTO(ItemDTO item, ItemType type, AuctionStatus status,
                      double startingPrice, double buyOutPrice, double tickSize,
                      LocalDateTime startTime, LocalDateTime endTime,
                      boolean antiSniping, String winnerId, double currentHighestBid) {
-        // ... gán các giá trị
-    }
+      // ... gán các giá trị
+   }
 }
 ```
 
 ### 5.4 ItemDTO
 
 ```java
-package auction_shared.dto;
+package auctionshared.dto;
 
 import java.io.Serializable;
 
 public class ItemDTO implements Serializable {
-    private String id;
-    private String itemName;
-    private String description;
-    private UserDTO owner;
-    private ItemType type;
+   private String id;
+   private String itemName;
+   private String description;
+   private UserDTO owner;
+   private ItemType type;
 }
 ```
 
 ### 5.5 BidTransactionDTO
 
 ```java
-package auction_shared.dto;
+package auctionshared.dto;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
 public class BidTransactionDTO implements Serializable {
-    private AuctionDTO auction;
-    private UserDTO bidder;
-    private double bidAmount;
-    private LocalDateTime bidTime;
+   private AuctionDTO auction;
+   private UserDTO bidder;
+   private double bidAmount;
+   private LocalDateTime bidTime;
 }
 ```
 
 ### 5.6 UserDTO
 
 ```java
-package auction_shared.dto;
+package auctionshared.dto;
 
 import java.io.Serializable;
 
 public class UserDTO implements Serializable {
-    private String id;
-    private String username;
-    private String role;  // "USER" hoặc "ADMIN"
+   private String id;
+   private String username;
+   private String role;  // "USER" hoặc "ADMIN"
 }
 ```
 
@@ -2177,14 +2278,14 @@ public class UserDTO implements Serializable {
 ### 5.7 SignUpDTO
 
 ```java
-package auction_shared.dto;
+package auctionshared.dto;
 
 import java.io.Serializable;
 
 public class SignUpDTO implements Serializable {
-    private String id;
-    private String username;
-    private String password;
+   private String id;
+   private String username;
+   private String password;
 }
 ```
 
@@ -2195,37 +2296,37 @@ public class SignUpDTO implements Serializable {
 #### AuctionStatus
 
 ```java
-package auction_shared.dto;
+package auctionshared.dto;
 
 public enum AuctionStatus {
-    ACTIVE,   // Đang diễn ra
-    ENDED,    // Kết thúc tự nhiên (hết giờ)
-    SOLD      // Bán ngay (buy-out)
+   ACTIVE,   // Đang diễn ra
+   ENDED,    // Kết thúc tự nhiên (hết giờ)
+   SOLD      // Bán ngay (buy-out)
 }
 ```
 
 #### ItemType
 
 ```java
-package auction_shared.dto;
+package auctionshared.dto;
 
 public enum ItemType {
-    ARTS,         // Đồ nghệ thuật
-    ELECTRONICS,  // Đồ điện tử
-    VEHICLES;     // Phương tiện
+   ARTS,         // Đồ nghệ thuật
+   ELECTRONICS,  // Đồ điện tử
+   VEHICLES;     // Phương tiện
 
-    public static ItemType fromDbValue(String value) {
-        return switch (value) {
-            case "ARTS" -> ARTS;
-            case "ELECTRONICS" -> ELECTRONICS;
-            case "VEHICLES" -> VEHICLES;
-            default -> throw new IllegalArgumentException("Unknown item_type: " + value);
-        };
-    }
+   public static ItemType fromDbValue(String value) {
+      return switch (value) {
+         case "ARTS" -> ARTS;
+         case "ELECTRONICS" -> ELECTRONICS;
+         case "VEHICLES" -> VEHICLES;
+         default -> throw new IllegalArgumentException("Unknown item_type: " + value);
+      };
+   }
 
-    public String toDbValue() {
-        return this.name();
-    }
+   public String toDbValue() {
+      return this.name();
+   }
 }
 ```
 
@@ -2303,7 +2404,7 @@ public enum ItemType {
 
 ### 6.2 Factory Pattern
 
-**Vị trí**: `auction_server/factory/`
+**Vị trí**: `auctionserver/factory/`
 
 #### ItemFactory (Abstract Factory)
 
@@ -2417,7 +2518,7 @@ public class SignInController implements Initializable, AuctionUpdateListener {
 
 ### 6.4 Strategy Pattern (Behavior Interfaces)
 
-**Vị trí**: `auction_server/behaviors/`
+**Vị trí**: `auctionserver/behaviors/`
 
 #### Interfaces
 
@@ -2541,7 +2642,7 @@ this.messageHandler = new MessageHandlerService(
 
 ### 6.6 DAO Pattern (Data Access Object)
 
-**Vị trí**: `auction_server/dao/`
+**Vị trí**: `auctionserver/dao/`
 
 #### DAO Interfaces
 
@@ -2588,7 +2689,7 @@ public class BidTransactionDAO implements TransactionalDAO<BidTransaction> {
 
 ### 6.7 Mapper Pattern
 
-**Vị trí**: `auction_server/mapper/Mappers.java`
+**Vị trí**: `auctionserver/mapper/Mappers.java`
 
 ```java
 public class Mappers {

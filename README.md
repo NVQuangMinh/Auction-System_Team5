@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Auction System Logo](./auction-client/src/main/resources/auction_client/images/Auction-System.png)
+![Auction System Logo](./auction-client/src/main/resources/auctionclient/images/Auction-System.png)
 
 **Hệ thống Đấu giá Trực tuyến Thời gian thực** — Xây dựng với Java 21, JavaFX & TCP/IP Socket
 
@@ -170,14 +170,14 @@ Auction-System_Team5/
 │
 ├── auction-shared/                # Shared library (client ↔ server)
 │   └── src/main/java/
-│       ├── auction_shared/
+│       ├── auctionshared/
 │       │   ├── dto/               # DTOs: AuctionDTO, ItemDTO,
 │       │   │                       # UserDTO, BidTransactionDTO, ...
 │       │   └── Network/           # NetworkMessage, Notification
 │       └── pom.xml
 │
 ├── auction-server/                # Server application
-│   └── src/main/java/auction_server/
+│   └── src/main/java/auctionserver/
 │       ├── Main.java              # Entry point: khởi động server
 │       ├── base/Entity.java       # Base entity class
 │       ├── entities/              # Domain entities
@@ -191,13 +191,13 @@ Auction-System_Team5/
 │   └── pom.xml
 │
 ├── auction-client/                # JavaFX client application
-│   └── src/main/java/auction_client/
+│   └── src/main/java/auctionclient/
 │       ├── launcher/              # JavaFX Application entry points
 │       ├── controllers/          # FXML controllers
 │       ├── Network/               # ClientService (socket client)
 │       └── UserSession.java      # Session singleton
 │   └── src/main/resources/
-│       ├── auction_client/
+│       ├── auctionclient/
 │       │   ├── fxml/             # *.fxml layout files
 │       │   └── images/           # Assets
 │       └── logback.xml
@@ -246,7 +246,7 @@ mvn clean install
 
 ```bash
 cd auction-server
-mvn exec:java -Dexec.mainClass="auction_server.Main"
+mvn exec:java -Dexec.mainClass="auctionserver.Main"
 ```
 
 Server khởi động SocketServer tại **port 8080** và AuctionScheduler kiểm tra phiên đấu giá mỗi giây.

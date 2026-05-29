@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.control.Label?>
+
+<BorderPane fx:id="MainPane" style="-fx-background-color: #f6f8ef;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auctionclient.controllers.main.AuctionMainController">
+   <top>
+      <fx:include fx:id="menuBar" source="WebMenuBar.fxml" />
+   </top>
+   <center>
+      <StackPane>
+         <Label style="-fx-font-size: 30; -fx-text-fill: #555;" text="xin chao the gioi" />
+      </StackPane>
+   </center>
+</BorderPane>

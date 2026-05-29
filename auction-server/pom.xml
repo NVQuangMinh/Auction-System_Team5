@@ -78,9 +78,9 @@
                 <version>3.2.5</version>
                 <configuration>
                     <argLine>
-                        --add-opens auction.server/auction_server.dao=ALL-UNNAMED
-                        --add-opens auction.server/auction_server.entities=ALL-UNNAMED
-                        --add-opens auction.server/auction_server.service=ALL-UNNAMED
+                        --add-opens auction.server/auctionserver.dao=ALL-UNNAMED
+                        --add-opens auction.server/auctionserver.entities=ALL-UNNAMED
+                        --add-opens auction.server/auctionserver.service=ALL-UNNAMED
                         -XX:+EnableDynamicAgentLoading
                         -Dnet.bytebuddy.experimental=true
                     </argLine>

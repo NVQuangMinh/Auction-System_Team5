@@ -1,7 +1,7 @@
 module auction.shared {
-    exports auction_shared.dto;
-    exports auction_shared.Network;
+    exports auctionshared.dto;
+    exports auctionshared.Network;
 
-    opens auction_shared.dto to auction.server, auction.client;
-    opens auction_shared.Network to auction.client, auction.server;
+    opens auctionshared.dto to auction.server, auction.client;
+    opens auctionshared.Network to auction.client, auction.server;
 }

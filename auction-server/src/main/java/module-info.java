@@ -6,19 +6,19 @@ module auction.server {
     requires ch.qos.logback.classic;
     requires com.zaxxer.hikari;
 
-    exports auction_server.core;
-    exports auction_server.entities;
-    exports auction_server.entities.items;
-    exports auction_server.behaviors;
-    exports auction_server.interfaces;
-    exports auction_server.mapper;
-    exports auction_server.factory;
-    opens auction_server.Network to auction.shared;
-    exports auction_server.behaviors.profile;
-    exports auction_server.service;
+    exports auctionserver.core;
+    exports auctionserver.entities;
+    exports auctionserver.entities.items;
+    exports auctionserver.behaviors;
+    exports auctionserver.interfaces;
+    exports auctionserver.mapper;
+    exports auctionserver.factory;
+    opens auctionserver.Network to auction.shared;
+    exports auctionserver.behaviors.profile;
+    exports auctionserver.service;
 
     // Cho phép Mockito truy cập các package này khi chạy test
-    opens auction_server.dao;
-    opens auction_server.entities;
-    opens auction_server.service;
+    opens auctionserver.dao;
+    opens auctionserver.entities;
+    opens auctionserver.service;
 }

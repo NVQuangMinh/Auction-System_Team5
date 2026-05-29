@@ -94,7 +94,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.8</version>
                 <configuration>
-                    <mainClass>auction_client.launcher.Launcher</mainClass>
+                    <mainClass>auctionclient.launcher.Launcher</mainClass>
                 </configuration>
             </plugin>
             <plugin>
@@ -108,16 +108,16 @@
                         --add-opens javafx.graphics/com.sun.javafx.application=ALL-UNNAMED
                         --add-opens javafx.graphics/com.sun.glass.ui=ALL-UNNAMED
                         --add-reads org.kordamp.ikonli.core=ALL-UNNAMED
-                        --add-opens auction.client/auction_client=ALL-UNNAMED
-                        --add-opens auction.client/auction_client.launcher=ALL-UNNAMED
-                        --add-opens auction.client/auction_client.Network=ALL-UNNAMED
-                        --add-opens auction.client/auction_client.controllers=ALL-UNNAMED
-                        --add-opens auction.client/auction_client.controllers.admin=ALL-UNNAMED
-                        --add-opens auction.client/auction_client.controllers.auth=ALL-UNNAMED
-                        --add-opens auction.client/auction_client.controllers.bidder=ALL-UNNAMED
-                        --add-opens auction.client/auction_client.controllers.seller=ALL-UNNAMED
-                        --add-opens auction.client/auction_client.controllers.main=ALL-UNNAMED
-                        --add-opens auction.client/auction_client.controllers.notification=ALL-UNNAMED
+                        --add-opens auction.client/auctionclient=ALL-UNNAMED
+                        --add-opens auction.client/auctionclient.launcher=ALL-UNNAMED
+                        --add-opens auction.client/auctionclient.Network=ALL-UNNAMED
+                        --add-opens auction.client/auctionclient.controllers=ALL-UNNAMED
+                        --add-opens auction.client/auctionclient.controllers.admin=ALL-UNNAMED
+                        --add-opens auction.client/auctionclient.controllers.auth=ALL-UNNAMED
+                        --add-opens auction.client/auctionclient.controllers.bidder=ALL-UNNAMED
+                        --add-opens auction.client/auctionclient.controllers.seller=ALL-UNNAMED
+                        --add-opens auction.client/auctionclient.controllers.main=ALL-UNNAMED
+                        --add-opens auction.client/auctionclient.controllers.notification=ALL-UNNAMED
                         -XX:+EnableDynamicAgentLoading
                         -Dnet.bytebuddy.experimental=true
                     </argLine>
