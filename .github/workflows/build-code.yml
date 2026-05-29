@@ -35,5 +35,10 @@ jobs:
       - name: Run Server Tests
         run: mvn test -pl auction-server
 
-      - name: Run Client Tests
+      - name: Run Client Tests (Linux)
+        if: matrix.os == 'ubuntu-latest'
         run: xvfb-run mvn test -pl auction-client
+
+      - name: Run Client Tests (Non-Linux)
+        if: matrix.os != 'ubuntu-latest'
+        run: mvn test -pl auction-client
