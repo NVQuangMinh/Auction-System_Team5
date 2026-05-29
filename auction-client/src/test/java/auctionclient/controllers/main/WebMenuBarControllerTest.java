@@ -14,13 +14,13 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 import org.testfx.api.FxAssert;
-import org.testfx.framework.junit5.ApplicationTest;
+import auctionclient.controllers.FxControllerTestBase;
 import org.testfx.matcher.control.LabeledMatchers;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class WebMenuBarControllerTest extends ApplicationTest {
+class WebMenuBarControllerTest extends FxControllerTestBase {
 
     private static final String TEST_USERNAME = "nhan";
 

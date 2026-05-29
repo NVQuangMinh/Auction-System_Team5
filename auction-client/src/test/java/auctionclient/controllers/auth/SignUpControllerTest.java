@@ -16,13 +16,13 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.testfx.framework.junit5.ApplicationTest;
+import auctionclient.controllers.FxControllerTestBase;
 import org.testfx.util.WaitForAsyncUtils;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class SignUpControllerTest extends ApplicationTest {
+class SignUpControllerTest extends FxControllerTestBase {
 
     private static final String TEST_USERNAME = "newuser";
     private static final String TEST_PASSWORD = "secret123";

@@ -17,7 +17,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.testfx.api.FxAssert;
-import org.testfx.framework.junit5.ApplicationTest;
+import auctionclient.controllers.FxControllerTestBase;
 import org.testfx.matcher.base.NodeMatchers;
 import org.testfx.matcher.control.LabeledMatchers;
 
@@ -29,7 +29,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class BidProductInfoControllerTest extends ApplicationTest {
+class BidProductInfoControllerTest extends FxControllerTestBase {
     private BidProductInfoController controller;
     private ClientService mockClientService;
 

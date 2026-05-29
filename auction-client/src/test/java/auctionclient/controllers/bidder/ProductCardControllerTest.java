@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 import org.testfx.api.FxAssert;
-import org.testfx.framework.junit5.ApplicationTest;
+import auctionclient.controllers.FxControllerTestBase;
 import org.testfx.matcher.base.NodeMatchers;
 import org.testfx.matcher.control.LabeledMatchers;
 
@@ -24,7 +24,7 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class ProductCardControllerTest extends ApplicationTest {
+class ProductCardControllerTest extends FxControllerTestBase {
 
     private ProductCardController controller;
     private ClientService mockClientService;

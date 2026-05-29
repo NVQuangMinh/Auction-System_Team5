@@ -9,7 +9,7 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.mockito.MockedStatic;
 import static org.mockito.Mockito.mockStatic;
 import org.testfx.api.FxAssert;
-import org.testfx.framework.junit5.ApplicationTest;
+import auctionclient.controllers.FxControllerTestBase;
 import org.testfx.matcher.control.LabeledMatchers;
 
 import auctionclient.UserSession;
@@ -23,7 +23,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
-class UserPushUpNotificationControllerTest extends ApplicationTest {
+class UserPushUpNotificationControllerTest extends FxControllerTestBase {
 
     private static final String TEST_USERNAME = "nhan";
 

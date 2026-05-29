@@ -12,7 +12,7 @@ import org.mockito.MockedStatic;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import org.testfx.api.FxAssert;
-import org.testfx.framework.junit5.ApplicationTest;
+import auctionclient.controllers.FxControllerTestBase;
 import org.testfx.matcher.control.LabeledMatchers;
 import org.testfx.util.WaitForAsyncUtils;
 
@@ -33,7 +33,7 @@ import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
 
-public class SellProductSceneControllerTest extends ApplicationTest {
+public class SellProductSceneControllerTest extends FxControllerTestBase {
 
     private static final String TEST_USERNAME = "nhan";
 

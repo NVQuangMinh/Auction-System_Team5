@@ -14,7 +14,7 @@ import org.mockito.MockedStatic;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
-import org.testfx.framework.junit5.ApplicationTest;
+import auctionclient.controllers.FxControllerTestBase;
 
 import auctionclient.Network.ClientService;
 import auctionshared.Network.NetworkMessage;
@@ -27,7 +27,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-class UserActivitiesControllerTest extends ApplicationTest {
+class UserActivitiesControllerTest extends FxControllerTestBase {
 
     private UserActivitiesController controller;
     private ClientService mockClientService;

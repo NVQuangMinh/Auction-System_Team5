@@ -13,7 +13,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.testfx.api.FxAssert;
-import org.testfx.framework.junit5.ApplicationTest;
+import auctionclient.controllers.FxControllerTestBase;
 import org.testfx.matcher.control.LabeledMatchers;
 
 import java.io.Serializable;
@@ -23,7 +23,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-class SellProductInfoControllerTest extends ApplicationTest {
+class SellProductInfoControllerTest extends FxControllerTestBase {
 
     private SellProductInfoController controller;
     private ClientService mockClientService;

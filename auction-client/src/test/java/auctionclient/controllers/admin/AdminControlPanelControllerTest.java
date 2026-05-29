@@ -18,7 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import org.testfx.framework.junit5.ApplicationTest;
+import auctionclient.controllers.FxControllerTestBase;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -27,9 +27,8 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-//fail sạch : )
 
-class AdminControlPanelControllerTest extends ApplicationTest {
+class AdminControlPanelControllerTest extends FxControllerTestBase {
     private AdminControlPanelController controller;
     private ClientService mockClientService;
 

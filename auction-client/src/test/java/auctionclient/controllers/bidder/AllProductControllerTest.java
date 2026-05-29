@@ -1,39 +1,38 @@
 package auctionclient.controllers.bidder;
 
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.junit.jupiter.api.AfterEach;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import static org.mockito.Mockito.clearInvocations;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
+import auctionclient.controllers.FxControllerTestBase;
+import org.testfx.util.WaitForAsyncUtils;
+
 import auctionclient.Network.ClientService;
 import auctionshared.Network.NetworkMessage;
 import auctionshared.dto.AuctionDTO;
 import auctionshared.dto.AuctionStatus;
 import auctionshared.dto.ItemDTO;
 import auctionshared.dto.ItemType;
-
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.RadioButton;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
-import org.testfx.framework.junit5.ApplicationTest;
-import org.testfx.util.WaitForAsyncUtils;
-
-import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.clearInvocations;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
 
 /**
  * Kiểm tra lọc sản phẩm theo trạng thái (Active / Ended) và danh mục
  * (All, Arts, Vehicles, Electronics) — 8 trường hợp.
  */
-public class AllProductControllerTest extends ApplicationTest {
+public class AllProductControllerTest extends FxControllerTestBase {
 
     private AllProductController controller;
     private ClientService mockClientService;

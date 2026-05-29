@@ -6,12 +6,12 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.Test;
 import org.testfx.api.FxAssert;
-import org.testfx.framework.junit5.ApplicationTest;
+import auctionclient.controllers.FxControllerTestBase;
 import org.testfx.matcher.control.LabeledMatchers;
 
 import java.io.IOException;
 
-public class ActivitiesItemControllerTest extends ApplicationTest{
+public class ActivitiesItemControllerTest extends FxControllerTestBase {
     private ActivitiesItemController controller;
     @Override
     public void start(Stage stage) throws IOException {
