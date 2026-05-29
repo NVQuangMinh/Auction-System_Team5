@@ -118,9 +118,6 @@ class ProductInfoSubmissionControllerTest extends FxControllerTestBase {
         assertEquals(testUser.getId(), auction.getItem().getOwner().getId());
     }
 
-    // =========================================================================
-    // 3. testAddItem_AntiSnippingEnabled – checkbox được chọn → antiSnipping=true
-    // =========================================================================
     @Test
     public void testAddItem_AntiSnippingEnabled() {
         UserSession.getInstance().setUser(testUser);
@@ -135,9 +132,6 @@ class ProductInfoSubmissionControllerTest extends FxControllerTestBase {
         assertTrue(auction.isAntiSniping());
     }
 
-    // =========================================================================
-    // 4. testAddItem_MissingField – bỏ trống tên → hiện lỗi, không gửi message
-    // =========================================================================
     @Test
     public void testAddItem_MissingField() {
         interact(() -> lookup("#productName").queryAs(TextField.class).setText(""));
@@ -153,9 +147,6 @@ class ProductInfoSubmissionControllerTest extends FxControllerTestBase {
         assertEquals(Color.RED, error.getTextFill());
     }
 
-    // =========================================================================
-    // 5. testAddItem_NoTypeSelected – chưa chọn loại → hiện lỗi
-    // =========================================================================
     @Test
     @SuppressWarnings("unchecked")
     public void testAddItem_NoTypeSelected() {
@@ -171,9 +162,6 @@ class ProductInfoSubmissionControllerTest extends FxControllerTestBase {
         assertEquals(Color.RED, error.getTextFill());
     }
 
-    // =========================================================================
-    // 6. testAddItem_InvalidPrice_NonNumeric – giá không phải số → hiện lỗi
-    // =========================================================================
     @Test
     public void testAddItem_InvalidPrice_NonNumeric() {
         interact(() -> lookup("#startingPrice").queryAs(TextField.class).setText("abc"));
@@ -188,9 +176,6 @@ class ProductInfoSubmissionControllerTest extends FxControllerTestBase {
         assertEquals(Color.RED, error.getTextFill());
     }
 
-    // =========================================================================
-    // 7. testAddItem_BuyoutLessThanStart – buyout <= start → lỗi
-    // =========================================================================
     @Test
     public void testAddItem_BuyoutLessThanStart() {
         interact(() -> lookup("#buyoutPrice").queryAs(TextField.class).setText("50")); // buyout(50) <= start(100)
@@ -205,9 +190,6 @@ class ProductInfoSubmissionControllerTest extends FxControllerTestBase {
         assertEquals(Color.RED, error.getTextFill());
     }
 
-    // =========================================================================
-    // 8. testAddItem_InvalidTickSize – tick không chia hết khoảng giá → lỗi
-    // =========================================================================
     @Test
     public void testAddItem_InvalidTickSize() {
         // (200 - 100) = 100; tick = 30 → 100 % 30 != 0
@@ -223,9 +205,6 @@ class ProductInfoSubmissionControllerTest extends FxControllerTestBase {
         assertEquals(Color.RED, error.getTextFill());
     }
 
-    // =========================================================================
-    // 9. testAddItem_ZeroTickSize – tick = 0 → lỗi (tickSizeVal <= 0)
-    // =========================================================================
     @Test
     public void testAddItem_ZeroTickSize() {
         interact(() -> lookup("#tickSize").queryAs(TextField.class).setText("0"));
@@ -239,9 +218,6 @@ class ProductInfoSubmissionControllerTest extends FxControllerTestBase {
         assertEquals("Invalid tick size", error.getText());
     }
 
-    // =========================================================================
-    // 10. testAddItem_InvalidBidDuration_NonInteger – duration không phải int
-    // =========================================================================
     @Test
     public void testAddItem_InvalidBidDuration_NonInteger() {
         interact(() -> lookup("#bidDurationField").queryAs(TextField.class).setText("xyz"));
@@ -256,9 +232,6 @@ class ProductInfoSubmissionControllerTest extends FxControllerTestBase {
         assertEquals(Color.RED, error.getTextFill());
     }
 
-    // =========================================================================
-    // 11. testAddItem_NonPositiveBidDuration – duration <= 0 → lỗi
-    // =========================================================================
     @Test
     public void testAddItem_NonPositiveBidDuration() {
         interact(() -> lookup("#bidDurationField").queryAs(TextField.class).setText("0"));
@@ -273,9 +246,6 @@ class ProductInfoSubmissionControllerTest extends FxControllerTestBase {
         assertEquals(Color.RED, error.getTextFill());
     }
 
-    // =========================================================================
-    // 12. testAddItem_VehicleType – chọn Vehicle → ItemType.VEHICLES
-    // =========================================================================
     @Test
     @SuppressWarnings("unchecked")
     public void testAddItem_VehicleType() {
@@ -291,9 +261,6 @@ class ProductInfoSubmissionControllerTest extends FxControllerTestBase {
         assertEquals(ItemType.VEHICLES, auction.getItem().getType());
     }
 
-    // =========================================================================
-    // 13. testAddItem_ArtType – chọn Art → ItemType.ARTS
-    // =========================================================================
     @Test
     @SuppressWarnings("unchecked")
     public void testAddItem_ArtType() {
@@ -309,9 +276,6 @@ class ProductInfoSubmissionControllerTest extends FxControllerTestBase {
         assertEquals(ItemType.ARTS, auction.getItem().getType());
     }
 
-    // =========================================================================
-    // 14. testErrorClearedOnValidSubmit – submit lỗi trước, sau đó submit đúng → error ẩn
-    // =========================================================================
     @Test
     public void testErrorClearedOnValidSubmit() {
         UserSession.getInstance().setUser(testUser);
@@ -330,9 +294,6 @@ class ProductInfoSubmissionControllerTest extends FxControllerTestBase {
         verify(mockClientService, times(1)).sendMessage(any());
     }
 
-    // =========================================================================
-    // 15. testAuctionStartPrice_EqualsCurrentPrice – currentPrice = startPrice khi tạo
-    // =========================================================================
     @Test
     public void testAuctionStartPrice_EqualsCurrentPrice() {
         UserSession.getInstance().setUser(testUser);

@@ -9,7 +9,7 @@ import org.testfx.util.WaitForAsyncUtils;
  */
 public abstract class FxControllerTestBase extends ApplicationTest {
 
-    private static final int FX_STABILIZE_MS = 300;
+    private static final int FX_STABILIZE_MS = 600;
 
     @BeforeEach
     void stabilizeFxBeforeTest() {
