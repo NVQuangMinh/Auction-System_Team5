@@ -36,4 +36,4 @@ jobs:
         run: mvn test -pl auction-server
 
       - name: Run Client Tests
-        run: mvn test -pl auction-client
+        run: xvfb-run mvn test -pl auction-client
