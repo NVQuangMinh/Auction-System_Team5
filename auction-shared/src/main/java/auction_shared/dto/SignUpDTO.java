@@ -7,7 +7,7 @@ public class SignUpDTO implements Serializable {
     private String username;
     private String password;
 
-    public SignUpDTO(String id,String username, String password) {
+    public SignUpDTO(String id, String username, String password) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -21,7 +21,7 @@ public class SignUpDTO implements Serializable {
         return password;
     }
 
-    public String getId(){
+    public String getId() {
         return id;
     }
 }

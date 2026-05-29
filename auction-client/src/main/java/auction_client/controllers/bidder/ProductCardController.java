@@ -84,9 +84,9 @@ public class ProductCardController implements Initializable {
 
     private String formatPrice(double value) {
         if (value == (long) value) {
-            return String.format("%,d", (long) value);
+            return String.format("$%,d", (long) value);
         } else {
-            return String.format("%,.2f", value);
+            return String.format("$%,.2f", value);
         }
     }
 

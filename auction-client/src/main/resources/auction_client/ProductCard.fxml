@@ -1,19 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.Cursor?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.effect.DropShadow?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.paint.Color?>
-<?import javafx.scene.text.Font?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
 
-<VBox alignment="TOP_CENTER" onMouseClicked="#handleCardClick" prefHeight="350.0" prefWidth="260.0" style="-fx-background-color: F5F5F0; -fx-background-radius: 15; -fx-border-color: #D1D5DB; -fx-border-width: 2; -fx-border-radius: 15;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction_client.controllers.bidder.ProductCardController">
+<VBox alignment="TOP_CENTER" onMouseClicked="#handleCardClick" prefHeight="350.0" prefWidth="260.0" style="-fx-background-color: F5F5F0; -fx-background-radius: 15; -fx-border-color: #D1D5DB; -fx-border-width: 2; -fx-border-radius: 15;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auction_client.controllers.bidder.ProductCardController">
    <children>
       <HBox prefHeight="50.0" prefWidth="202.0">
          <children>
@@ -48,8 +44,7 @@
                   <Label alignment="CENTER" prefHeight="20.0" prefWidth="152.0" style="-fx-font-size: 14;" text="Current Price" textAlignment="CENTER" textFill="#9ca3af" />
                   <HBox spacing="1.0">
                      <children>
-                        <Label alignment="TOP_RIGHT" prefHeight="45.0" prefWidth="135.0" style="-fx-font-size: 20; -fx-font-weight: bold;" text="\$" />
-                        <Label fx:id="currentPrice" alignment="TOP_LEFT" prefHeight="45.0" prefWidth="149.0" style="-fx-font-size: 20; -fx-font-weight: bold;" text="00" />
+                        <Label fx:id="currentPrice" alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="149.0" style="-fx-font-size: 20; -fx-font-weight: bold;" text="00" textAlignment="CENTER" wrapText="true" HBox.hgrow="ALWAYS" />
                      </children>
                   </HBox>
                </children>
@@ -64,8 +59,7 @@
                   <Label alignment="CENTER" prefHeight="17.0" prefWidth="233.0" style="-fx-font-size: 14;" text="Buy Out" textFill="#9ca3af" />
                   <HBox prefHeight="65.0" prefWidth="47.0" spacing="1.0">
                      <children>
-                        <Label alignment="TOP_RIGHT" prefHeight="45.0" prefWidth="136.0" style="-fx-font-size: 20; -fx-font-weight: bold;" text="\$" />
-                        <Label fx:id="buyOutPrice" alignment="TOP_LEFT" prefHeight="45.0" prefWidth="149.0" style="-fx-font-size: 20; -fx-font-weight: bold;" text="00" />
+                        <Label fx:id="buyOutPrice" alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="149.0" style="-fx-font-size: 20; -fx-font-weight: bold;" text="00" textAlignment="CENTER" wrapText="true" HBox.hgrow="ALWAYS" />
                      </children>
                   </HBox>
                </children>
@@ -76,7 +70,7 @@
          </VBox.margin>
       </HBox>
       <Label fx:id="description" alignment="TOP_LEFT" prefHeight="62.0" prefWidth="202.0" text="Description" />
-      <Label fx:id="typeSpecificLabel" managed="false" visible="false" alignment="TOP_LEFT" prefHeight="30.0" prefWidth="202.0" style="-fx-font-size: 12; -fx-text-fill: #888;" text="" />
+      <Label fx:id="typeSpecificLabel" alignment="TOP_LEFT" managed="false" prefHeight="30.0" prefWidth="202.0" style="-fx-font-size: 12; -fx-text-fill: #888;" text="" visible="false" />
    </children>
    <padding>
       <Insets left="17.0" right="17.0" top="5.0" />
