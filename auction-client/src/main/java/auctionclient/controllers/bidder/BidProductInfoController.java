@@ -12,7 +12,12 @@ import auctionclient.UserSession;
 import auctionclient.interfaces.AuctionUpdateListener;
 import auctionclient.interfaces.Cleanable;
 import auctionshared.Network.NetworkMessage;
-import auctionshared.dto.*;
+
+//import auctionshared.dto.*;
+import auctionshared.dto.AuctionDTO;
+import auctionshared.dto.AuctionStatus;
+import auctionshared.dto.BidTransactionDTO;
+
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;

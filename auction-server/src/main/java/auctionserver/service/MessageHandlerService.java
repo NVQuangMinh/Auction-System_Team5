@@ -7,7 +7,14 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
-import auctionserver.exception.*;
+//import auctionserver.exception.*;
+import auctionserver.exception.DatabaseException;
+import auctionserver.exception.InactiveBidException;
+import auctionserver.exception.InvalidBidAmountException;
+import auctionserver.exception.SelfBiddingException;
+import auctionserver.exception.UserBannedException;
+import auctionserver.exception.UserNotFoundException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
