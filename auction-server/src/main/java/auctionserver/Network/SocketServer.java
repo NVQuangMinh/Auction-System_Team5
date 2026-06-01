@@ -22,10 +22,10 @@ public class SocketServer {
         try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
              ServerSocket serverSocket = new ServerSocket(port)) {
 
-            log.info("Server is available at port: {}", port);
+            log.info("Server đã khởi động tại địa chỉ: {}", port);
             while (true) {
                 Socket clientSocket = serverSocket.accept();
-                log.info("A new client connected!");
+                log.info("Một người dùng mới đã kết nối!");
                 // add client vào list các client đang online
                 ClientHandler clientHandler = new ClientHandler(clientSocket, daoProvider);
                 AuctionManager.getInstance().addClient(clientHandler);
@@ -33,7 +33,7 @@ public class SocketServer {
             }
         }
         catch (IOException e) {
-            log.info("Server encountered an error", e);
+            log.info("Server đã xảy ra lỗi", e);
         }
     }
 }

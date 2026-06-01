@@ -20,54 +20,54 @@ public class UserService {
 
     public void register(User user) {
         if (user == null || user.getUsername() == null || user.getUsername().isBlank()) {
-            throw new IllegalArgumentException("Username cannot be empty");
+            throw new IllegalArgumentException("Tên đăng nhập không được để trống");
         }
         if (user.getPassword() == null || user.getPassword().isBlank()) {
-            throw new IllegalArgumentException("Password cannot be empty");
+            throw new IllegalArgumentException("Mật khẩu không được để trống");
         }
 
         try {
             User existingUser = userDAO.getUserByUsername(user.getUsername());
             if (existingUser != null) {
-                throw new DuplicateUsernameException("Username already exists: " + user.getUsername());
+                throw new DuplicateUsernameException("Tên đăng nhập đã tồn tại: " + user.getUsername());
             }
             userDAO.insertUser(user);
-            log.info("User registered successfully: {}", user.getUsername());
+            log.info("Người dùng đã đăng ký thành công: {}", user.getUsername());
         } catch (DatabaseException e) {
-            log.error("Database error during registration for user: {}", user.getUsername(), e);
+            log.error("Lỗi cơ sở dữ liệu khi người dùng đăng kí: {}", user.getUsername(), e);
             throw e;
         } catch (Exception e) {
-            log.error("Unexpected exception occurred during registration for user: {}", user.getUsername(), e);
-            throw new DatabaseException("Unexpected error during registration", e);
+            log.error("Lỗi cơ sở dữ liệu khi người dùng đăng kí: {}", user.getUsername(), e);
+            throw new DatabaseException("Lỗi cơ sở dữ liệu khi người dùng đăng kí", e);
         }
     }
 
     public User login(String username, String password) {
         if (username == null || username.isBlank()) {
-            throw new IllegalArgumentException("Username cannot be empty");
+            throw new IllegalArgumentException("Tên đăng nhập không được để trống");
         }
         if (password == null || password.isBlank()) {
-            throw new IllegalArgumentException("Password cannot be empty");
+            throw new IllegalArgumentException("Mật khẩu không được để trống");
         }
 
         try {
             User user = userDAO.getUserByUsername(username);
             if (user == null) {
-                throw new UserNotFoundException("User not found: " + username);
+                throw new UserNotFoundException("Người dùng không tồn tại: " + username);
             }
             if ("BANNED".equals(user.getUserStatus())) {
-                throw new UserBannedException("User is banned: " + username);
+                throw new UserBannedException("Người dùng đã bị khoá: " + username);
             }
             if (!user.getPassword().equals(password)) {
-                throw new UserNotFoundException("Invalid credentials for user: " + username);
+                throw new UserNotFoundException("Thông tin xác thực của người dùng không hợp lệ: " + username);
             }
-            log.info("User logged in successfully: {}", username);
+            log.info("Người dùng đã đăng nhập thành công: {}", username);
             return user;
         } catch (DatabaseException e) {
-            log.error("Database error during login for user: {}", username, e);
+            log.error("Lỗi cơ sở dữ liệu khi người dùng đăng nhập: {}", username, e);
             throw e;
         } catch (UserBannedException | UserNotFoundException e) {
-            log.error("Unexpected exception occurred during login for user: {}", username, e);
+            log.error("Lỗi cơ sở dữ liệu khi người dùng đăng nhập: {}", username, e);
             throw e;
         }
     }

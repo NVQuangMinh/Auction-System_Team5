@@ -61,8 +61,8 @@ public class BidTransactionDAO implements TransactionalDAO<BidTransaction> {
                 }
             }
         } catch (SQLException e) {
-            log.error("Database error while finding top bidder for auction: {}", auctionId, e);
-            throw new DatabaseException("Failed to find top bidder for auction: " + auctionId, e);
+            log.error("Lỗi cơ sở dữ liệu khi tìm người trả giá cao nhất cho phiên đấu giá: {}", auctionId, e);
+            throw new DatabaseException("Không thể tìm người trả giá cao nhất cho phiên đấu giá: " + auctionId, e);
         }
         return null;
     }
@@ -101,8 +101,8 @@ public class BidTransactionDAO implements TransactionalDAO<BidTransaction> {
                 resultMap.computeIfAbsent(auctionId, k -> new ArrayList<>()).add(tx);
             }
         } catch (SQLException e) {
-            log.error("Database error while selecting active auctions bid histories", e);
-            throw new DatabaseException("Failed to select active auctions bid histories", e);
+            log.error("Lỗi cơ sở dữ liệu khi truy vấn lịch sử trả giá của các phiên đấu giá đang diễn ra", e);
+            throw new DatabaseException("Không thể tìm lịch sử trả giá của các phiên đấu giá đang diễn r", e);
         }
         return resultMap;
     }
@@ -150,8 +150,8 @@ public class BidTransactionDAO implements TransactionalDAO<BidTransaction> {
                 }
             }
         } catch (SQLException e) {
-            log.error("Database error while selecting bid transactions for auction: {}", auctionId, e);
-            throw new DatabaseException("Failed to select bid transactions for auction: " + auctionId, e);
+            log.error("Lỗi cơ sở dữ liệu khi truy vấn các giao dịch trả giá của phiên đấu giá: {}", auctionId, e);
+            throw new DatabaseException("Không thể tìm các giao dịch trả giá của phiên đấu giá: " + auctionId, e);
         }
         return result;
     }

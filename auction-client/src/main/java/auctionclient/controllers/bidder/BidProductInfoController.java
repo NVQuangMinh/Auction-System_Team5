@@ -254,7 +254,7 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
             error.setVisible(true);
             error.setManaged(true);
             error.setOpacity(1.0);
-            error.setText("Please enter a valid number!");
+            error.setText("Hãy điền một số hợp lệ!");
             error.setTextFill(Color.RED);
         }
 

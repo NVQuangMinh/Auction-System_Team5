@@ -36,7 +36,7 @@
                         </ImageView>
                         <HBox alignment="CENTER" fillHeight="false" prefHeight="52.0" prefWidth="354.0" spacing="23.0">
                            <children>
-                                <Button fx:id="signInButton" mnemonicParsing="false" onAction="#switchToSignInScene" prefHeight="31.0" prefWidth="115.0" style="-fx-background-color: transparent; -fx-background-radius: 500;" text="Sign In" textFill="WHITE">
+                                <Button fx:id="signInButton" mnemonicParsing="false" onAction="#switchToSignInScene" prefHeight="31.0" prefWidth="115.0" style="-fx-background-color: transparent; -fx-background-radius: 500;" text="Đăng nhập" textFill="WHITE">
                                  <font>
                                     <Font name="System Bold" size="15.0" />
                                  </font>
@@ -44,7 +44,7 @@
                                     <Cursor fx:constant="HAND" />
                                  </cursor>
                               </Button>
-                                <Button fx:id="signUpButton" mnemonicParsing="false" onAction="#switchToSignUpScene" prefHeight="31.0" prefWidth="115.0" style="-fx-background-color: white; -fx-background-radius: 500;" text="Sign up">
+                                <Button fx:id="signUpButton" mnemonicParsing="false" onAction="#switchToSignUpScene" prefHeight="31.0" prefWidth="115.0" style="-fx-background-color: white; -fx-background-radius: 500;" text="Đăng ký">
                                  <font>
                                     <Font name="System Bold" size="15.0" />
                                  </font>
@@ -57,23 +57,23 @@
                               <Insets />
                            </VBox.margin>
                         </HBox>
-                          <TextField fx:id="username" prefHeight="25.0" prefWidth="255.0" promptText="USERNAME" style="-fx-background-color: white;">
+                          <TextField fx:id="username" prefHeight="25.0" prefWidth="255.0" promptText="TÊN ĐĂNG NHẬP" style="-fx-background-color: white;">
                            <font>
                               <Font size="15.0" />
                            </font>
                         </TextField>
-                          <PasswordField fx:id="password" alignment="TOP_LEFT" prefHeight="25.0" prefWidth="255.0" promptText="PASSWORD" style="-fx-background-color: white;">
+                          <PasswordField fx:id="password" alignment="TOP_LEFT" prefHeight="25.0" prefWidth="255.0" promptText="MẬT KHẨU" style="-fx-background-color: white;">
                            <font>
                               <Font size="15.0" />
                            </font>
                         </PasswordField>
-                        <PasswordField fx:id="confirmpassword" prefHeight="25.0" prefWidth="255.0" promptText="CONFIRMPASSWORD" style="-fx-background-color: white;">
+                        <PasswordField fx:id="confirmpassword" prefHeight="25.0" prefWidth="255.0" promptText="NHẬP LẠI MẬT KHẨU" style="-fx-background-color: white;">
                            <font>
                               <Font size="15.0" />
                            </font>
                         </PasswordField>
                         <Region prefHeight="10.0" prefWidth="200.0" />
-                          <Button fx:id="CreateAccountButton" mnemonicParsing="false" onAction="#onSignUpClicked" prefHeight="34.0" prefWidth="166.0" style="-fx-background-color: white; -fx-background-radius: 500;" text="CREATE ACCOUNT" textAlignment="CENTER">
+                          <Button fx:id="CreateAccountButton" mnemonicParsing="false" onAction="#onSignUpClicked" prefHeight="34.0" prefWidth="166.0" style="-fx-background-color: white; -fx-background-radius: 500;" text="Tạo tài khoản" textAlignment="CENTER">
                            <font>
                               <Font name="System Bold" size="15.0" />
                            </font>

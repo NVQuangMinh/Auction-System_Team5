@@ -51,7 +51,7 @@ class ItemFactoryTest {
         assertEquals("Da Vinci", item.getTypeSpecificAttribute(),
                 "typeSpecificAttribute phải là artistName với Arts");
         // Label đúng
-        assertEquals("Artist", item.getTypeAttributeLabel());
+        assertEquals("Hoạ sĩ", item.getTypeAttributeLabel());
         // Các field cơ bản đúng
         assertEquals("art-001",         item.getId());
         assertEquals("Mona Lisa",       item.getName());
@@ -70,7 +70,7 @@ class ItemFactoryTest {
         assertEquals(ItemType.ELECTRONICS, item.getType());
         assertEquals("A17 Pro", item.getTypeSpecificAttribute(),
                 "typeSpecificAttribute phải là model với Electronics");
-        assertEquals("Model", item.getTypeAttributeLabel());
+        assertEquals("Mẫu mã", item.getTypeAttributeLabel());
         assertEquals("iPhone 15", item.getName());
     }
 
@@ -85,7 +85,7 @@ class ItemFactoryTest {
         assertEquals(ItemType.VEHICLES, item.getType());
         assertEquals("Ford", item.getTypeSpecificAttribute(),
                 "typeSpecificAttribute phải là brand với Vehicles");
-        assertEquals("Brand", item.getTypeAttributeLabel());
+        assertEquals("Thương hiệu", item.getTypeAttributeLabel());
         assertEquals("Mustang GT", item.getName());
     }
 

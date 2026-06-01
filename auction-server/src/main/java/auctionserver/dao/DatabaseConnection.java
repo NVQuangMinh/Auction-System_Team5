@@ -34,7 +34,7 @@ public class DatabaseConnection {
 
         // nạp vào HikariDataSource để khởi chạy.
         dataSource = new HikariDataSource(config);
-        log.info("Database connection pool initialized.");
+        log.info("Khởi tạo thành công danh sách kết nối cơ sở dữ liệu (Connection Pool).");
     }
 
     public static Connection getConnection() throws SQLException {
@@ -47,7 +47,7 @@ public class DatabaseConnection {
     public static void closePool() {
         if (dataSource != null) {
             dataSource.close();
-            log.info("Database connection pool closed.");
+            log.info("Đã đóng vùng kết nối cơ sở dữ liệu (Connection Pool).");
         }
     }
 }
