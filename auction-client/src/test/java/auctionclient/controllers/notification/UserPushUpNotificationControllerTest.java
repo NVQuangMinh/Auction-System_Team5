@@ -118,7 +118,7 @@ class UserPushUpNotificationControllerTest extends FxControllerTestBase {
             org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
 
             mocked.verify(() -> UserPushUpNotificationController.showNotification(
-                    "You have placed bid successfully", "SUCCESS"));
+                    "Bạn đã trả giá sản phẩm thành công.", "SUCCESS"));
         }
     }
 
@@ -143,7 +143,7 @@ class UserPushUpNotificationControllerTest extends FxControllerTestBase {
             org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
 
             mocked.verify(() -> UserPushUpNotificationController.showNotification(
-                    "You have sold item successfully", "SUCCESS"));
+                    "Bạn đã đăng bán sản phẩm thành công.", "SUCCESS"));
         }
     }
 
@@ -168,7 +168,7 @@ class UserPushUpNotificationControllerTest extends FxControllerTestBase {
             org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
 
             mocked.verify(() -> UserPushUpNotificationController.showNotification(
-                    "You have buy out item successfully", "SUCCESS"));
+                    "Bạn đã mua sản phẩm thành công.", "SUCCESS"));
         }
     }
 

@@ -272,7 +272,7 @@ class BidProductInfoControllerTest extends FxControllerTestBase {
 
         // Hiển thị thông báo "Please enter a valid number!"
         FxAssert.verifyThat("#error", NodeMatchers.isVisible());
-        FxAssert.verifyThat("#error", LabeledMatchers.hasText("Please enter a valid number!"));
+        FxAssert.verifyThat("#error", LabeledMatchers.hasText("Hãy điền một số hợp lệ!"));
     }
 
 }
