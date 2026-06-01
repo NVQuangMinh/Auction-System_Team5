@@ -30,6 +30,6 @@ public class Arts extends Item<String> {
 
     @Override
     public String getTypeAttributeLabel() {
-        return "Artist";
+        return "Hoạ sĩ";
     }
 }

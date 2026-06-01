@@ -15,14 +15,14 @@
     <children>
       <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" minWidth="1.0" spacing="5.0" HBox.hgrow="ALWAYS">
          <children>
-            <Label alignment="CENTER_RIGHT" style="-fx-font-size: 15; -fx-font-weight: BOLD;" text="WELCOME, " textFill="WHITE" />
+            <Label alignment="CENTER_RIGHT" style="-fx-font-size: 15; -fx-font-weight: BOLD;" text="Xin chào," textFill="WHITE" />
               <Label fx:id="welcome" style="-fx-font-size: 15; -fx-font-weight: bold;" text="USER" textFill="WHITE">
                   <font>
                       <Font name="System Bold" size="12.0" />
                   </font>
               </Label>
-            <Button fx:id="productsMenuButton" alignment="CENTER" mnemonicParsing="false" onAction="#switchToAllProductScene" style="-fx-background-color: transparent; -fx-font-weight: bold; -fx-font-size: 15;" stylesheets="@UnderlineButton.css" text="PRODUCTS" textFill="WHITE" />
-            <Button fx:id="adminControlPanelButton" alignment="CENTER" mnemonicParsing="false" onAction="#switchToAdminControlPanel" style="-fx-font-size: 15; -fx-font-weight: bold; -fx-background-color: transparent;" stylesheets="@UnderlineButton.css" text="ADMIN CONTROL PANEL" textFill="WHITE" />
+            <Button fx:id="productsMenuButton" alignment="CENTER" mnemonicParsing="false" onAction="#switchToAllProductScene" style="-fx-background-color: transparent; -fx-font-weight: bold; -fx-font-size: 15;" stylesheets="@UnderlineButton.css" text="CÁC SẢN PHẨM ĐẤU GIÁ" textFill="WHITE" />
+            <Button fx:id="adminControlPanelButton" alignment="CENTER" mnemonicParsing="false" onAction="#switchToAdminControlPanel" style="-fx-font-size: 15; -fx-font-weight: bold; -fx-background-color: transparent;" stylesheets="@UnderlineButton.css" text="TRUNG TÂM ĐIỀU KHIỂN " textFill="WHITE" />
          </children>
          <HBox.margin>
             <Insets left="10.0" />
@@ -38,12 +38,12 @@
         </ImageView>
       <HBox alignment="CENTER_RIGHT" maxWidth="1.7976931348623157E308" minWidth="1.0" spacing="5.0" HBox.hgrow="ALWAYS">
          <children>
-              <Button fx:id="userProductListButton" alignment="CENTER" mnemonicParsing="false" onAction="#switchToUserProductListScene" style="-fx-background-color: transparent; -fx-font-size: 15; -fx-font-weight: bold;" stylesheets="@UnderlineButton.css" text="YOUR LISTINGS" textFill="WHITE">
+              <Button fx:id="userProductListButton" alignment="CENTER" mnemonicParsing="false" onAction="#switchToUserProductListScene" style="-fx-background-color: transparent; -fx-font-size: 15; -fx-font-weight: bold;" stylesheets="@UnderlineButton.css" text="CÁC SẢN PHẨM CỦA BẠN" textFill="WHITE">
                   <font>
                       <Font name="System Bold" size="12.0" />
                   </font>
               </Button>
-              <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#switchToActivitiesScene" style="-fx-background-color: transparent; -fx-font-size: 15; -fx-font-weight: bold;" stylesheets="@UnderlineButton.css" text="ACTIVITIES" textAlignment="CENTER" textFill="WHITE">
+              <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#switchToActivitiesScene" style="-fx-background-color: transparent; -fx-font-size: 15; -fx-font-weight: bold;" stylesheets="@UnderlineButton.css" text="HOẠT ĐỘNG" textAlignment="CENTER" textFill="WHITE">
                   <font>
                       <Font name="System Bold" size="12.0" />
                   </font>
@@ -51,7 +51,7 @@
             <HBox alignment="CENTER" onMouseClicked="#logOut" style="-fx-background-color: #fe5721; -fx-background-radius: 40;" HBox.hgrow="NEVER">
                <children>
                   <FontIcon iconColor="WHITE" iconLiteral="fas-sign-out-alt" iconSize="25" wrappingWidth="28.5" />
-                  <Label alignment="CENTER" style="-fx-font-size: 15; -fx-font-weight: bold;" text="LOGOUT" textFill="WHITE" />
+                  <Label alignment="CENTER" style="-fx-font-size: 15; -fx-font-weight: bold;" text="ĐĂNG XUẤT" textFill="WHITE" />
                </children>
                <cursor>
                   <Cursor fx:constant="HAND" />

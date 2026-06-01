@@ -53,7 +53,7 @@ public class SignUpController implements Initializable, AuctionUpdateListener {
                     switchToMainScene();
                 } else {
                     UserSession.getInstance().setUser(null);
-                    showAlert(Alert.AlertType.ERROR, "Register failed", "Unable to sign up");
+                    showAlert(Alert.AlertType.ERROR, "Đăng ký thất bại", "Không thể tạo tài khoản");
                 }
             });
         }

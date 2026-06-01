@@ -13,10 +13,12 @@ import auctionserver.dao.DAOProvider;
 import auctionserver.dao.DefaultDAOProvider;
 import auctionserver.entities.Auction;
 import auctionserver.entities.BidTransaction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Main {
+    private static final Logger log = LoggerFactory.getLogger(Main.class);
     public static void main(String[] args) {
-
         DAOProvider daoProvider = new DefaultDAOProvider();
         AuctionDAO auctionDAO = daoProvider.auctionDAO();
         BidTransactionDAO bidDAO = daoProvider.bidTransactionDAO();
@@ -40,14 +42,15 @@ public class Main {
             manager.addRoom(auction);
         }
 
-        System.out.println("[System] Loaded " + activeAuctions.size() + " active auction(s) from database.");
+        log.info("[Hệ thống] đã tải {} phiên đấu giá đang hoạt động từ cơ sở dữ liệu.",  activeAuctions.size());
+
 
         // Chạy Scheduler với manager đã có data
         AuctionScheduler scheduler = new AuctionScheduler(manager, daoProvider);
         scheduler.start();
-        System.out.println("[System] Auction Scheduler has started.");
+        log.info("[Hệ thống] Auction Scheduler đã bắt đầu.");
 
-        System.out.println("[System] Starting Socket Server...");
+        log.info("[Hệ thống] Khởi động Socket Server...");
         new SocketServer().start(8080);
     }
 }

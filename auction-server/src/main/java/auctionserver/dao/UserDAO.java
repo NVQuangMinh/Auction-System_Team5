@@ -30,12 +30,12 @@ public class UserDAO {
 
             int affectedRows = pstmt.executeUpdate();
             if (affectedRows == 0) {
-                throw new DatabaseException("Failed to insert user: " + user.getUsername());
+                throw new DatabaseException("Không thể thêm mới người dùng: " + user.getUsername());
             }
-            log.info("User inserted successfully: {}", user.getUsername());
+            log.info("Thêm mới người dùng thành công: {}", user.getUsername());
         } catch (SQLException e) {
-            log.error("Database error while inserting user: {}", user.getUsername(), e);
-            throw new DatabaseException("Failed to insert user: " + user.getUsername(), e);
+            log.error("Lỗi cơ sở dữ liệu khi thêm mới người dùng: {}", user.getUsername(), e);
+            throw new DatabaseException("Không thể thêm mới người dùng: " + user.getUsername(), e);
         }
     }
 
@@ -58,8 +58,8 @@ public class UserDAO {
                 }
             }
         } catch (SQLException e) {
-            log.error("Database error while getting user by username: {}", username, e);
-            throw new DatabaseException("Failed to get user: " + username, e);
+            log.error("Lỗi cơ sở dữ liệu khi truy vẫn thông tin người dùng theo tên đăng nhập: {}", username, e);
+            throw new DatabaseException("Không thể truy vẫn thông tin người dùng theo tên đăng nhập: " + username, e);
         }
         return null;
     }
@@ -83,8 +83,8 @@ public class UserDAO {
                 users.add(user);
             }
         } catch (SQLException e) {
-            log.error("Database error while getting all users", e);
-            throw new DatabaseException("Failed to get all users", e);
+            log.error("Lỗi cơ sở dữ liệu khi truy vấn tất cả người dùng.", e);
+            throw new DatabaseException("Không thể truy vấn tất cả người dùng.", e);
         }
         return users;
     }
@@ -99,12 +99,12 @@ public class UserDAO {
 
             int affectedRows = pstmt.executeUpdate();
             if (affectedRows == 0) {
-                throw new DatabaseException("Failed to ban user: " + user.getUsername());
+                throw new DatabaseException("Không thể khoá tài khoản người dùng: " + user.getUsername());
             }
-            log.info("User banned successfully: {}", user.getUsername());
+            log.info("Đã khoá tài khoản người dùng: {}", user.getUsername());
         } catch (SQLException e) {
-            log.error("Database error while banning user: {}", user.getUsername(), e);
-            throw new DatabaseException("Failed to ban user: " + user.getUsername(), e);
+            log.error("Lỗi cơ sở dữ liệu khi khóa tài khoản người dùng: {}", user.getUsername(), e);
+            throw new DatabaseException("Không thể khoá tài khoản người dùng: " + user.getUsername(), e);
         }
     }
 }

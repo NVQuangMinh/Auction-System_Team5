@@ -66,7 +66,7 @@ public class ClientService {
                     handleServerResponse(response);
                 }
             } catch (Exception e) {
-                log.warn("Lost connection to server.");
+                log.warn("Không thể kết nối tới máy chủ.");
                 isRunning = false;
             }
         });

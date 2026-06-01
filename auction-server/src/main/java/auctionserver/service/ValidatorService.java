@@ -12,13 +12,13 @@ public class ValidatorService {
 
     public static void validateBid(Auction auction, BidTransaction transaction) throws BidException {
         if (auction.getStatus() != AuctionStatus.ACTIVE) {
-            throw new InactiveBidException("Auction đã kết thúc!");
+            throw new InactiveBidException("Phiên đấu giá đã kết thúc!");
         }
         if (auction.isExpired()) {
-            throw new InactiveBidException("Auction đã hết hạn chốt!");
+            throw new InactiveBidException("Phiên đấu giá đã hết hạn chốt!");
         }
         if (auction.getItem().getOwner().getUsername().equals(transaction.getBidder().getUsername())) {
-            throw new SelfBiddingException("Người đấu giá không được là người bán hàng!");
+            throw new SelfBiddingException("Người trả giá không được là người bán hàng!");
         }
         double bidAmount = transaction.getBidAmount();
         if (bidAmount <= auction.getCurrentHighestBid()) {
@@ -36,13 +36,13 @@ public class ValidatorService {
 
     public static void validateBuyOut(Auction auction, BidTransaction transaction) throws BidException {
         if (auction.getStatus() != AuctionStatus.ACTIVE) {
-            throw new InactiveBidException("Auction đã kết thúc!");
+            throw new InactiveBidException("Phiên đấu giá đã kết thúc!");
         }
         if (auction.isExpired()) {
-            throw new InactiveBidException("Auction đã hết hạn chốt!");
+            throw new InactiveBidException("Phiên đấu giá đã hết hạn chốt!");
         }
         if (transaction.getBidder().getUsername().equals(auction.getItem().getOwner().getUsername())) {
-            throw new SelfBiddingException("Người đấu giá không được là người bán hàng!");
+            throw new SelfBiddingException("Người trả giá không được là người bán hàng!");
         }
         if (Math.abs(transaction.getBidAmount() - auction.getBuyOutPrice()) > 0.001) {
             throw new InvalidBidAmountException("Giá mua ngay không hợp lệ! Phải đúng bằng giá buyOutPrice = " + auction.getBuyOutPrice());

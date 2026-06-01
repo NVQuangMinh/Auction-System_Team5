@@ -30,6 +30,6 @@ public class Electronics extends Item<String> {
 
     @Override
     public String getTypeAttributeLabel() {
-        return "Model";
+        return "Mẫu mã";
     }
 }

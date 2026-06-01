@@ -41,7 +41,7 @@
          <children>
             <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
                <children>
-                  <Label alignment="CENTER" prefHeight="20.0" prefWidth="152.0" style="-fx-font-size: 14;" text="Current Price" textAlignment="CENTER" textFill="#9ca3af" />
+                  <Label alignment="CENTER" prefHeight="20.0" prefWidth="152.0" style="-fx-font-size: 14;" text="Giá Hiện Tại" textAlignment="CENTER" textFill="#9ca3af" />
                   <HBox spacing="1.0">
                      <children>
                         <Label fx:id="currentPrice" alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="149.0" style="-fx-font-size: 20; -fx-font-weight: bold;" text="00" textAlignment="CENTER" wrapText="true" HBox.hgrow="ALWAYS" />
@@ -56,7 +56,7 @@
             </Separator>
             <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
                <children>
-                  <Label alignment="CENTER" prefHeight="17.0" prefWidth="233.0" style="-fx-font-size: 14;" text="Buy Out" textFill="#9ca3af" />
+                  <Label alignment="CENTER" prefHeight="17.0" prefWidth="233.0" style="-fx-font-size: 14;" text="Giá Mua" textFill="#9ca3af" />
                   <HBox prefHeight="65.0" prefWidth="47.0" spacing="1.0">
                      <children>
                         <Label fx:id="buyOutPrice" alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="-1.0" prefWidth="149.0" style="-fx-font-size: 20; -fx-font-weight: bold;" text="00" textAlignment="CENTER" wrapText="true" HBox.hgrow="ALWAYS" />

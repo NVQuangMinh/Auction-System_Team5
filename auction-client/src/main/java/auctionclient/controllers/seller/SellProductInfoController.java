@@ -56,7 +56,7 @@ public class SellProductInfoController implements Initializable, AuctionUpdateLi
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        priceSeries.setName("Price");
+        priceSeries.setName("Giá");
         bidHistory.getData().add(priceSeries);
     }
 

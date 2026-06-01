@@ -66,7 +66,7 @@ public class ProductCardController implements Initializable {
                 itemIMage.setImage(image);
             }
         } catch (NullPointerException e) {
-            System.out.println("Cannot find image at: " + imagePath);
+            System.out.println("Không tìm thấy ảnh tại: " + imagePath);
         }
 
         String attr = auction.getItem().getTypeSpecificAttribute();

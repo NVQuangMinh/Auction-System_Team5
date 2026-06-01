@@ -31,6 +31,6 @@ public class Vehicles extends Item<String> {
 
     @Override
     public String getTypeAttributeLabel() {
-        return "Brand";
+        return "Thương hiệu";
     }
 }

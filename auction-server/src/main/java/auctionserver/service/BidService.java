@@ -63,11 +63,11 @@ public class BidService {
                     }
                     conn.commit();
 
-                    log.info("Bid thành công: Auction={}, Bidder={}, BidAmount={}",
+                    log.info("Trả giá sản phẩm thành công: Auction={}, Bidder={}, BidAmount={}",
                             auction.getAuctionId(), transaction.getBidder().getUsername(), transaction.getBidAmount());
                 } catch (SQLException e) {
                     conn.rollback();
-                    throw new TransactionFailedException("Failed to save bid transaction", e);
+                    throw new TransactionFailedException("Không thể lưu giao dịch trả giá (bid transaction).", e);
                 }
             }
         } catch (TransactionFailedException e) {
@@ -75,13 +75,13 @@ public class BidService {
             auction.revertLastBid(transaction);
             throw e;
         } catch (BidException e) {
-            log.error("Bid validation failed: Auction={}", auction.getAuctionId(), e);
+            log.error("Xác thực lượt trả giá sản phẩm thất bại: Auction={}", auction.getAuctionId(), e);
             auction.revertLastBid(transaction);
             throw e;
         } catch (Exception e) {
-            log.error("Unexpected exception occurred while processing bid", e);
+            log.error("Đã xảy ra lỗi trong quá trình xử lý lượt trả giá sản phẩm.", e);
             auction.revertLastBid(transaction);
-            throw new TransactionFailedException("Unexpected error while processing bid", e);
+            throw new TransactionFailedException("Xảy ra lỗi trong quá trình xử lý lượt trả giá sản phẩm.", e);
         } finally {
             auction.getLock().unlock();
         }
@@ -104,11 +104,11 @@ public class BidService {
                     auctionDAO.updateStatusAndWinner(auction, conn);
                     conn.commit();
 
-                    log.info("Buy Out thành công: Auction={}, Winner={}",
+                    log.info("Mua sản phẩm thành công: Auction={}, Winner={}",
                             auction.getAuctionId(), auction.getWinnerId());
                 } catch (SQLException e) {
                     conn.rollback();
-                    throw new TransactionFailedException("Failed to process buy-out transaction", e);
+                    throw new TransactionFailedException("Không thể xử lí giao dịch mua sản phẩm", e);
                 }
             }
         } catch (TransactionFailedException e) {
@@ -116,13 +116,13 @@ public class BidService {
             auction.revertBuyOut(transaction);
             throw e;
         } catch (BidException e) {
-            log.error("Buy-out validation failed: Auction={}", auction.getAuctionId(), e);
+            log.error("Xác thực lượt mua sản phẩm thất bại: Auction={}", auction.getAuctionId(), e);
             auction.revertBuyOut(transaction);
             throw e;
         } catch (Exception e) {
-            log.error("Unexpected exception occurred while processing buy-out", e);
+            log.error("Đã xảy ra lỗi trong quá trình xử lý lượt mua sản phẩm", e);
             auction.revertBuyOut(transaction);
-            throw new TransactionFailedException("Unexpected error while processing buy-out", e);
+            throw new TransactionFailedException("Xxảy ra lỗi trong quá trình xử lý lượt mua sản phẩm", e);
         } finally {
             auction.getLock().unlock();
         }

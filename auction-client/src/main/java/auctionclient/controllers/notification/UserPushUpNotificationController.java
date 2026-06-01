@@ -140,17 +140,17 @@ public class UserPushUpNotificationController implements AuctionUpdateListener {
     public void onUpdateReceived(NetworkMessage msg) {
         String action = msg.getAction();
         if ("BID_SUCCESS".equals(action)) {
-            UserPushUpNotificationController.showNotification("You have placed bid successfully", "SUCCESS");
+            UserPushUpNotificationController.showNotification("Bạn đã trả giá sản phẩm thành công.", "SUCCESS");
         } else if ("BID_FAILED".equals(action)) {
             UserPushUpNotificationController.showNotification((String) msg.getData(), "FAILED");
         }
         if ("SELL_SUCCESS".equals(action)) {
-            UserPushUpNotificationController.showNotification("You have sold item successfully", "SUCCESS");
+            UserPushUpNotificationController.showNotification("Bạn đã đăng bán sản phẩm thành công.", "SUCCESS");
         } else if ("SELL_FAILED".equals(action)) {
             UserPushUpNotificationController.showNotification((String) msg.getData(), "FAILED");
         }
         if ("BUYOUT_SUCCESS".equals(action)) {
-            UserPushUpNotificationController.showNotification("You have buy out item successfully", "SUCCESS");
+            UserPushUpNotificationController.showNotification("Bạn đã mua sản phẩm thành công.", "SUCCESS");
         } else if ("BUYOUT_FAILED".equals(action)) {
             UserPushUpNotificationController.showNotification((String) msg.getData(), "FAILED");
         }
