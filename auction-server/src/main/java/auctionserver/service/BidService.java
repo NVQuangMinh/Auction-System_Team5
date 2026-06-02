@@ -95,7 +95,7 @@ public class BidService {
     public void processBuyOut(Auction auction, BidTransaction transaction) throws BidException {
         auction.getLock().lock();
         try {
-            auction.buyOut(transaction);
+            auction.prepareBuyOutInMemory(transaction);
 
             try (Connection conn = DatabaseConnection.getConnection()) {
                 conn.setAutoCommit(false);

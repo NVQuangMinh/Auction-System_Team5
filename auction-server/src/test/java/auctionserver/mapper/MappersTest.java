@@ -100,7 +100,7 @@ class MappersTest {
         Auction auctionWithBid = new Auction(
                 item, 100.0, 1000.0, 50.0, start, end, false
         );
-        auctionWithBid.placeBid(new BidTransaction(auctionWithBid, buyer, 150.0));
+        auctionWithBid.prepareBidInMemory(new BidTransaction(auctionWithBid, buyer, 150.0));
         auctionWithBid.endAuction();
 
         AuctionDTO dto = Mappers.toDTO(auctionWithBid);

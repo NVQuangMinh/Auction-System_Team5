@@ -71,32 +71,32 @@ class AuctionTest {
     @DisplayName("getCurrentHighestBid - Có 2 bid → trả về bid cuối cùng")
     void getCurrentHighestBid_withBids_returnsLast() throws BidException {
 
-        auction.placeBid(new BidTransaction(auction, buyer, 150.0));
+        auction.prepareBidInMemory(new BidTransaction(auction, buyer, 150.0));
 
         User buyer2 = new User("b2", "buyer2", "p", "USER", "AVAILABLE");
-        auction.placeBid(new BidTransaction(auction, buyer2, 200.0));
+        auction.prepareBidInMemory(new BidTransaction(auction, buyer2, 200.0));
 
         assertEquals(200.0, auction.getCurrentHighestBid());
     }
 
     // ════════════════════════════════════════════════════════════════════════
-    // placeBid
+    // prepareBidInMemory
     // ════════════════════════════════════════════════════════════════════════
 
     @Test
-    @DisplayName("placeBid - Bid hợp lệ (đúng tick) → thêm vào bidHistory")
-    void placeBid_valid_appendsToBidHistory() throws BidException {
-        auction.placeBid(validBid(150.0));
+    @DisplayName("prepareBidInMemory - Bid hợp lệ (đúng tick) → thêm vào bidHistory")
+    void prepareBidInMemory_valid_appendsToBidHistory() throws BidException {
+        auction.prepareBidInMemory(validBid(150.0));
 
         assertEquals(1, auction.getBidHistory().size());
         assertEquals(150.0, auction.getCurrentHighestBid());
     }
 
     @Test
-    @DisplayName("placeBid - Bid không hợp lệ → throw exception, bidHistory không thay đổi")
-    void placeBid_invalid_doesNotModifyHistory() {
+    @DisplayName("prepareBidInMemory - Bid không hợp lệ → throw exception, bidHistory không thay đổi")
+    void prepareBidInMemory_invalid_doesNotModifyHistory() {
         assertThrows(InvalidBidAmountException.class,
-                () -> auction.placeBid(validBid(110.0)));
+                () -> auction.prepareBidInMemory(validBid(110.0)));
 
         assertTrue(auction.getBidHistory().isEmpty(),
                 "bidHistory phải vẫn rỗng sau bid thất bại");
@@ -111,7 +111,7 @@ class AuctionTest {
     @DisplayName("revertLastBid - Bid 1 lần rồi revert → history rỗng, bid = startingPrice")
     void revertLastBid_singleBid_restoresToStartingPrice() throws BidException {
         BidTransaction tx = validBid(150.0);
-        auction.placeBid(tx);
+        auction.prepareBidInMemory(tx);
 
         auction.revertLastBid(tx);
 
@@ -123,11 +123,11 @@ class AuctionTest {
     @DisplayName("revertLastBid - Bid 2 lần, revert lần 2 → history còn 1, bid = 150")
     void revertLastBid_withPreviousBid_restoresToPreviousBid() throws BidException {
         BidTransaction tx1 = validBid(150.0);
-        auction.placeBid(tx1);
+        auction.prepareBidInMemory(tx1);
 
         User buyer2 = new User("b2", "buyer2", "p", "USER", "AVAILABLE");
         BidTransaction tx2 = new BidTransaction(auction, buyer2, 200.0);
-        auction.placeBid(tx2);
+        auction.prepareBidInMemory(tx2);
 
         auction.revertLastBid(tx2);
 
@@ -159,7 +159,7 @@ class AuctionTest {
     @Test
     @DisplayName("endAuction - Có bid → winnerId = ID của bidder cuối")
     void endAuction_withBid_setsWinnerId() throws BidException {
-        auction.placeBid(validBid(150.0));
+        auction.prepareBidInMemory(validBid(150.0));
         auction.endAuction();
 
         assertEquals(buyer.getId(), auction.getWinnerId());
@@ -175,14 +175,14 @@ class AuctionTest {
 
 
     // ════════════════════════════════════════════════════════════════════════
-    // buyOut + revertBuyOut
+    // prepareBuyOutInMemory + revertBuyOut
     // ════════════════════════════════════════════════════════════════════════
 
     @Test
-    @DisplayName("buyOut - BuyOut đúng giá → status = SOLD, winnerId = buyerId")
-    void buyOut_valid_setsSOLDAndWinner() throws BidException {
+    @DisplayName("prepareBuyOutInMemory - BuyOut đúng giá → status = SOLD, winnerId = buyerId")
+    void prepareBuyOutInMemory_valid_setsSOLDAndWinner() throws BidException {
         BidTransaction buyOutTx = new BidTransaction(auction, buyer, BUY_OUT_PRICE);
-        auction.buyOut(buyOutTx);
+        auction.prepareBuyOutInMemory(buyOutTx);
 
         assertEquals(AuctionStatus.SOLD, auction.getStatus());
         assertEquals(buyer.getId(), auction.getWinnerId());
@@ -195,7 +195,7 @@ class AuctionTest {
         BidTransaction buyOutTx = new BidTransaction(auction, buyer, BUY_OUT_PRICE);
 
         // Giả lập buyOut thành công trong RAM, rồi DB fail → revert
-        auction.buyOut(buyOutTx);
+        auction.prepareBuyOutInMemory(buyOutTx);
         auction.revertBuyOut(buyOutTx);
 
         assertEquals(AuctionStatus.ACTIVE, auction.getStatus());

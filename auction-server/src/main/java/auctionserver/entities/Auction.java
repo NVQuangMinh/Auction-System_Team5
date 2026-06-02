@@ -127,29 +127,13 @@ public class Auction implements Serializable {
         }
     }
 
-    public void placeBid(BidTransaction transaction) throws BidException {
-        lock.lock();
-        try {
-            ValidatorService.validateBid(this, transaction);
-            addTransaction(transaction);
-            setCurrentHighestBid(transaction.getBidAmount());
-        } finally {
-            lock.unlock();
-        }
-    }
-
-    public void buyOut(BidTransaction transaction) throws BidException {
-        lock.lock();
-        try {
-            ValidatorService.validateBuyOut(this, transaction);
-            this.originalOwnerBeforeBuyOut = item.getOwner();
-            item.setOwner(transaction.getBidder());
-            status = AuctionStatus.SOLD;
-            winnerId = transaction.getBidder().getId();
-            addTransaction(transaction);
-        } finally {
-            lock.unlock();
-        }
+    public void prepareBuyOutInMemory(BidTransaction transaction) throws BidException {
+        ValidatorService.validateBuyOut(this, transaction);
+        this.originalOwnerBeforeBuyOut = item.getOwner();
+        item.setOwner(transaction.getBidder());
+        status = AuctionStatus.SOLD;
+        winnerId = transaction.getBidder().getId();
+        addTransaction(transaction);
     }
 
     /**
