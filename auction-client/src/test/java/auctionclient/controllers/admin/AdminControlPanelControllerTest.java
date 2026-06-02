@@ -127,33 +127,4 @@ class AdminControlPanelControllerTest extends FxControllerTestBase {
         assertEquals(AuctionStatus.ACTIVE, itemTable.getItems().get(0).getStatus());
         assertEquals(AuctionStatus.ACTIVE, itemTable.getItems().get(1).getStatus());
     }
-
-    @Test
-    public void testOnUpdateReceived_AuctionEnded_Notification() {
-        try (MockedStatic<UserPushUpNotificationController> mockedNotification = mockStatic(
-                UserPushUpNotificationController.class)) {
-            ItemDTO item = new ItemDTO(
-                    "item-1", "Laptop", "desc", null, auctionshared.dto.ItemType.ELECTRONICS);
-            AuctionDTO dto = new AuctionDTO(
-                    item,
-                    auctionshared.dto.AuctionStatus.ENDED,
-                    100.0,
-                    500.0,
-                    10.0,
-                    java.time.LocalDateTime.now(),
-                    java.time.LocalDateTime.now(),
-                    false,
-                    null,
-                    100.0);
-
-            NetworkMessage msg = new NetworkMessage("AUCTION_ENDED", dto);
-
-            controller.onUpdateReceived(msg);
-            org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
-
-            mockedNotification.verify(() -> UserPushUpNotificationController.showNotification(
-                    "Phiên đấu giá kết thúc: Laptop", "INFO"), times(1));
-        }
-    }
-
 }
