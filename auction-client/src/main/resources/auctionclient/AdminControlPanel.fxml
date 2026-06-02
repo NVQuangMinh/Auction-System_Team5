@@ -36,7 +36,7 @@
                                                 <TableColumn fx:id="colUserId" editable="false" maxWidth="80.0" minWidth="200.0" prefWidth="200.0" reorderable="false" sortable="false" text="ID" />
                                                 <TableColumn fx:id="colUsername" editable="false" minWidth="300.0" prefWidth="300.0" reorderable="false" sortable="false" text="Tên đăng nhập" />
                                                 <TableColumn fx:id="colUserRole" editable="false" minWidth="200.0" prefWidth="200.0" reorderable="false" sortable="false" text="Loại tài khoản" />
-                                                <TableColumn fx:id="colUserAction" editable="false" maxWidth="80.0" minWidth="80.0" reorderable="false" sortable="false" text="Hành động" />
+                                                <TableColumn fx:id="colUserAction" editable="false" maxWidth="90.0" minWidth="90.0" prefWidth="90.0" reorderable="false" sortable="false" text="Hành động" />
                                             </columns>
                                             <styleClass>
                                                 <String fx:value="modern-table" />
@@ -86,7 +86,7 @@
                                                 <TableColumn fx:id="colItemName" editable="false" minWidth="250.0" prefWidth="250.0" reorderable="false" sortable="false" text="Sản phẩm" />
                                                 <TableColumn fx:id="colItemPrice" editable="false" minWidth="300.0" prefWidth="300.0" reorderable="false" sortable="false" text="Giá hiện tại" />
                                                 <TableColumn fx:id="colItemStatus" editable="false" minWidth="300.0" prefWidth="300.0" reorderable="false" sortable="false" text="Trạng thái" />
-                                                <TableColumn fx:id="colItemAction" editable="false" maxWidth="80.0" minWidth="80.0" reorderable="false" sortable="false" text="Hành động" />
+                                                <TableColumn fx:id="colItemAction" editable="false" maxWidth="90.0" minWidth="90.0" prefWidth="90.0" reorderable="false" sortable="false" text="Hành động" />
                                             </columns>
                                             <columnResizePolicy>
                                                 <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

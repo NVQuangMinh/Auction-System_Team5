@@ -124,7 +124,7 @@ public class MessageHandlerService {
                      * Cái dấu -> là lambda
                      * Ở bên trái: a (là phần tử được duyệt)
                      * Bên phải: điều kiện (if)
-                     * Nếu đúng điều kiện (active) thì sẽ trả veef true cho hàm filter
+                     * Nếu đúng điều kiện (active) thì sẽ trả về true cho hàm filter
                      */
                     .collect(Collectors.toList());
             AuctionManager.getInstance().broadcast(new NetworkMessage(
@@ -188,7 +188,7 @@ public class MessageHandlerService {
         } catch (IllegalArgumentException e) {
             messageSender.sendMessage(new NetworkMessage("SELL_FAILED", false));
             log.info("SELL FAIL");
-            activities.add(new Notification("Bạn đã đăng bán sản phẩm thất bại", LocalTime.now()));
+            activities.add(new Notification("Bạn đã đăng bán sản phẩm thất bại.", LocalTime.now()));
             log.info("Đã thêm thông báo SELL FAILED, số hoạt động hiện tại: {}", activities.size());
         }
     }
@@ -207,11 +207,11 @@ public class MessageHandlerService {
                 setLoggedInUser(user);
             }
             messageSender.sendMessage(new NetworkMessage("LOGIN", Mappers.toDTO(user)));
-            log.info("{}{}", dto.getUsername(), " successfully login");
-            activities.add(new Notification("login successfully", LocalTime.now()));
+            log.info("{}{}", dto.getUsername(), " đã đăng nhập thành công.");
+            activities.add(new Notification("Đăng nhập thành công.", LocalTime.now()));
         } catch (IllegalArgumentException | UserBannedException | UserNotFoundException | DatabaseException e) {
             messageSender.sendMessage(new NetworkMessage("LOGIN", null));
-            log.info("{}{}", dto.getUsername(), " failed to login");
+            log.info("{}{}", dto.getUsername(), " đã đăng nhập thất bại.");
             activities.add(new Notification(
                     e.getMessage(),
                     LocalTime.now()));
@@ -333,7 +333,7 @@ public class MessageHandlerService {
             userService.register(newUser);
             messageSender.sendMessage(new NetworkMessage("CREATE_ACCOUNT", true));
             activities.add(new Notification(
-                    "account created successfully",
+                    "Đã tạo tài khoản mới thành công.",
                     LocalTime.now()));
             log.info("{}{}", dto.getUsername(), " đã tạo tài khoản mới thành công");
         } catch (IllegalArgumentException | DatabaseException e) {

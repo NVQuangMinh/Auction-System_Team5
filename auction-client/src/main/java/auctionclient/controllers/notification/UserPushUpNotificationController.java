@@ -74,7 +74,7 @@ public class UserPushUpNotificationController implements AuctionUpdateListener {
                 controller.setNotification(notification, type);
                 Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
 
-                newNotificationStage.setX(screenBounds.getMaxX() - 437 - 20);
+                newNotificationStage.setX(screenBounds.getMaxX() - 500 - 20);
                 activeNotifications.add(newNotificationStage);
                 recalculatePositions();
 
@@ -139,15 +139,25 @@ public class UserPushUpNotificationController implements AuctionUpdateListener {
     @Override
     public void onUpdateReceived(NetworkMessage msg) {
         String action = msg.getAction();
+        if ("LOGIN".equals(action) && msg.getData() != null) {
+            UserPushUpNotificationController.showNotification("Đăng nhập thành công.", "SUCCESS");
+        }
+        if ("CREATE_ACCOUNT".equals(action) && (boolean) msg.getData()) {
+            UserPushUpNotificationController.showNotification("Đã tạo tài khoản mới thành công.", "SUCCESS");
+        }
         if ("BID_SUCCESS".equals(action)) {
             UserPushUpNotificationController.showNotification("Bạn đã trả giá sản phẩm thành công.", "SUCCESS");
         } else if ("BID_FAILED".equals(action)) {
-            UserPushUpNotificationController.showNotification((String) msg.getData(), "FAILED");
+            if(msg.getData() == null) {
+                UserPushUpNotificationController.showNotification("Trả giá thất bại: không tìm thấy người dùng.", "FAILED");
+            } else {
+                UserPushUpNotificationController.showNotification("Trả giá thất bại: không tìm thấy phiên đấu giá.", "FAILED");
+            }
         }
         if ("SELL_SUCCESS".equals(action)) {
             UserPushUpNotificationController.showNotification("Bạn đã đăng bán sản phẩm thành công.", "SUCCESS");
         } else if ("SELL_FAILED".equals(action)) {
-            UserPushUpNotificationController.showNotification((String) msg.getData(), "FAILED");
+            UserPushUpNotificationController.showNotification("Bạn đã đăng bán sản phẩm thất bại.", "FAILED");
         }
         if ("BUYOUT_SUCCESS".equals(action)) {
             UserPushUpNotificationController.showNotification("Bạn đã mua sản phẩm thành công.", "SUCCESS");
@@ -158,6 +168,7 @@ public class UserPushUpNotificationController implements AuctionUpdateListener {
             UserDTO userDTO = (UserDTO) msg.getData();
             if (userDTO.getUsername().equals(UserSession.getInstance().getUsername())) {
                 try {
+                    UserPushUpNotificationController.showNotification("Tài khoản của bạn đã bị khoá.", "NOTIFY");
                     // Đóng tất cả stage
                     if (!Stage.getWindows().isEmpty()) {
                         for (Window window : Stage.getWindows()) {
@@ -170,7 +181,12 @@ public class UserPushUpNotificationController implements AuctionUpdateListener {
                 } catch (Exception exception) {
                     exception.printStackTrace();
                 }
+            } else {
+                UserPushUpNotificationController.showNotification("Khoá tài khoản người dùng thành công.", "SUCCESS");
             }
+        }
+        if ("REMOVE_ITEM".equals(action)) {
+            UserPushUpNotificationController.showNotification("Gỡ bỏ sản phẩm thành công.", "SUCCESS");
         }
     }
 }
