@@ -336,7 +336,7 @@ mvn javafx:run
 
 | Vai trò | Username | Password |
 |---|---|---|
-| Admin | *(xem trong DB)* | *(xem trong DB)* |
+| Admin | *vuminh* | *123* |
 | User | *(tạo mới qua màn hình Đăng ký)* | — |
 
 ---
