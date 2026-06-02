@@ -50,4 +50,12 @@ public class BidTransaction implements Serializable {
     public void setBidTime(LocalDateTime bidTime) {
         this.bidTime = bidTime;
     }
+
+    public boolean equals(BidTransaction transaction) {
+        if (transaction == null || transaction.getClass() != getClass()) {
+            return false;
+        }
+
+        return this.id.equals(transaction.getId());
+    }
 }
