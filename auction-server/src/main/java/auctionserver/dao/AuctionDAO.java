@@ -48,8 +48,8 @@ public class AuctionDAO implements WritableDAO<Auction> {
             pstmt.setBoolean(10, auction.isAntiSniping());
             return pstmt.executeUpdate();
         } catch (SQLException e) {
-            log.error("Database error while inserting auction: {}", auction.getAuctionId(), e);
-            throw new DatabaseException("Failed to insert auction: " + auction.getAuctionId(), e);
+            log.error("Lỗi cơ sở dữ liệu khi thêm mới phiên đấu giá: {}", auction.getAuctionId(), e);
+            throw new DatabaseException("Không thể thêm mới phiên đấu giá: " + auction.getAuctionId(), e);
         }
     }
 
@@ -102,8 +102,8 @@ public class AuctionDAO implements WritableDAO<Auction> {
             ps.setString(2, auction.getAuctionId());
             return ps.executeUpdate();
         } catch (SQLException e) {
-            log.error("Database error while updating end time for auction: {}", auction.getAuctionId(), e);
-            throw new TransactionFailedException("Failed to update end time for auction: " + auction.getAuctionId(), e);
+            log.error("Lỗi cơ sở dữ liệu khi cập nhật thời gian kết thúc phiên đấu giá: {}", auction.getAuctionId(), e);
+            throw new TransactionFailedException("Không thể cập nhật thời gian kết thúc cho phiên đấu giá: " + auction.getAuctionId(), e);
         }
     }
 
@@ -122,8 +122,8 @@ public class AuctionDAO implements WritableDAO<Auction> {
             ps.setString(2, auctionId);
             return ps.executeUpdate();
         } catch (SQLException e) {
-            log.error("Database error while updating status for auction: {}", auctionId, e);
-            throw new DatabaseException("Failed to update status for auction: " + auctionId, e);
+            log.error("Lỗi cơ sở dữ liệu khi cập nhật trạng thái phiên đấu giá: {}", auctionId, e);
+            throw new DatabaseException("Không thể cập nhật trạng thái phiên đấu giá: " + auctionId, e);
         }
     }
 
@@ -206,8 +206,8 @@ public class AuctionDAO implements WritableDAO<Auction> {
                 }
             }
         } catch (SQLException e) {
-            log.error("Database error while selecting ended/sold auctions", e);
-            throw new DatabaseException("Failed to select ended/sold auctions", e);
+            log.error("Lỗi cơ sở dữ liệu khi truy vấn các phiên đấu giá đã kết thúc hoặc đã bán", e);
+            throw new DatabaseException("Không thể truy vấn các phiên đấu giá đã kết thúc hoặc đã bán", e);
         }
         return auctions;
     }
@@ -255,7 +255,7 @@ public class AuctionDAO implements WritableDAO<Auction> {
                     LocalDateTime startTime = rs.getTimestamp("start_time").toLocalDateTime();
                     LocalDateTime endTime = rs.getTimestamp("end_time").toLocalDateTime();
                     if (startTime == null || endTime == null) {
-                        log.warn("Skipping auction with null timestamps for id={}", auctionId);
+                        log.warn("Bỏ qua phiên đấu giá do giá trị thời gian bị rỗng (null) đối với id={}", auctionId);
                         return null;
                     }
 
@@ -272,8 +272,8 @@ public class AuctionDAO implements WritableDAO<Auction> {
                 }
             }
         } catch (SQLException e) {
-            log.error("Database error while selecting auction by id: {}", auctionId, e);
-            throw new DatabaseException("Failed to select auction: " + auctionId, e);
+            log.error("Lỗi cơ sở dữ liệu khi truy vấn phiên đấu giá theo ID: {}", auctionId, e);
+            throw new DatabaseException("Không thể truy vấn phiên đấu giá theo ID: " + auctionId, e);
         }
         return null;
     }
@@ -302,7 +302,7 @@ public class AuctionDAO implements WritableDAO<Auction> {
                 LocalDateTime startTime = rs.getTimestamp("start_time").toLocalDateTime();
                 LocalDateTime endTime = rs.getTimestamp("end_time").toLocalDateTime();
                 if (startTime == null || endTime == null) {
-                    log.warn("Skipping auction with null timestamps for item_id={}", rs.getString("item_id"));
+                    log.warn("Bỏ qua phiên đấu giá do giá trị thời gian bị rỗng (null) đối với sản phẩm có ID={}", rs.getString("item_id"));
                     continue;
                 }
 
@@ -318,8 +318,8 @@ public class AuctionDAO implements WritableDAO<Auction> {
                         AuctionStatus.valueOf(rs.getString("auction_status"))));
             }
         } catch (SQLException e) {
-            log.error("Database error while selecting auctions by condition", e);
-            throw new DatabaseException("Failed to select auctions", e);
+            log.error("Lỗi cơ sở dữ liệu khi truy vấn các phiên đấu giá theo điều kiện", e);
+            throw new DatabaseException("Không thể truy vấn các phiên đấu giá theo điều kiện", e);
         }
         return auctions;
     }
@@ -339,8 +339,8 @@ public class AuctionDAO implements WritableDAO<Auction> {
 
             return ps.executeUpdate();
         } catch (SQLException e) {
-            log.error("Database error while updating auction: {}", auction.getAuctionId(), e);
-            throw new DatabaseException("Failed to update auction: " + auction.getAuctionId(), e);
+            log.error("Lỗi cơ sở dữ liệu khi cập nhật phiên đấu giá: {}", auction.getAuctionId(), e);
+            throw new DatabaseException("Không thể cập nhật phiên đấu giá: " + auction.getAuctionId(), e);
         }
     }
 }

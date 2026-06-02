@@ -63,12 +63,12 @@ public class ClientHandler implements Runnable {
                 try {
                     handleRequest(msg);
                 } catch (Exception e) {
-                    log.error("Error handling request: {}", e.getMessage(), e);
+                    log.error("Lôĩ khi xử lí yêu cầu: {}", e.getMessage(), e);
                 }
             }
         } catch (Exception e) {
             AuctionManager.getInstance().removeClient(this);
-            log.info("Client has disconnected");
+            log.info("Người dùng đã ngắt kết nối");
         }
     }
 
@@ -78,9 +78,9 @@ public class ClientHandler implements Runnable {
             out.flush();
             out.reset();
         } catch (IOException e) {
-            log.info("fail to send message", e);
+            log.info("Không thể gửi tin nhắn", e);
         } catch (Exception e) {
-            log.error("Unexpected exception occurred while sending message", e);
+            log.error("Đã xảy ra lỗi khi gửi tin nhắn", e);
         }
     }
 
@@ -91,7 +91,7 @@ public class ClientHandler implements Runnable {
      */
     private void handleRequest(NetworkMessage msg) {
         String action = msg.getAction();
-        log.info("Handling request: {}, current activities size: {}", action, messageHandler.getActivitiesSize());
+        log.info("Đang xử lí yêu cầu: {}, số lượng yêu cầu hiện tại: {}", action, messageHandler.getActivitiesSize());
         
         switch (action) {
             case "PLACE_BID":

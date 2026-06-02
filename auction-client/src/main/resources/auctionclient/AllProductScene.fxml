@@ -1,16 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.RadioButton?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.ToggleGroup?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.FlowPane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<BorderPane style="-fx-background-color: #f6f8ef;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auctionclient.controllers.bidder.AllProductController">
+<BorderPane style="-fx-background-color: #f6f8ef;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auctionclient.controllers.bidder.AllProductController">
    <fx:define>
       <ToggleGroup fx:id="categoryGroup" />
       <ToggleGroup fx:id="statusGroup" />
@@ -25,12 +20,12 @@
          </padding>
          <children>
             <!-- CATEGORIES -->
-            <Label alignment="CENTER" prefHeight="30.0" prefWidth="160.0" style="-fx-background-color: #138eff; -fx-background-radius: 10;" text="CATEGORIES" textFill="WHITE">
+            <Label alignment="CENTER" prefHeight="30.0" prefWidth="160.0" style="-fx-background-color: #138eff; -fx-background-radius: 10;" text="DANH MỤC" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="13.0" />
                </font>
             </Label>
-            <VBox prefWidth="160.0" spacing="8.0" style="-fx-background-color: #f6f8ef; -fx-background-radius: 15;">
+            <VBox alignment="TOP_CENTER" prefWidth="160.0" spacing="8.0" style="-fx-background-color: #f6f8ef; -fx-background-radius: 15;">
                <padding>
                   <Insets bottom="15.0" left="10.0" right="10.0" top="15.0" />
                </padding>
@@ -45,7 +40,7 @@
                </children>
             </VBox>
             <!-- STATUS -->
-            <Label alignment="CENTER" prefHeight="30.0" prefWidth="160.0" style="-fx-background-color: #138eff; -fx-background-radius: 10;" text="STATUS" textFill="WHITE">
+            <Label alignment="CENTER" prefHeight="30.0" prefWidth="160.0" style="-fx-background-color: #138eff; -fx-background-radius: 10;" text="TRẠNG THÁI" textFill="WHITE">
                <font>
                   <Font name="System Bold" size="13.0" />
                </font>
@@ -53,7 +48,7 @@
                   <Insets top="15.0" />
                </VBox.margin>
             </Label>
-            <VBox prefWidth="160.0" spacing="8.0" style="-fx-background-color: #f6f8ef; -fx-background-radius: 15;">
+            <VBox alignment="TOP_CENTER" prefWidth="160.0" spacing="8.0" style="-fx-background-color: #f6f8ef; -fx-background-radius: 15;">
                <padding>
                   <Insets bottom="15.0" left="10.0" right="10.0" top="15.0" />
                </padding>

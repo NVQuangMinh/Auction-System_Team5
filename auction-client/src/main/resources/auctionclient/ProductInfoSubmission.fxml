@@ -1,22 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.Cursor?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
-
-<VBox prefHeight="664.0" prefWidth="490.0" spacing="20.0" style="-fx-background-radius: 30; -fx-background-color: white; -fx-border-radius: 30; -fx-border-color: #e0e0e0; -fx-border-width: 1;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auctionclient.controllers.seller.ProductInfoSubmissionController">
+<VBox prefHeight="664.0" prefWidth="490.0" spacing="20.0" style="-fx-background-radius: 30; -fx-background-color: white; -fx-border-radius: 30; -fx-border-color: #e0e0e0; -fx-border-width: 1;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auctionclient.controllers.seller.ProductInfoSubmissionController">
    <children>
       <HBox alignment="CENTER" fillHeight="false" prefHeight="25.0" prefWidth="438.0">
          <children>
@@ -34,7 +25,7 @@
             <Font name="System Bold Italic" size="12.0" />
          </font>
       </Label>
-      <TextField fx:id="productName" prefHeight="50.0" prefWidth="440.0" promptText="Product Name" style="-fx-background-radius: 10;">
+      <TextField fx:id="productName" prefHeight="50.0" prefWidth="440.0" promptText="Tên Sản Phẩm" style="-fx-background-radius: 10;">
          <font>
             <Font size="15.0" />
          </font>
@@ -45,7 +36,7 @@
             <Insets top="15.0" />
          </VBox.margin>
       </TextField>
-      <TextArea fx:id="productDescription" prefHeight="50.0" prefWidth="438.0" promptText="Product Description" style="-fx-background-radius: 10;">
+      <TextArea fx:id="productDescription" prefHeight="50.0" prefWidth="438.0" promptText="Mô Tả" style="-fx-background-radius: 10;">
          <font>
             <Font size="15.0" />
          </font>
@@ -61,7 +52,7 @@
       </TextArea>
       <HBox alignment="CENTER" prefHeight="50.0" prefWidth="438.0">
          <children>
-            <TextField fx:id="startingPrice" prefHeight="50.0" prefWidth="195.5" promptText="Starting Price" style="-fx-background-radius: 10;" HBox.hgrow="ALWAYS">
+            <TextField fx:id="startingPrice" prefHeight="50.0" prefWidth="195.5" promptText="Giá Khởi Điểm" style="-fx-background-radius: 10;" HBox.hgrow="ALWAYS">
                <font>
                   <Font size="15.0" />
                </font>
@@ -70,7 +61,7 @@
                </cursor>
             </TextField>
             <Region prefHeight="46.0" prefWidth="28.0" />
-            <TextField fx:id="buyoutPrice" prefHeight="50.0" prefWidth="195.5" promptText="Buyout Price" style="-fx-background-radius: 10;" HBox.hgrow="ALWAYS">
+            <TextField fx:id="buyoutPrice" prefHeight="50.0" prefWidth="195.5" promptText="Giá Mua" style="-fx-background-radius: 10;" HBox.hgrow="ALWAYS">
                <font>
                   <Font size="15.0" />
                </font>
@@ -82,7 +73,7 @@
       </HBox>
       <HBox prefHeight="50.0" prefWidth="438.0">
          <children>
-            <TextField fx:id="tickSize" prefHeight="50.0" prefWidth="205.0" promptText="Tick Size" style="-fx-background-radius: 10;">
+            <TextField fx:id="tickSize" prefHeight="50.0" prefWidth="205.0" promptText="Bước Giá" style="-fx-background-radius: 10;">
                <font>
                   <Font size="15.0" />
                </font>
@@ -94,7 +85,7 @@
             <ChoiceBox fx:id="types" prefHeight="40.0" prefWidth="207.0" />
          </children>
       </HBox>
-      <TextField fx:id="typeSpecificField" prefHeight="50.0" prefWidth="440.0" promptText="Artist Name / Model / Brand" style="-fx-background-radius: 10;">
+      <TextField fx:id="typeSpecificField" prefHeight="50.0" prefWidth="440.0" promptText="Hoạ Sĩ / Mẫu Mã / Thương Hiệu" style="-fx-background-radius: 10;">
          <font>
             <Font size="15.0" />
          </font>
@@ -102,7 +93,7 @@
             <Cursor fx:constant="TEXT" />
          </cursor>
       </TextField>
-      <TextField fx:id="bidDurationField" prefHeight="50.0" prefWidth="440.0" promptText="Bid Duration (minutes)" style="-fx-background-radius: 10;">
+      <TextField fx:id="bidDurationField" prefHeight="50.0" prefWidth="440.0" promptText="Thời Gian Đấu Giá (phút)" style="-fx-background-radius: 10;">
          <font>
             <Font size="15.0" />
          </font>
@@ -112,17 +103,17 @@
       </TextField>
       <HBox alignment="CENTER_RIGHT" prefHeight="33.0" prefWidth="438.0">
          <children>
-            <CheckBox fx:id="antiSnippingCheckbox" contentDisplay="CENTER" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" prefHeight="27.0" prefWidth="154.0" style="-fx-font-size: 13;" text="Enable Anti-Snipping" />
+            <CheckBox fx:id="antiSnippingCheckbox" contentDisplay="CENTER" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" prefHeight="27.0" prefWidth="154.0" style="-fx-font-size: 13;" text="Cho phép Anti-Snipping" />
          </children>
       </HBox>
       <HBox alignment="CENTER_LEFT" prefHeight="80.0" prefWidth="438.0" VBox.vgrow="ALWAYS">
          <children>
-            <Button alignment="CENTER" mnemonicParsing="false" onAction="#switchToUserProductList" style="-fx-font-size: 15; -fx-font-weight: bold; -fx-padding: 15 75 15 75; -fx-background-radius: 10; -fx-background-color: #E0E0E0;" text="CANCEL" HBox.hgrow="ALWAYS">
+            <Button alignment="CENTER" mnemonicParsing="false" onAction="#switchToUserProductList" style="-fx-font-size: 15; -fx-font-weight: bold; -fx-padding: 15 75 15 75; -fx-background-radius: 10; -fx-background-color: #E0E0E0;" text="HUỶ" HBox.hgrow="ALWAYS">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor></Button>
             <Region prefHeight="200.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
-            <Button fx:id="submitButton" mnemonicParsing="false" onAction="#addItem" style="-fx-font-size: 15; -fx-font-weight: bold; -fx-padding: 15 67 15 67; -fx-background-radius: 10; -fx-background-color: #007bff;" text="ADD ITEM" textFill="WHITE" HBox.hgrow="ALWAYS">
+            <Button fx:id="submitButton" mnemonicParsing="false" onAction="#addItem" style="-fx-font-size: 15; -fx-font-weight: bold; -fx-padding: 15 67 15 67; -fx-background-radius: 10; -fx-background-color: #007bff;" text="ĐĂNG BÁN" textFill="WHITE" HBox.hgrow="ALWAYS">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor></Button>

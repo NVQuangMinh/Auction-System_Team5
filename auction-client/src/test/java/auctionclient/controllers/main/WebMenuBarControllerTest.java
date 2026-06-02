@@ -78,7 +78,7 @@ class WebMenuBarControllerTest extends FxControllerTestBase {
 
     @Test
     public void testActivitiesButtonNavigatesToActivitiesPage() {
-        clickOn("ACTIVITIES");
+        clickOn("#activities");
         assertNotNull(lookup("#notificationContainer").query());
     }
 
@@ -101,7 +101,7 @@ class WebMenuBarControllerTest extends FxControllerTestBase {
 
     @Test
     public void testLogoutButtonCanLogout() {
-        clickOn("LOGOUT");
+        clickOn("ĐĂNG XUẤT");
         clickOn("OK");
         assertNotNull(lookup("#username").query());
     }

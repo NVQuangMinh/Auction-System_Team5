@@ -118,7 +118,7 @@ class UserPushUpNotificationControllerTest extends FxControllerTestBase {
             org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
 
             mocked.verify(() -> UserPushUpNotificationController.showNotification(
-                    "You have placed bid successfully", "SUCCESS"));
+                    "Bạn đã trả giá sản phẩm thành công.", "SUCCESS"));
         }
     }
 
@@ -127,11 +127,11 @@ class UserPushUpNotificationControllerTest extends FxControllerTestBase {
         try (MockedStatic<UserPushUpNotificationController> mocked =
                      mockStatic(UserPushUpNotificationController.class)) {
             controller.onUpdateReceived(
-                    new NetworkMessage("BID_FAILED", "Insufficient balance"));
+                    new NetworkMessage("BID_FAILED", "Trả giá thất bại: không tìm thấy phiên đấu giá."));
             org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
 
             mocked.verify(() -> UserPushUpNotificationController.showNotification(
-                    "Insufficient balance", "FAILED"));
+                    "Trả giá thất bại: không tìm thấy phiên đấu giá.", "FAILED"));
         }
     }
 
@@ -143,7 +143,7 @@ class UserPushUpNotificationControllerTest extends FxControllerTestBase {
             org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
 
             mocked.verify(() -> UserPushUpNotificationController.showNotification(
-                    "You have sold item successfully", "SUCCESS"));
+                    "Bạn đã đăng bán sản phẩm thành công.", "SUCCESS"));
         }
     }
 
@@ -152,11 +152,11 @@ class UserPushUpNotificationControllerTest extends FxControllerTestBase {
         try (MockedStatic<UserPushUpNotificationController> mocked =
                      mockStatic(UserPushUpNotificationController.class)) {
             controller.onUpdateReceived(
-                    new NetworkMessage("SELL_FAILED", "Cannot list item"));
+                    new NetworkMessage("SELL_FAILED", "Bạn đã đăng bán sản phẩm thất bại."));
             org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
 
             mocked.verify(() -> UserPushUpNotificationController.showNotification(
-                    "Cannot list item", "FAILED"));
+                    "Bạn đã đăng bán sản phẩm thất bại.", "FAILED"));
         }
     }
 
@@ -168,7 +168,7 @@ class UserPushUpNotificationControllerTest extends FxControllerTestBase {
             org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
 
             mocked.verify(() -> UserPushUpNotificationController.showNotification(
-                    "You have buy out item successfully", "SUCCESS"));
+                    "Bạn đã mua sản phẩm thành công.", "SUCCESS"));
         }
     }
 

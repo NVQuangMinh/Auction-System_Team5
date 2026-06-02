@@ -48,8 +48,8 @@ public class ItemDAO implements WritableDAO<Item>, ReadableDAO<Item> {
             pstmt.setString(8, item instanceof Vehicles ? (String) item.getTypeSpecificAttribute() : null);
             return pstmt.executeUpdate();
         } catch (SQLException e) {
-            log.error("Database error while inserting item: {}", item.getId(), e);
-            throw new DatabaseException("Failed to insert item: " + item.getId(), e);
+            log.error("Lỗi cơ sở dữ liệu khi thêm mới sản phẩm: {}", item.getId(), e);
+            throw new DatabaseException("Không thể thêm mới sản phẩm: " + item.getId(), e);
         }
     }
 
@@ -84,8 +84,8 @@ public class ItemDAO implements WritableDAO<Item>, ReadableDAO<Item> {
                 items.add(mapRow(rs, owner));
             }
         } catch (SQLException e) {
-            log.error("Database error while selecting all items", e);
-            throw new DatabaseException("Failed to select all items", e);
+            log.error("Lỗi cơ sở dữ liệu khi truy vấn tất cả sản phẩm.", e);
+            throw new DatabaseException("Không thể truy vấn tất cả sản phẩm.", e);
         }
         return items;
     }
@@ -108,8 +108,8 @@ public class ItemDAO implements WritableDAO<Item>, ReadableDAO<Item> {
                 }
             }
         } catch (SQLException e) {
-            log.error("Database error while selecting item by id: {}", id, e);
-            throw new DatabaseException("Failed to select item: " + id, e);
+            log.error("Lỗi cơ sở dữ liệu khi truy vấn sản phẩm theo ID: {}", id, e);
+            throw new DatabaseException("Không thể truy vấn sản phẩm theo ID: " + id, e);
         }
         return null;
     }
@@ -127,8 +127,8 @@ public class ItemDAO implements WritableDAO<Item>, ReadableDAO<Item> {
                 items.add(mapRow(rs, owner));
             }
         } catch (SQLException e) {
-            log.error("Database error while selecting items by condition: {}", condition, e);
-            throw new DatabaseException("Failed to select items: " + condition, e);
+            log.error("Lỗi cơ sở dữ liệu khi truy vấn các sản phẩm theo điều kiện: {}", condition, e);
+            throw new DatabaseException("Không thể truy vấn các sản phẩm theo điều kiện.: " + condition, e);
         }
         return items;
     }

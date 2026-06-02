@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="background" prefHeight="600.0" prefWidth="1066.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auctionclient.controllers.auth.SignInController">
+<AnchorPane fx:id="background" prefHeight="600.0" prefWidth="1066.0" style="-fx-background-image: url('images/1378262.png'); -fx-background-size: cover; -fx-background-position: center; -fx-background-repeat: no-repeat;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auctionclient.controllers.auth.SignInController">
    <children>
       <ImageView fitHeight="1000.0" fitWidth="2500.0" pickOnBounds="true" preserveRatio="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <image>
@@ -36,7 +36,7 @@
                         </ImageView>
                         <HBox alignment="CENTER" fillHeight="false" prefHeight="55.0" prefWidth="408.0" spacing="23.0">
                            <children>
-                              <Button fx:id="signInButton" maxHeight="31.0" maxWidth="115.0" mnemonicParsing="false" onAction="#onSignInClicked" prefHeight="31.0" prefWidth="115.0" style="-fx-background-color: white; -fx-background-radius: 500;" text="Sign In">
+                              <Button fx:id="signInButton" maxHeight="31.0" maxWidth="115.0" mnemonicParsing="false" onAction="#onSignInClicked" prefHeight="31.0" prefWidth="115.0" style="-fx-background-color: white; -fx-background-radius: 500;" text="Đăng nhập">
                                  <font>
                                     <Font name="System Bold" size="15.0" />
                                  </font>
@@ -44,7 +44,7 @@
                                     <Cursor fx:constant="HAND" />
                                  </cursor>
                               </Button>
-                              <Button fx:id="signUpButton" alignment="CENTER" maxHeight="31.0" maxWidth="115.0" mnemonicParsing="false" onAction="#switchToSignUpScene" prefHeight="31.0" prefWidth="115.0" style="-fx-background-color: transparent; -fx-background-radius: 500;" text="Sign up" textFill="WHITE">
+                              <Button fx:id="signUpButton" alignment="CENTER" maxHeight="31.0" maxWidth="115.0" mnemonicParsing="false" onAction="#switchToSignUpScene" prefHeight="31.0" prefWidth="115.0" style="-fx-background-color: transparent; -fx-background-radius: 500;" text="Đăng ký" textFill="WHITE">
                                  <font>
                                     <Font name="System Bold" size="15.0" />
                                  </font>
@@ -56,12 +56,12 @@
                         </HBox>
                         <VBox alignment="TOP_CENTER" fillWidth="false" spacing="20.0">
                            <children>
-                              <TextField fx:id="username" maxWidth="256.0" prefHeight="31.0" prefWidth="255.0" promptText="USERNAME" style="-fx-background-color: white;">
+                              <TextField fx:id="username" maxWidth="256.0" prefHeight="31.0" prefWidth="255.0" promptText="TÊN ĐĂNG NHẬP" style="-fx-background-color: white;">
                                  <font>
                                     <Font size="15.0" />
                                  </font>
                               </TextField>
-                              <PasswordField fx:id="password" maxWidth="255.0" prefHeight="31.0" prefWidth="255.0" promptText="PASSWORD" style="-fx-background-color: white;">
+                              <PasswordField fx:id="password" maxWidth="255.0" prefHeight="31.0" prefWidth="255.0" promptText="MẬT KHẨU" style="-fx-background-color: white;">
                                  <font>
                                     <Font size="15.0" />
                                  </font>

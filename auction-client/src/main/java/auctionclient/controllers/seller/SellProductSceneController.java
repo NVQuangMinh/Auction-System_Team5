@@ -61,7 +61,7 @@ public class SellProductSceneController implements Initializable, AuctionUpdateL
         stage.initOwner(owner);
         stage.setOnHiding(e -> overlayPane.setVisible(false));
         stage.setScene(scene);
-        stage.setTitle("Add New Product");
+        stage.setTitle("Đăng bán sản phẩm");
         overlayPane.setVisible(true);
         stage.show();
     }

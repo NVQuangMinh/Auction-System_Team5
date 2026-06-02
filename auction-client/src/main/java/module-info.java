@@ -8,7 +8,8 @@ module auction.client {
   requires org.kordamp.ikonli.core;
   requires org.kordamp.ikonli.javafx;
   requires org.kordamp.ikonli.fontawesome5;
-  uses org.kordamp.ikonli.IkonHandler;
+    requires java.logging;
+    uses org.kordamp.ikonli.IkonHandler;
 
   exports auctionclient.launcher;
 

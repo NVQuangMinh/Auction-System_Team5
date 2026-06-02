@@ -143,7 +143,7 @@ class ProductInfoSubmissionControllerTest extends FxControllerTestBase {
         Label error = lookup("#error").queryAs(Label.class);
         assertTrue(error.isVisible());
         assertTrue(error.isManaged());
-        assertEquals("You missed some information", error.getText());
+        assertEquals("Xin hãy điền đầy đủ thông tin sản phẩm", error.getText());
         assertEquals(Color.RED, error.getTextFill());
     }
 
@@ -158,7 +158,7 @@ class ProductInfoSubmissionControllerTest extends FxControllerTestBase {
 
         Label error = lookup("#error").queryAs(Label.class);
         assertTrue(error.isVisible());
-        assertEquals("You have not selected item's type", error.getText());
+        assertEquals("Xin hãy chọn loại sản phẩm", error.getText());
         assertEquals(Color.RED, error.getTextFill());
     }
 
@@ -172,7 +172,7 @@ class ProductInfoSubmissionControllerTest extends FxControllerTestBase {
 
         Label error = lookup("#error").queryAs(Label.class);
         assertTrue(error.isVisible());
-        assertEquals("Please enter valid numbers", error.getText());
+        assertEquals("Xin hãy điền các số phù hợp", error.getText());
         assertEquals(Color.RED, error.getTextFill());
     }
 
@@ -186,7 +186,7 @@ class ProductInfoSubmissionControllerTest extends FxControllerTestBase {
 
         Label error = lookup("#error").queryAs(Label.class);
         assertTrue(error.isVisible());
-        assertEquals("Buy Out Price is less than Start Price", error.getText());
+        assertEquals("Giá mua của sản phẩm không được nhỏ hơn hoặc bằng giá khởi điểm", error.getText());
         assertEquals(Color.RED, error.getTextFill());
     }
 
@@ -201,7 +201,7 @@ class ProductInfoSubmissionControllerTest extends FxControllerTestBase {
 
         Label error = lookup("#error").queryAs(Label.class);
         assertTrue(error.isVisible());
-        assertEquals("Invalid tick size", error.getText());
+        assertEquals("Xin hãy điền bước giá hợp lệ", error.getText());
         assertEquals(Color.RED, error.getTextFill());
     }
 
@@ -215,7 +215,7 @@ class ProductInfoSubmissionControllerTest extends FxControllerTestBase {
 
         Label error = lookup("#error").queryAs(Label.class);
         assertTrue(error.isVisible());
-        assertEquals("Invalid tick size", error.getText());
+        assertEquals("Xin hãy điền bước giá hợp lệ", error.getText());
     }
 
     @Test
@@ -228,7 +228,7 @@ class ProductInfoSubmissionControllerTest extends FxControllerTestBase {
 
         Label error = lookup("#error").queryAs(Label.class);
         assertTrue(error.isVisible());
-        assertEquals("Please enter an integer", error.getText());
+        assertEquals("Xin hãy điền số nguyên", error.getText());
         assertEquals(Color.RED, error.getTextFill());
     }
 
@@ -242,7 +242,7 @@ class ProductInfoSubmissionControllerTest extends FxControllerTestBase {
 
         Label error = lookup("#error").queryAs(Label.class);
         assertTrue(error.isVisible());
-        assertEquals("Bid duration must be positive", error.getText());
+        assertEquals("Xin hãy điền thời gian hợp lệ", error.getText());
         assertEquals(Color.RED, error.getTextFill());
     }
 

@@ -76,10 +76,6 @@ public class ProductInfoSubmissionController implements Initializable {
         types.getItems().addAll(options);
     }
 
-    @FXML
-    private void handleAddImage() {
-        System.out.println("Add image clicked");
-    }
 
     private void handleSubmit() {
         name = productName.getText().trim();
@@ -92,12 +88,12 @@ public class ProductInfoSubmissionController implements Initializable {
         if (name.isBlank() || description.isBlank() ||
                 startPriceStr.isBlank() || buyOutPriceStr.isBlank() ||
                 tickStr.isBlank() || bidDurStr.isBlank()) {
-            throw new IllegalArgumentException("You missed some information");
+            throw new IllegalArgumentException("Xin hãy điền đầy đủ thông tin sản phẩm");
         }
 
         String selectedType = types.getValue();
         if (selectedType == null) {
-            throw new IllegalArgumentException("You have not selected item's type");
+            throw new IllegalArgumentException("Xin hãy chọn loại sản phẩm");
         }
 
         type = switch (selectedType) {
@@ -107,7 +103,7 @@ public class ProductInfoSubmissionController implements Initializable {
             default -> null;
         };
         if (type == null) {
-            throw new IllegalArgumentException("You have not selected item's type");
+            throw new IllegalArgumentException("Xin hãy chọn loại sản phẩm");
         }
 
 
@@ -117,24 +113,24 @@ public class ProductInfoSubmissionController implements Initializable {
             buyOutPriceVal = Double.parseDouble(buyOutPriceStr);
             tickSizeVal = Double.parseDouble(tickStr);
         } catch (NumberFormatException e) {
-            throw new InvalidPriceException("Please enter valid numbers");
+            throw new InvalidPriceException("Xin hãy điền các số phù hợp");
         }
 
         if (buyOutPriceVal <= startPriceVal) {
-            throw new InvalidPriceException("Buy Out Price is less than Start Price");
+            throw new InvalidPriceException("Giá mua của sản phẩm không được nhỏ hơn hoặc bằng giá khởi điểm");
         }
 
         if ((buyOutPriceVal - startPriceVal) % tickSizeVal != 0 || tickSizeVal <= 0) {
-            throw new InvalidTickSizeException("Invalid tick size");
+            throw new InvalidTickSizeException("Xin hãy điền bước giá hợp lệ");
         }
 
         try {
             bidDuration = Integer.parseInt(bidDurStr);
             if (bidDuration <= 0) {
-                throw new IllegalArgumentException("Bid duration must be positive");
+                throw new IllegalArgumentException("Xin hãy điền thời gian hợp lệ");
             }
         } catch (NumberFormatException e) {
-            throw new NumberFormatException("Please enter an integer");
+            throw new NumberFormatException("Xin hãy điền số nguyên");
         }
 
         antiSnipping = antiSnippingCheckbox.isSelected();
@@ -180,7 +176,7 @@ public class ProductInfoSubmissionController implements Initializable {
             error.setVisible(true);
             error.setOpacity(1.0);
             error.setManaged(true);
-            error.setText("Unknown error...");
+            error.setText("Lỗi không xác định...");
             error.setTextFill(Color.RED);
         }
     }

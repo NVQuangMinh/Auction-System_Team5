@@ -46,7 +46,7 @@ public class UserActivitiesController implements AuctionUpdateListener, Initiali
                 controller.setData(notification.getNotificationMessage(), String.valueOf(notification.getNotificationTime()));
                 notificationContainer.getChildren().addFirst(item);
             } catch (IOException e) {
-                System.out.println("Error loading notification item: " + e.getMessage());
+                System.out.println("Lỗi, không thể tải các thông báo: " + e.getMessage());
                 e.printStackTrace();
             }
         }

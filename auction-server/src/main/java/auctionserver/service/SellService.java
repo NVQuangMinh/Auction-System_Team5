@@ -25,10 +25,10 @@ public class SellService {
 
     public void publishItemAndAuction(Item item, Auction auction) {
         if (item == null || auction == null) {
-            throw new IllegalArgumentException("Item and Auction cannot be null");
+            throw new IllegalArgumentException("Sản phẩm và phiên đấu giá không được trống");
         }
         if (auction.getStartingPrice() >= auction.getBuyOutPrice()) {
-            throw new IllegalArgumentException("Starting price must be less than buy-out price");
+            throw new IllegalArgumentException("Giá khởi điểm phải nhỏ hơn giá mua");
         }
 
         try (Connection conn = auctionDAO.getConnection()) {
@@ -37,25 +37,25 @@ public class SellService {
                 itemDAO.insert(item, conn);
                 auctionDAO.insert(auction, conn);
                 conn.commit();
-                log.info("Item and auction published successfully: {}", item.getId());
+                log.info("Đã đăng sản phẩm và phiên đấu giá thành công : {}", item.getId());
             } catch (SQLException e) {
                 conn.rollback();
-                log.error("Transaction failed while publishing item and auction: {}", item.getId(), e);
-                throw new TransactionFailedException("Failed to publish item and auction: " + item.getId(), e);
+                log.error("`Thất bại khi đăng sản phẩm và phiên đấu giá`: {}", item.getId(), e);
+                throw new TransactionFailedException("Thất bại khi đăng sản phẩm và phiên đấu giá: " + item.getId(), e);
             } catch (Exception e) {
                 conn.rollback();
-                log.error("Unexpected exception occurred while publishing item and auction: {}", item.getId(), e);
-                throw new TransactionFailedException("Unexpected error while publishing item and auction: " + item.getId(), e);
+                log.error("Đã xảy ra lỗi khi đăng sản phẩm và phiên đấu giá: {}", item.getId(), e);
+                throw new TransactionFailedException("Đã xảy ra lỗi khi đăng sản phẩm và phiên đấu giá: " + item.getId(), e);
             }
         } catch (SQLException e) {
-            log.error("Database connection error while publishing item and auction: {}", item.getId(), e);
-            throw new DatabaseException("Failed to get database connection", e);
+            log.error("Lỗi cơ sở dữ liệu khi đăng sản phẩm và phiên đấu giá: {}", item.getId(), e);
+            throw new DatabaseException("Không thể kết nối với cơ sở dữ liệu", e);
             // thêm catch TransactionFailedException ở đây vì nếu không nó sẽ nhảy vào Exception bên dưới và throw nhầm
         } catch (TransactionFailedException e) {
             throw e;
         } catch (Exception e) {
-            log.error("Unexpected exception occurred while getting database connection for publishing: {}", item.getId(), e);
-            throw new DatabaseException("Unexpected error while getting database connection", e);
+            log.error("Đã xảy ra lỗi khi kết nối cơ sở dữ liệu: {}", item.getId(), e);
+            throw new DatabaseException("Đã xảy ra lỗi khi kết nối cơ sở dữ liệu", e);
         }
     }
 }

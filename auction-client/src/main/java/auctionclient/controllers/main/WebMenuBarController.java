@@ -112,9 +112,9 @@ public class WebMenuBarController implements Initializable {
     @FXML
     public void logOut(MouseEvent event) throws IOException {
         Alert logOutAlert = new Alert(Alert.AlertType.CONFIRMATION);
-        logOutAlert.setTitle("Logout");
-        logOutAlert.setHeaderText("Redirecting to sign-in page...");
-        logOutAlert.setContentText("Are you sure you want to logout?");
+        logOutAlert.setTitle("Đăng xuất");
+        logOutAlert.setHeaderText("Chuyển hướng tới trang đăng nhập");
+        logOutAlert.setContentText("Bạn có chắc chắn muốn đăng xuất?");
 
         if (logOutAlert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
             cleanupCurrentScene(event);
