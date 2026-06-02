@@ -78,7 +78,7 @@ public class ClientHandler implements Runnable {
             out.flush();
             out.reset();
         } catch (IOException e) {
-            log.info("Không thể gửi tin nhắn", e);
+            log.info("Đã xảy ra lỗi khi gửi tin nhắn", e);
         } catch (Exception e) {
             log.error("Đã xảy ra lỗi khi gửi tin nhắn", e);
         }

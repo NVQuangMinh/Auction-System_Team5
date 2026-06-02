@@ -29,8 +29,6 @@ public class WebMenuBarController implements Initializable {
     @FXML
     public Label welcome;
     @FXML
-    public ImageView logoutImage;
-    @FXML
     public Button productsMenuButton;
     @FXML
     public Button userProductListButton;

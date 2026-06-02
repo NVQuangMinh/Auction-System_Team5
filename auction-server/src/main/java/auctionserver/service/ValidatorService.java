@@ -45,7 +45,7 @@ public class ValidatorService {
             throw new SelfBiddingException("Người trả giá không được là người bán hàng!");
         }
         if (Math.abs(transaction.getBidAmount() - auction.getBuyOutPrice()) > 0.001) {
-            throw new InvalidBidAmountException("Giá mua ngay không hợp lệ! Phải đúng bằng giá buyOutPrice = " + auction.getBuyOutPrice());
+            throw new InvalidBidAmountException("Giá đặt không hợp lệ! Phải nhỏ hơn hoặc bằng giá mua = " + auction.getBuyOutPrice());
         }
     }
 }

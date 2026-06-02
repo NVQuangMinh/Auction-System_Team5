@@ -151,7 +151,7 @@ public class UserPushUpNotificationController implements AuctionUpdateListener {
             if(msg.getData() == null) {
                 UserPushUpNotificationController.showNotification("Trả giá thất bại: không tìm thấy người dùng.", "FAILED");
             } else {
-                UserPushUpNotificationController.showNotification("Trả giá thất bại: không tìm thấy phiên đấu giá.", "FAILED");
+                UserPushUpNotificationController.showNotification((String) msg.getData(), "FAILED");
             }
         }
         if ("SELL_SUCCESS".equals(action)) {
