@@ -178,12 +178,6 @@ public class AllProductController implements Initializable, AuctionUpdateListene
             List<AuctionDTO> allDTOs = (List<AuctionDTO>) msg.getData();
             Platform.runLater(() -> handleUpdateBid(allDTOs));
 
-        } else if (action.equals("AUCTION_ENDED") || action.equals("AUCTION_SOLD")) {
-            AuctionDTO dto = (AuctionDTO) msg.getData();
-            String itemName = dto.getItem().getName();
-            UserPushUpNotificationController.showNotification(
-                    "Phiên đấu giá kết thúc: " + itemName, "INFO");
-
         } else if (action.equals("REMOVE_ITEM")) {
             AuctionDTO removed = (AuctionDTO) msg.getData();
             Platform.runLater(() -> {
