@@ -1,7 +1,6 @@
 package auctionclient.controllers.admin;
 
 import auctionclient.Network.ClientService;
-import auctionclient.controllers.notification.UserPushUpNotificationController;
 import auctionclient.interfaces.AuctionUpdateListener;
 import auctionclient.interfaces.Cleanable;
 import auctionshared.Network.NetworkMessage;
