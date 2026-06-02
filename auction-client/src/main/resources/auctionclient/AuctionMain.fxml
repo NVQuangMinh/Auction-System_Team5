@@ -1,16 +1,136 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.StackPane?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.text.TextFlow?>
 
-<BorderPane fx:id="MainPane" style="-fx-background-color: #f6f8ef;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auctionclient.controllers.main.AuctionMainController">
-   <top>
-      <fx:include fx:id="menuBar" source="WebMenuBar.fxml" />
-   </top>
-   <center>
-      <StackPane>
-         <Label style="-fx-font-size: 30; -fx-text-fill: #555;" text="xin chao the gioi" />
-      </StackPane>
-   </center>
+<BorderPane fx:id="MainPane" style="-fx-background-color: #f0f4f8;" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auctionclient.controllers.main.AuctionMainController">
+    <top>
+        <fx:include fx:id="menuBar" source="WebMenuBar.fxml" />
+    </top>
+    <center>
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent;">
+            <content>
+                <VBox alignment="TOP_CENTER" spacing="30.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);">
+                    <padding>
+                        <Insets bottom="50.0" left="80.0" right="80.0" top="50.0" />
+                    </padding>
+                    <VBox.margin>
+                        <Insets />
+                    </VBox.margin>
+
+                    <!-- HEADER -->
+                    <VBox alignment="CENTER" spacing="15.0">
+                        <HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" style="-fx-background-color: #138eff; -fx-background-radius: 15; -fx-padding: 15;">
+                            <ImageView fitHeight="150.0" preserveRatio="true">
+                                <image>
+                                    <Image url="@images/Auction-System.png" />
+                                </image>
+                            </ImageView>
+                        </HBox>
+                        <Label style="-fx-font-size: 28; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" text="Hệ thống Đấu giá Trực tuyến Thời gian thực" />
+                        <Label style="-fx-font-size: 16; -fx-text-fill: #000000; -fx-font-style: italic;" text="Xây dựng với Java 21, JavaFX &amp; TCP/IP Socket — Team 5" />
+                        <Separator />
+                    </VBox>
+
+                    <!-- OVERVIEW -->
+                    <VBox spacing="10.0">
+                        <Label style="-fx-font-size: 22; -fx-font-weight: bold; -fx-text-fill: #2980b9;" text="1. Giới thiệu Tổng quan" />
+                        <TextFlow lineSpacing="5.0">
+                            <Text style="-fx-font-size: 15; -fx-fill: #000000;" text="The Auction Studio là một hệ thống đấu giá trực tuyến thời gian thực, phát triển theo mô hình client-server với giao tiếp qua TCP/IP Socket. Hệ thống cho phép người dùng tham gia đấu giá, theo dõi cập nhật giá liên tục với độ chính xác cao và an toàn." />
+                        </TextFlow>
+                        <Label style="-fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #000000; -fx-padding: 10 0 0 0;" text="Điểm nhấn kỹ thuật:" />
+                        <VBox spacing="8.0">
+                            <padding><Insets left="20.0" /></padding>
+                            <Label style="-fx-font-size: 15; -fx-text-fill: #000000;" text="• Real-time bidding (Socket broadcasting)" />
+                            <Label style="-fx-font-size: 15; -fx-text-fill: #000000;" text="• Multi-module Maven (client, server, shared)" />
+                            <Label style="-fx-font-size: 15; -fx-text-fill: #000000;" text="• PostgreSQL (AWS RDS) với HikariCP pool" />
+                            <Label style="-fx-font-size: 15; -fx-text-fill: #000000;" text="• Virtual Threads (Java 21) cho khả năng đồng thời cao" />
+                            <Label style="-fx-font-size: 15; -fx-text-fill: #000000;" text="• ReentrantLock an toàn &amp; JDBC Transaction Rollback" />
+                        </VBox>
+                    </VBox>
+
+                    <!-- FEATURES -->
+                    <VBox spacing="15.0">
+                        <Label style="-fx-font-size: 22; -fx-font-weight: bold; -fx-text-fill: #2980b9;" text="2. Tính năng Chính" />
+                        
+                        <GridPane hgap="30.0" vgap="20.0">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="50.0" />
+                                <ColumnConstraints percentWidth="50.0" />
+                            </columnConstraints>
+                            <rowConstraints>
+                                <RowConstraints vgrow="ALWAYS" />
+                            </rowConstraints>
+                            
+                            <!-- User Features -->
+                            <VBox style="-fx-background-color: #f8f9fa; -fx-padding: 20; -fx-background-radius: 8; -fx-border-color: #e9ecef; -fx-border-radius: 8;" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                                <Label style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #16a085;" text="Người dùng (User)" />
+                                <VBox spacing="8.0">
+                                    <padding><Insets top="10.0" /></padding>
+                                    <Label style="-fx-font-size: 14; -fx-text-fill: #138eff; -fx-font-weight: bold;" text="✓ Đăng nhập / Đăng ký" />
+                                    <Label style="-fx-font-size: 14; -fx-text-fill: #138eff; -fx-font-weight: bold;" text="✓ Duyệt danh sách phiên đấu giá (Arts, Electronics...)" />
+                                    <Label style="-fx-font-size: 14; -fx-text-fill: #138eff; -fx-font-weight: bold;" text="✓ Đặt giá thầu (Place Bid) &amp; Mua ngay (Buy-out)" />
+                                    <Label style="-fx-font-size: 14; -fx-text-fill: #138eff; -fx-font-weight: bold;" text="✓ Đăng bán sản phẩm (Seller)" />
+                                    <Label style="-fx-font-size: 14; -fx-text-fill: #138eff; -fx-font-weight: bold;" text="✓ Xem lịch sử hoạt động &amp; Lịch sử đấu giá" />
+                                    <Label style="-fx-font-size: 14; -fx-text-fill: #138eff; -fx-font-weight: bold;" text="✓ Anti-Sniping (Gia hạn tự động 30s)" />
+                                </VBox>
+                            </VBox>
+                            
+                            <!-- Admin Features -->
+                            <VBox style="-fx-background-color: #f8f9fa; -fx-padding: 20; -fx-background-radius: 8; -fx-border-color: #e9ecef; -fx-border-radius: 8;" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                                <Label style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #c0392b;" text="Quản trị viên &amp; Hệ thống" />
+                                <VBox spacing="8.0">
+                                    <padding><Insets top="10.0" /></padding>
+                                    <Label style="-fx-font-size: 14; -fx-text-fill: #138eff; -fx-font-weight: bold;" text="✓ Quản lý Người dùng (Ban account)" />
+                                    <Label style="-fx-font-size: 14; -fx-text-fill: #138eff; -fx-font-weight: bold;" text="✓ Quản lý Phiên đấu giá (Gỡ bỏ sản phẩm vi phạm)" />
+                                    <Label style="-fx-font-size: 14; -fx-text-fill: #138eff; -fx-font-weight: bold;" text="✓ Scheduler tự động chốt kết quả (mỗi giây)" />
+                                    <Label style="-fx-font-size: 14; -fx-text-fill: #138eff; -fx-font-weight: bold;" text="✓ Push Notification Real-time (UPDATE_BID, ENDED...)" />
+                                    <Label style="-fx-font-size: 14; -fx-text-fill: #138eff; -fx-font-weight: bold;" text="✓ Đồng bộ trạng thái RAM &amp; Database" />
+                                    <Label style="-fx-font-size: 14; -fx-text-fill: #138eff; -fx-font-weight: bold;" text="✓ Tự động khôi phục dữ liệu khi restart Server" />
+                                </VBox>
+                            </VBox>
+                        </GridPane>
+                    </VBox>
+
+                    <!-- ARCHITECTURE -->
+                    <VBox spacing="10.0">
+                        <Label style="-fx-font-size: 22; -fx-font-weight: bold; -fx-text-fill: #2980b9;" text="3. Kiến trúc &amp; Thiết kế OOP" />
+                        <VBox style="-fx-background-color: #f0f4f8; -fx-padding: 15; -fx-background-radius: 8; -fx-border-color: #b0c4de; -fx-border-radius: 8;">
+                            <Label style="-fx-font-family: 'Consolas'; -fx-font-size: 14; -fx-text-fill: #003366; -fx-font-weight: bold;" text="auction-client (JavaFX) ◄── TCP Socket ──► auction-server (Logic)&#10;       ▲                                          ▲&#10;       └────────── auction-shared (DTOs) ─────────┘" />
+                        </VBox>
+                        <Label style="-fx-font-size: 15; -fx-text-fill: #000000; -fx-line-spacing: 5;" text="Sử dụng các Design Pattern chuẩn mực như Singleton (Session, Manager), Factory (Item creation), Observer (UpdateListeners), và Transaction Script kết hợp ReentrantLock cho độ tin cậy giao dịch tuyệt đối." wrapText="true" />
+                    </VBox>
+
+                    <!-- TECH STACK -->
+                    <VBox spacing="10.0">
+                        <Label style="-fx-font-size: 22; -fx-font-weight: bold; -fx-text-fill: #2980b9;" text="4. Tech Stack" />
+                        <HBox spacing="15.0" alignment="CENTER_LEFT">
+                            <Label style="-fx-background-color: #e8f4f8; -fx-padding: 8 15; -fx-background-radius: 20; -fx-font-size: 14; -fx-text-fill: #2980b9; -fx-font-weight: bold;" text="Java 21" />
+                            <Label style="-fx-background-color: #e8f4f8; -fx-padding: 8 15; -fx-background-radius: 20; -fx-font-size: 14; -fx-text-fill: #2980b9; -fx-font-weight: bold;" text="JavaFX 23" />
+                            <Label style="-fx-background-color: #e8f4f8; -fx-padding: 8 15; -fx-background-radius: 20; -fx-font-size: 14; -fx-text-fill: #2980b9; -fx-font-weight: bold;" text="PostgreSQL" />
+                            <Label style="-fx-background-color: #e8f4f8; -fx-padding: 8 15; -fx-background-radius: 20; -fx-font-size: 14; -fx-text-fill: #2980b9; -fx-font-weight: bold;" text="TCP Sockets" />
+                            <Label style="-fx-background-color: #e8f4f8; -fx-padding: 8 15; -fx-background-radius: 20; -fx-font-size: 14; -fx-text-fill: #2980b9; -fx-font-weight: bold;" text="HikariCP" />
+                        </HBox>
+                    </VBox>
+
+                </VBox>
+            </content>
+            <BorderPane.margin>
+                <Insets bottom="40.0" left="150.0" right="150.0" top="40.0" />
+            </BorderPane.margin>
+        </ScrollPane>
+    </center>
 </BorderPane>
