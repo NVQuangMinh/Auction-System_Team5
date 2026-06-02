@@ -274,26 +274,21 @@ cd Auction-System_Team5
 ### Bước 2 — Cấu hình kết nối Database
 
 Mở file cấu hình kết nối của server và điền thông tin database của bạn.
-Tìm class `DatabaseConnection.java` tại:
-
-```
-auction-server/src/main/java/auctionserver/dao/DatabaseConnection.java
-```
 
 Hoặc thiết lập biến môi trường (khuyến nghị cho Production):
 
 **Linux / macOS:**
 ```bash
-export DB_URL="jdbc:postgresql://<host>:5432/<database>"
-export DB_USER="<username>"
-export DB_PASSWORD="<password>"
+export DB_URL="jdbc:postgresql://auction-db.cjqaae4g8cec.ap-southeast-2.rds.amazonaws.com:5432/auction_db"
+export DB_USER="postgres"
+export DB_PASSWORD="811168Nam"
 ```
 
 **Windows (PowerShell):**
 ```powershell
-$env:DB_URL = "jdbc:postgresql://<host>:5432/<database>"
-$env:DB_USER = "<username>"
-$env:DB_PASSWORD = "<password>"
+$env:DB_URL = "jjdbc:postgresql://auction-db.cjqaae4g8cec.ap-southeast-2.rds.amazonaws.com:5432/auction_db"
+$env:DB_USER = "postgres"
+$env:DB_PASSWORD = "811168Nam"
 ```
 
 ### Bước 3 — Build toàn bộ dự án
