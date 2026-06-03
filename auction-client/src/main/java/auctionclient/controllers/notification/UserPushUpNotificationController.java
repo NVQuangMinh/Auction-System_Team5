@@ -171,18 +171,17 @@ public class UserPushUpNotificationController implements AuctionUpdateListener {
                 try {
                     UserPushUpNotificationController.showNotification("Tài khoản của bạn đã bị khoá.", "NOTIFY");
                     // Đóng tất cả stage
-                    if (!Stage.getWindows().isEmpty()) {
-                        for (Window window : Stage.getWindows()) {
-                            if (window instanceof Stage) {
-                                ((Stage) window).close();
+                    Timeline timeline = new Timeline(new KeyFrame(
+                            Duration.seconds(3),
+                            event -> {
+                                Platform.exit();
                             }
-                        }
-                    }
-                    UserSession.getInstance().closeApp();
+                    ));
+                    timeline.play();
                 } catch (Exception exception) {
                     exception.printStackTrace();
                 }
-            } else {
+            } else if (UserSession.getInstance().getUser().getRole().equals("ADMIN")) {
                 UserPushUpNotificationController.showNotification("Khoá tài khoản người dùng thành công.", "SUCCESS");
             }
         }
