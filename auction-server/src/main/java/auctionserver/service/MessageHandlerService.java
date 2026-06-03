@@ -322,6 +322,20 @@ public class MessageHandlerService {
     }
 
     /**
+     * Xử lý lấy danh sách sản phẩm ENDED/SOLD của user (từ DB).
+     * Dùng cho cột "Đã Bán" trên SellProductScene.
+     *
+     * @param msg NetworkMessage chứa username
+     */
+    public void handleGetMyEndedList(NetworkMessage msg) {
+        String username = (String) msg.getData();
+        List<Auction> endedList = daoProvider.auctionDAO().selectEndedByOwner(username);
+        messageSender.sendMessage(new NetworkMessage(
+                "GET_MY_ENDED_LIST",
+                (Serializable) Mappers.toAuctionDTOList(endedList)));
+    }
+
+    /**
      * Xử lý tạo tài khoản.
      * 
      * @param msg NetworkMessage chứa SignUpDTO

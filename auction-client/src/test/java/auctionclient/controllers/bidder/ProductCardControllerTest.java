@@ -142,25 +142,5 @@ class ProductCardControllerTest extends FxControllerTestBase {
         verify(mockListener, times(1)).openAuctionDetail(auction);
     }
 
-    @Test
-    public void testBuyOut_SendsCorrectMessage() {
-        UserSession.getInstance().setUser(testUser);
 
-        AuctionDTO auction = createAuction(AuctionStatus.ACTIVE);
-        HandleCardClicked mockListener = mock(HandleCardClicked.class);
-
-        interact(() -> controller.setData(auction, mockListener));
-        interact(() -> controller.buyOut());
-
-        ArgumentCaptor<NetworkMessage> captor = ArgumentCaptor.forClass(NetworkMessage.class);
-        verify(mockClientService, times(1)).sendMessage(captor.capture());
-
-        NetworkMessage sentMsg = captor.getValue();
-        assertEquals("BUY_OUT", sentMsg.getAction());
-
-        BidTransactionDTO transaction = (BidTransactionDTO) sentMsg.getData();
-        assertEquals(auction, transaction.getAuction());
-        assertEquals(2000.0, transaction.getBidAmount());
-        assertEquals(testUser.getId(), transaction.getBidder().getId());
-    }
 }

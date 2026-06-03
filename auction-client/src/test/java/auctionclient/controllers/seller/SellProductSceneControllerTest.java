@@ -138,10 +138,10 @@ public class SellProductSceneControllerTest extends FxControllerTestBase {
     }
 
     private Node pushAuctionAndGetFirstCard(AuctionDTO auction) {
-        controller.onUpdateReceived(new NetworkMessage("GET_MY_LIST", (Serializable) List.of(auction)));
+        controller.onUpdateReceived(new NetworkMessage("GET_MY_ENDED_LIST", (Serializable) List.of(auction)));
         WaitForAsyncUtils.waitForFxEvents();
 
-        FlowPane flowPane = lookup("#myListFlowPane").queryAs(FlowPane.class);
+        FlowPane flowPane = lookup("#soldFlowPane").queryAs(FlowPane.class);
         assertNotNull(flowPane);
         assertEquals(1, flowPane.getChildren().size());
         return flowPane.getChildren().get(0);

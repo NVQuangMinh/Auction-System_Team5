@@ -1,11 +1,7 @@
 package auctionclient.controllers.bidder;
 
-import auctionclient.Network.ClientService;
-import auctionclient.UserSession;
 import auctionclient.interfaces.HandleCardClicked;
-import auctionshared.Network.NetworkMessage;
 import auctionshared.dto.AuctionDTO;
-import auctionshared.dto.BidTransactionDTO;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -14,7 +10,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.shape.Rectangle;
 
 import java.net.URL;
-import java.time.LocalDateTime;
 import java.util.ResourceBundle;
 
 public class ProductCardController implements Initializable {
@@ -94,10 +89,4 @@ public class ProductCardController implements Initializable {
         this.cardClickedListener.openAuctionDetail(this.auction);
     }
 
-    @FXML
-    public void buyOut() {
-        BidTransactionDTO transaction = new BidTransactionDTO(auction, UserSession.getInstance().getUser(),
-                auction.getBuyOutPrice(), LocalDateTime.now());
-        ClientService.getInstance().sendMessage(new NetworkMessage("BUY_OUT", transaction));
-    }
 }

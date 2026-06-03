@@ -4,46 +4,117 @@
 <?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<StackPane xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auctionclient.controllers.seller.SellProductSceneController">
+<StackPane xmlns="http://javafx.com/javafx/17.0.12"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="auctionclient.controllers.seller.SellProductSceneController">
    <children>
-      <BorderPane prefHeight="600.0" prefWidth="1200.0">
+      <BorderPane prefHeight="600.0" prefWidth="1200.0"
+                  style="-fx-background-color: #f6f8ef;">
          <top>
              <fx:include fx:id="menuBar" source="WebMenuBar.fxml" />
          </top>
          <center>
-            <ScrollPane fitToHeight="true" fitToWidth="true" BorderPane.alignment="CENTER">
-               <content>
-                  <VBox alignment="TOP_CENTER">
-                     <children>
-                        <HBox alignment="CENTER" prefHeight="48.0" prefWidth="1018.0">
-                           <children>
-                              <Button mnemonicParsing="false" style="-fx-background-color: white; -fx-label-padding: 1 31.5 1 31.5; -fx-font-size: 16; -fx-font-weight: bold; -fx-background-radius: 25; -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.4), 15, 0, 0, 5);" text="DANH SÁCH SẢN PHẨM" />
-                              <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-                              <Button mnemonicParsing="false" onAction="#handleUserAddItem" style="-fx-background-color: #138EFF; -fx-font-size: 16; -fx-font-weight: bold; -fx-background-radius: 25; -fx-label-padding: 1 20 1 20; -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.4), 15, 0, 0, 5);" text="+ ĐĂNG BÁN SẢN PHẨM" textFill="WHITE">
-                                 <cursor>
-                                    <Cursor fx:constant="HAND" />
-                                 </cursor>
-                              </Button>
-                           </children>
-                           <VBox.margin>
-                              <Insets />
-                           </VBox.margin>
-                        </HBox>
-                        <FlowPane fx:id="myListFlowPane" alignment="CENTER" hgap="80.0" vgap="50.0">
+            <VBox style="-fx-background-color: #f6f8ef;">
+               <padding>
+                  <Insets left="40.0" right="40.0" top="20.0" bottom="20.0"/>
+               </padding>
+
+               <!-- ── Toolbar ── -->
+               <HBox alignment="CENTER_LEFT" prefHeight="48.0" spacing="12.0">
+                  <VBox.margin><Insets bottom="14.0"/></VBox.margin>
+                  <Label text="Sản phẩm của tôi"
+                         style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: #1a1a2e;"/>
+                  <Region HBox.hgrow="ALWAYS"/>
+                  <Button mnemonicParsing="false"
+                          onAction="#handleUserAddItem"
+                          text="+ ĐĂNG BÁN SẢN PHẨM"
+                          style="-fx-background-color: #138EFF;
+                                 -fx-font-size: 14;
+                                 -fx-font-weight: bold;
+                                 -fx-background-radius: 25;
+                                 -fx-padding: 8 22 8 22;
+                                 -fx-text-fill: white;
+                                 -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.25), 10, 0, 0, 4);">
+                     <cursor><Cursor fx:constant="HAND"/></cursor>
+                  </Button>
+               </HBox>
+
+               <!-- ── 2 Dãy Nằm Ngang: Đang Bán | Đã Bán ── -->
+               <VBox spacing="24.0" VBox.vgrow="ALWAYS">
+
+                  <!-- DÃY TRÊN: Đang bán -->
+                  <VBox VBox.vgrow="ALWAYS" spacing="12.0">
+                     <HBox>
+                        <Label text="🟢 ĐANG BÁN"
+                               style="-fx-background-color: #138EFF;
+                                      -fx-font-size: 14;
+                                      -fx-font-weight: bold;
+                                      -fx-background-radius: 25;
+                                      -fx-padding: 8 22 8 22;
+                                      -fx-text-fill: white;
+                                      -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.25), 10, 0, 0, 4);"/>
+                     </HBox>
+                     <ScrollPane fitToHeight="true"
+                                 vbarPolicy="NEVER"
+                                 hbarPolicy="AS_NEEDED"
+                                 VBox.vgrow="ALWAYS"
+                                 style="-fx-background: #f6f8ef;
+                                        -fx-background-color: transparent;
+                                        -fx-border-color: transparent;
+                                        -fx-padding: 0;">
+                        <FlowPane fx:id="sellingFlowPane"
+                                  alignment="CENTER_LEFT"
+                                  orientation="VERTICAL"
+                                  hgap="20.0" vgap="20.0">
                            <padding>
-                              <Insets bottom="30.0" left="40.0" right="40.0" top="30.0" />
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
                            </padding>
                         </FlowPane>
-                     </children>
-                     <padding>
-                        <Insets left="90.0" right="90.0" top="30.0" />
-                     </padding>
+                     </ScrollPane>
                   </VBox>
-               </content>
-            </ScrollPane>
+
+                  <!-- DÃY DƯỚI: Đã bán -->
+                  <VBox VBox.vgrow="ALWAYS" spacing="12.0">
+                     <HBox>
+                        <Label text="✅ ĐÃ BÁN"
+                               style="-fx-background-color: #34A853;
+                                      -fx-font-size: 14;
+                                      -fx-font-weight: bold;
+                                      -fx-background-radius: 25;
+                                      -fx-padding: 8 22 8 22;
+                                      -fx-text-fill: white;
+                                      -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.25), 10, 0, 0, 4);"/>
+                     </HBox>
+                     <ScrollPane fitToHeight="true"
+                                 vbarPolicy="NEVER"
+                                 hbarPolicy="AS_NEEDED"
+                                 VBox.vgrow="ALWAYS"
+                                 style="-fx-background: #f6f8ef;
+                                        -fx-background-color: transparent;
+                                        -fx-border-color: transparent;
+                                        -fx-padding: 0;">
+                        <FlowPane fx:id="soldFlowPane"
+                                  alignment="CENTER_LEFT"
+                                  orientation="VERTICAL"
+                                  hgap="20.0" vgap="20.0">
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                           </padding>
+                        </FlowPane>
+                     </ScrollPane>
+                  </VBox>
+
+               </VBox>
+            </VBox>
          </center>
       </BorderPane>
-      <AnchorPane fx:id="overlayPane" opacity="0.21" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #000000;" visible="false" />
+
+      <!-- Overlay mờ khi mở modal đăng bán -->
+      <AnchorPane fx:id="overlayPane"
+                  opacity="0.21"
+                  style="-fx-background-color: #000000;"
+                  visible="false"/>
    </children>
 </StackPane>

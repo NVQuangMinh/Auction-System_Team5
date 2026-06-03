@@ -49,7 +49,6 @@ public class UserPushUpNotificationController implements AuctionUpdateListener {
     private Rectangle progressFill;
 
     private double totalTimeMs = 3000; // thoi gian an
-    private double timeLeftMs = totalTimeMs;
     private Stage notificationStage;
     private Timeline timeline;
     private double progress = 1.0;

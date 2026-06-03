@@ -14,9 +14,6 @@ public class AuctionMainController implements Cleanable {
         return menuBarController;
     }
 
-    public AllProductController getAllProductSceneController() {
-        return allProductSceneController;
-    }
 
     @Override
     public void cleanup() {

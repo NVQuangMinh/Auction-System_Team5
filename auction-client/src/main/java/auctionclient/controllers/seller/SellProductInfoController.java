@@ -41,7 +41,7 @@ public class SellProductInfoController implements Initializable, AuctionUpdateLi
     @FXML
     Label tickRate;
     @FXML
-    Label timeLeft; // I still don't know what to do with this shit;
+    Label timeLeft;
     @FXML
     LineChart<String, Number> bidHistory;
     @FXML

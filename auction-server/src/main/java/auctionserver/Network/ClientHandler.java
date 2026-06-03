@@ -112,6 +112,9 @@ public class ClientHandler implements Runnable {
             case "GET_MY_LIST":
                 messageHandler.handleGetMyList(msg);
                 break;
+            case "GET_MY_ENDED_LIST":
+                messageHandler.handleGetMyEndedList(msg);
+                break;
             case "CREATE_ACCOUNT":
                 messageHandler.handleCreateAccount(msg);
                 break;

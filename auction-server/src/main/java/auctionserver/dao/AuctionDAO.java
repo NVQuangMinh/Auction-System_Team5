@@ -210,6 +210,54 @@ public class AuctionDAO implements WritableDAO<Auction> {
         return auctions;
     }
 
+    /**
+     * Lấy danh sách auction ENDED/SOLD theo username của người bán.
+     * Dùng cho tính năng "Danh sách đã bán" trên SellProductScene.
+     *
+     * @param ownerUsername username của seller
+     * @return List&lt;Auction&gt; đã kết thúc/bán của seller đó
+     */
+    public List<Auction> selectEndedByOwner(String ownerUsername) {
+        String sql = "SELECT a.*, " +
+                "i.id as item_id, i.item_name, i.description, i.item_type, " +
+                "i.artist_name, i.model, i.brand, " +
+                "u.id as owner_id, u.username " +
+                "FROM auctions a " +
+                "JOIN items i ON a.item_id = i.id " +
+                "JOIN users u ON i.owner_id = u.id " +
+                "WHERE (a.auction_status = 'ENDED' OR a.auction_status = 'SOLD') " +
+                "  AND u.username = ? " +
+                "ORDER BY a.end_time DESC " +
+                "LIMIT 50";
+
+        List<Auction> auctions = new ArrayList<>();
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, ownerUsername);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    User owner = new User(rs.getString("owner_id"), rs.getString("username"), null);
+                    Item item = mapRowToItem(rs, owner);
+                    LocalDateTime startTime = rs.getTimestamp("start_time").toLocalDateTime();
+                    LocalDateTime endTime   = rs.getTimestamp("end_time").toLocalDateTime();
+                    if (startTime == null || endTime == null) continue;
+                    auctions.add(new Auction(
+                            item,
+                            rs.getDouble("starting_price"),
+                            rs.getDouble("buy_out_price"),
+                            rs.getDouble("tick_size"),
+                            startTime, endTime,
+                            rs.getBoolean("anti_snipe"),
+                            rs.getDouble("current_highest_bid"),
+                            AuctionStatus.valueOf(rs.getString("auction_status"))));
+                }
+            }
+        } catch (SQLException e) {
+            log.error("Lỗi truy vấn auction đã kết thúc theo owner: {}", ownerUsername, e);
+            throw new DatabaseException("Không thể truy vấn auction đã kết thúc của: " + ownerUsername, e);
+        }
+        return auctions;
+    }
 
 
     /**
