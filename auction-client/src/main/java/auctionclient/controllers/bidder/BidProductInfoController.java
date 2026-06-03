@@ -136,7 +136,7 @@ public class BidProductInfoController implements Initializable, AuctionUpdateLis
             List<BidTransactionDTO> allTransactions = (List<BidTransactionDTO>) msg.getData();
             Platform.runLater(() -> {
                 priceSeries.getData().clear();
-                DateTimeFormatter formater = DateTimeFormatter.ofPattern("HH:mm");
+                DateTimeFormatter formater = DateTimeFormatter.ofPattern("HH:mm:ss");
                 for (BidTransactionDTO transaction : allTransactions) {
                     priceSeries.getData().add(new XYChart.Data<>(
                             transaction.getBidTime().format(formater),

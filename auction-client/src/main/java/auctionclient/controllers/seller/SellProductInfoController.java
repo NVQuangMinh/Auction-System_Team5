@@ -3,6 +3,7 @@ package auctionclient.controllers.seller;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -132,11 +133,12 @@ public class SellProductInfoController implements Initializable, AuctionUpdateLi
                 }
             });
         } else if (action.equals("GET_BID_HISTORY")) {
+            DateTimeFormatter formater = DateTimeFormatter.ofPattern("HH:mm:ss");
             List<BidTransactionDTO> history = (List<BidTransactionDTO>) msg.getData();
             Platform.runLater(() -> {
                 priceSeries.getData().clear();
                 for (BidTransactionDTO transaction : history) {
-                    priceSeries.getData().add(new XYChart.Data<>(transaction.getBidTime().toString(), transaction.getBidAmount()));
+                    priceSeries.getData().add(new XYChart.Data<>(transaction.getBidTime().format(formater), transaction.getBidAmount()));
                 }
             });
         }
