@@ -367,8 +367,8 @@ mvn javafx:run
 
 | Loại | Link |
 |---|---|
-| **Báo cáo PDF** | *(Thêm link vào đây)* |
-| **Video Demo** | *(Thêm link vào đây)* |
+| **Báo cáo PDF** | *[(Báo cáo)](https://drive.google.com/drive/folders/11R3qf8JUxQCJ07IUG7BrDTJoN9nRQHqs)* |
+| **Video Demo** | *([Video Demo](https://drive.google.com/drive/folders/11R3qf8JUxQCJ07IUG7BrDTJoN9nRQHqs))* |
 
 ---
 
