@@ -1,12 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import org.kordamp.ikonli.javafx.*?>
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<StackPane xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auctionclient.controllers.admin.AdminControlPanelController">
+<StackPane xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="auctionclient.controllers.admin.AdminControlPanelController">
     <fx:define>
         <ToggleGroup fx:id="statusGroup" />
     </fx:define>
@@ -31,12 +41,12 @@
                                 <!-- MANAGE USERS -->
                                 <VBox spacing="15.0" VBox.vgrow="ALWAYS">
                                     <children>
-                                        <TableView fx:id="userTable" nodeOrientation="LEFT_TO_RIGHT" prefHeight="291.0" prefWidth="1018.0" stylesheets="@TableStyle.css" VBox.vgrow="ALWAYS">
+                                        <TableView fx:id="userTable" nodeOrientation="LEFT_TO_RIGHT" prefHeight="291.0" prefWidth="1018.0" stylesheets="@TableStyle.css">
                                             <columns>
-                                                <TableColumn fx:id="colUserId" editable="false" maxWidth="80.0" minWidth="200.0" prefWidth="200.0" reorderable="false" sortable="false" text="ID" />
-                                                <TableColumn fx:id="colUsername" editable="false" minWidth="300.0" prefWidth="300.0" reorderable="false" sortable="false" text="Tên đăng nhập" />
-                                                <TableColumn fx:id="colUserRole" editable="false" minWidth="200.0" prefWidth="200.0" reorderable="false" sortable="false" text="Loại tài khoản" />
-                                                <TableColumn fx:id="colUserAction" editable="false" maxWidth="90.0" minWidth="90.0" prefWidth="90.0" reorderable="false" sortable="false" text="Hành động" />
+                                                <TableColumn fx:id="colUserId" editable="false" minWidth="150.0" prefWidth="200.0" reorderable="false" sortable="false" text="ID" />
+                                                <TableColumn fx:id="colUsername" editable="false" minWidth="200.0" prefWidth="300.0" reorderable="false" sortable="false" text="Tên đăng nhập" />
+                                                <TableColumn fx:id="colUserRole" editable="false" minWidth="150.0" prefWidth="200.0" reorderable="false" sortable="false" text="Loại tài khoản" />
+                                                <TableColumn fx:id="colUserAction" editable="false" minWidth="120.0" prefWidth="150.0" reorderable="false" sortable="false" text="Hành động" />
                                             </columns>
                                             <styleClass>
                                                 <String fx:value="modern-table" />
@@ -70,10 +80,7 @@
                                                 <!-- Status Filter RadioButtons -->
                                                 <HBox alignment="CENTER" spacing="12.0" style="-fx-background-color: #f0f4ff; -fx-background-radius: 20; -fx-padding: 6 16 6 16;">
                                                     <children>
-                                                        <RadioButton fx:id="activeStatusRadio" mnemonicParsing="false" onAction="#onStatusSelected" selected="true" style="-fx-font-size: 13; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" text="Active">
-                                             <toggleGroup>
-                                                <ToggleGroup fx:id="statusGroupActiveEnd" />
-                                             </toggleGroup></RadioButton>
+                                                        <RadioButton fx:id="activeStatusRadio" mnemonicParsing="false" onAction="#onStatusSelected" selected="true" style="-fx-font-size: 13; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" text="Active" toggleGroup="$statusGroup" />
                                                         <RadioButton fx:id="endedStatusRadio" mnemonicParsing="false" onAction="#onStatusSelected" style="-fx-font-size: 13; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" text="Ended / Sold" toggleGroup="$statusGroup" />
                                                     </children>
                                                 </HBox>

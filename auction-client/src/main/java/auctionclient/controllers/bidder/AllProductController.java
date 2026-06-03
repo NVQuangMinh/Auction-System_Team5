@@ -1,7 +1,6 @@
 package auctionclient.controllers.bidder;
 
 import auctionclient.Network.ClientService;
-import auctionclient.controllers.notification.UserPushUpNotificationController;
 import auctionclient.interfaces.AuctionUpdateListener;
 import auctionclient.interfaces.Cleanable;
 import auctionclient.interfaces.HandleCardClicked;
@@ -177,12 +176,6 @@ public class AllProductController implements Initializable, AuctionUpdateListene
         } else if (action.equals("UPDATE_BID")) {
             List<AuctionDTO> allDTOs = (List<AuctionDTO>) msg.getData();
             Platform.runLater(() -> handleUpdateBid(allDTOs));
-
-        } else if (action.equals("AUCTION_ENDED") || action.equals("AUCTION_SOLD")) {
-            AuctionDTO dto = (AuctionDTO) msg.getData();
-            String itemName = dto.getItem().getName();
-            UserPushUpNotificationController.showNotification(
-                    "Phiên đấu giá kết thúc: " + itemName, "INFO");
 
         } else if (action.equals("REMOVE_ITEM")) {
             AuctionDTO removed = (AuctionDTO) msg.getData();

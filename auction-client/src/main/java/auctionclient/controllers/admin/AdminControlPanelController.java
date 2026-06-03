@@ -1,7 +1,6 @@
 package auctionclient.controllers.admin;
 
 import auctionclient.Network.ClientService;
-import auctionclient.controllers.notification.UserPushUpNotificationController;
 import auctionclient.interfaces.AuctionUpdateListener;
 import auctionclient.interfaces.Cleanable;
 import auctionshared.Network.NetworkMessage;
@@ -97,11 +96,11 @@ public class AdminControlPanelController implements Initializable, AuctionUpdate
             @Override
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty) {
+                if (empty || getTableRow() == null || getTableRow().getItem() == null) {
                     setGraphic(null);
                 } else {
                     setGraphic(actionButton);
-                    UserDTO user = getTableView().getItems().get(getIndex());
+                    UserDTO user = (UserDTO) getTableRow().getItem();
                     actionButton.setOnAction(event -> handleBanUser(user));
                 }
             }
@@ -120,11 +119,11 @@ public class AdminControlPanelController implements Initializable, AuctionUpdate
             @Override
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty) {
+                if (empty || getTableRow() == null || getTableRow().getItem() == null) {
                     setGraphic(null);
                 } else {
                     setGraphic(actionButton);
-                    AuctionDTO auction = getTableView().getItems().get(getIndex());
+                    AuctionDTO auction = (AuctionDTO) getTableRow().getItem();
                     actionButton.setOnAction(event -> handleRemoveAuction(auction));
                 }
             }
@@ -211,12 +210,6 @@ public class AdminControlPanelController implements Initializable, AuctionUpdate
                 }
             });
 
-        } else if (action.equals("AUCTION_ENDED") || action.equals("AUCTION_SOLD")) {
-            // Push-based: thông báo cho admin
-            AuctionDTO dto = (AuctionDTO) msg.getData();
-            String itemName = dto.getItem().getName();
-            UserPushUpNotificationController.showNotification(
-                    "Phiên đấu giá kết thúc: " + itemName, "INFO");
         }
     }
 

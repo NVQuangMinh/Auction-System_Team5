@@ -6,6 +6,7 @@ import auctionclient.UserSession;
 import auctionclient.interfaces.AuctionUpdateListener;
 import auctionshared.Network.NetworkMessage;
 import auctionshared.dto.UserDTO;
+import auctionshared.dto.AuctionDTO;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -148,7 +149,7 @@ public class UserPushUpNotificationController implements AuctionUpdateListener {
         if ("BID_SUCCESS".equals(action)) {
             UserPushUpNotificationController.showNotification("Bạn đã trả giá sản phẩm thành công.", "SUCCESS");
         } else if ("BID_FAILED".equals(action)) {
-            if(msg.getData() == null) {
+            if (msg.getData() == null) {
                 UserPushUpNotificationController.showNotification("Trả giá thất bại: không tìm thấy người dùng.", "FAILED");
             } else {
                 UserPushUpNotificationController.showNotification((String) msg.getData(), "FAILED");
@@ -187,6 +188,18 @@ public class UserPushUpNotificationController implements AuctionUpdateListener {
         }
         if ("REMOVE_ITEM".equals(action)) {
             UserPushUpNotificationController.showNotification("Gỡ bỏ sản phẩm thành công.", "SUCCESS");
+        }
+        if ("AUCTION_ENDED".equals(action) || "AUCTION_SOLD".equals(action)) {
+            if (msg.getData() instanceof AuctionDTO dto) {
+                UserPushUpNotificationController.showNotification(
+                        "Phiên đấu giá kết thúc: " + dto.getItem().getName(), "INFO");
+            }
+        }
+        if ("YOU_WON".equals(action)) {
+            if (msg.getData() instanceof AuctionDTO dto) {
+                UserPushUpNotificationController.showNotification(
+                        "Bạn đã thắng phiên đấu giá: " + dto.getItem().getName(), "SUCCESS");
+            }
         }
     }
 }
