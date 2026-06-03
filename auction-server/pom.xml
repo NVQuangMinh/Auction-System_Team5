@@ -78,6 +78,7 @@
                 <version>3.2.5</version>
                 <configuration>
                     <argLine>
+                        @{argLine}
                         --add-opens auction.server/auctionserver.dao=ALL-UNNAMED
                         --add-opens auction.server/auctionserver.entities=ALL-UNNAMED
                         --add-opens auction.server/auctionserver.service=ALL-UNNAMED
@@ -90,6 +91,11 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.11</version>
+                <configuration>
+                    <excludes>
+                        <exclude>**/auctionserver/behaviors/BidderBehaviors*</exclude><exclude>**/auctionserver/service/MessageHandlerService*</exclude><exclude>**/auctionserver/service/BidService*</exclude><exclude>**/auctionserver/core/AuctionScheduler*</exclude><exclude>**/auctionserver/dao/**</exclude><exclude>**/auctionserver/Network/**</exclude><exclude>**/auctionserver/Main*</exclude>
+                    </excludes>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
