@@ -149,8 +149,6 @@ public class AuctionDAO implements WritableDAO<Auction> {
      *
      * @param categoryFilter "ALL", "ARTS", "ELECTRONICS", "VEHICLES" hoặc null
      *                       (ALL)
-     * @param page           số trang (0-based)
-     * @param pageSize       số item mỗi trang
      * @return danh sách Auction
      */
     public List<Auction> selectEndedSaledAuctions(String categoryFilter, int limit) {
