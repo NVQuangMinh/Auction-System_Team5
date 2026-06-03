@@ -240,7 +240,9 @@ public class AuctionDAO implements WritableDAO<Auction> {
                     Item item = mapRowToItem(rs, owner);
                     LocalDateTime startTime = rs.getTimestamp("start_time").toLocalDateTime();
                     LocalDateTime endTime   = rs.getTimestamp("end_time").toLocalDateTime();
-                    if (startTime == null || endTime == null) continue;
+                    if (startTime == null || endTime == null) {
+                        continue;
+                    }
                     auctions.add(new Auction(
                             item,
                             rs.getDouble("starting_price"),

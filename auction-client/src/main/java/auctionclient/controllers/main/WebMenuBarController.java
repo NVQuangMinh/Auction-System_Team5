@@ -115,6 +115,7 @@ public class WebMenuBarController implements Initializable {
         if (logOutAlert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
             cleanupCurrentScene(event);
             UserSession.getInstance().closeApp();
+            SignInController.isAdmin.set(false);
             switchScene(event, "/auctionclient/SignInScene.fxml");
         }
     }

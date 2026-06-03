@@ -50,6 +50,7 @@ public class SignUpController implements Initializable, AuctionUpdateListener {
             Platform.runLater(() -> {
                 if (isSuccess) {
                     UserSession.getInstance().setUsername(inputUsername);
+                    SignInController.isAdmin.set(false);
                     switchToMainScene();
                 } else {
                     UserSession.getInstance().setUser(null);
