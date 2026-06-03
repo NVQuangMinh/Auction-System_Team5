@@ -22,7 +22,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javafx.stage.Window;
 import javafx.util.Duration;
 
 public class UserPushUpNotificationController implements AuctionUpdateListener {

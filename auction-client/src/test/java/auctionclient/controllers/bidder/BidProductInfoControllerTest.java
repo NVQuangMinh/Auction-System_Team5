@@ -183,7 +183,7 @@ class BidProductInfoControllerTest extends FxControllerTestBase {
         controller.onUpdateReceived(msg);
         org.testfx.util.WaitForAsyncUtils.waitForFxEvents();
 
-        DateTimeFormatter formater = DateTimeFormatter.ofPattern("HH:mm");
+        DateTimeFormatter formater = DateTimeFormatter.ofPattern("HH:mm:ss");
         LineChart<String, Number> chart = lookup("#bidHistory").queryAs(LineChart.class);
 
         XYChart.Series<String, Number> priceSeries1 = chart.getData().get(0);

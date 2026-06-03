@@ -307,8 +307,9 @@ mvn clean install -DskipTests
 Server cần khởi động **trước** để sẵn sàng nhận kết nối từ Client.
 
 ```bash
+# Đứng tại thư mục gốc Auction-System_Team5/
 cd auction-server
-mvn exec:java -Dexec.mainClass="auctionserver.Main"
+mvn compile exec:java
 ```
 
 Khi khởi động thành công, console sẽ hiển thị:
@@ -326,6 +327,7 @@ Server đã khởi động tại địa chỉ: 8080
 Mở một cửa sổ terminal/command prompt mới, sau đó chạy:
 
 ```bash
+# Mở terminal MỚI, đứng tại thư mục gốc Auction-System_Team5/
 cd auction-client
 mvn javafx:run
 ```

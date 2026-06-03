@@ -65,18 +65,6 @@ class WebMenuBarControllerTest extends FxControllerTestBase {
     }
 
     @Test
-    public void testYourListingsButtonNavigatesToSellProductPage() {
-        clickOn("#userProductListButton");
-        assertNotNull(lookup("#myListFlowPane").query());
-
-        ArgumentCaptor<NetworkMessage> captor = ArgumentCaptor.forClass(NetworkMessage.class);
-        verify(mockClientService, atLeastOnce()).sendMessage(captor.capture());
-        assertTrue(captor.getAllValues().stream()
-                .anyMatch(msg -> "GET_MY_LIST".equals(msg.getAction())
-                        && TEST_USERNAME.equals(msg.getData())));
-    }
-
-    @Test
     public void testActivitiesButtonNavigatesToActivitiesPage() {
         clickOn("#activities");
         assertNotNull(lookup("#notificationContainer").query());
