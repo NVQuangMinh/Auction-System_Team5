@@ -279,16 +279,16 @@ Hoặc thiết lập biến môi trường (khuyến nghị cho Production):
 
 **Linux / macOS:**
 ```bash
-export DB_URL="jdbc:postgresql://auction-db.cjqaae4g8cec.ap-southeast-2.rds.amazonaws.com:5432/auction_db"
-export DB_USER="postgres"
-export DB_PASSWORD="811168Nam"
+export DB_URL=""
+export DB_USER=""
+export DB_PASSWORD=""
 ```
 
 **Windows (PowerShell):**
 ```powershell
-$env:DB_URL = "jjdbc:postgresql://auction-db.cjqaae4g8cec.ap-southeast-2.rds.amazonaws.com:5432/auction_db"
-$env:DB_USER = "postgres"
-$env:DB_PASSWORD = "811168Nam"
+$env:DB_URL = ""
+$env:DB_USER = ""
+$env:DB_PASSWORD = ""
 ```
 
 ### Bước 3 — Build toàn bộ dự án
@@ -336,7 +336,7 @@ mvn javafx:run
 
 | Vai trò | Username | Password |
 |---|---|---|
-| Admin | *(xem trong DB)* | *(xem trong DB)* |
+| Admin | *vuminh* | *123* |
 | User | *(tạo mới qua màn hình Đăng ký)* | — |
 
 ---
@@ -367,8 +367,8 @@ mvn javafx:run
 
 | Loại | Link |
 |---|---|
-| **Báo cáo PDF** | *(Thêm link vào đây)* |
-| **Video Demo** | *(Thêm link vào đây)* |
+| **Báo cáo PDF** | *[(Báo cáo)](https://drive.google.com/drive/folders/11R3qf8JUxQCJ07IUG7BrDTJoN9nRQHqs)* |
+| **Video Demo** | *([Video Demo](https://drive.google.com/drive/folders/11R3qf8JUxQCJ07IUG7BrDTJoN9nRQHqs))* |
 
 ---
 
